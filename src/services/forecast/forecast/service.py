@@ -1,7 +1,7 @@
-from datetime import date as datelib
 import json
 import requests
-
+from datetime import date as datelib
+from statics import ErrorMessages
 from model import BusinessException, WeatherCondition
 
 
@@ -12,7 +12,7 @@ async def get_forecast(city: str):
     lat, lon = await get_coordinates(city)
 
     if lat is None or lon is None:
-        raise BusinessException(404, f"No coordinates found for city {city}")
+        raise BusinessException(404, ErrorMessages.COORDINATES_NOT_FOUND)
 
     received_data = await send_request(lat, lon)
 
@@ -45,12 +45,12 @@ async def send_request(lat, lon):
         try:
             response = requests.get(url)
         except:
-            raise BusinessException(503, "Failed getting response")
+            raise BusinessException(503, ErrorMessages.GETTING_RESPONSE_FAILED)
 
         try:
             data = json.loads(response.text)
         except:
-            raise BusinessException(503, "Failed reading API response data")
+            raise BusinessException(503, ErrorMessages.READING_RESPONSE_FAILED)
     else:
         with open("./data/example_response.json", "r", encoding="utf-8") as test_data:
             data = json.load(test_data)
@@ -59,17 +59,27 @@ async def send_request(lat, lon):
 
 
 async def parse_data(received_data):
-    forecast_data = received_data["list"]
-
+    try:
+        forecast_data = received_data["list"]
+    except:
+        raise BusinessException(503, ErrorMessages.PARSING_DATA_FAILED)
+        
     conditions = []
 
     for hourly_data in forecast_data[::8]:
-        date = datelib.fromtimestamp(int(hourly_data["dt"]))
-        weather = hourly_data["weather"][0]["main"]
-        icon = map_icon_url(hourly_data["weather"][0]["icon"])
-        temp = hourly_data["main"]["temp"]
-        min_temp = hourly_data["main"]["temp_min"]
-        max_temp = hourly_data["main"]["temp_max"]
+        try:
+            date = datelib.fromtimestamp(int(hourly_data["dt"]))
+            weather = hourly_data["weather"][0]["main"]
+            icon = map_icon_url(hourly_data["weather"][0]["icon"])
+            temp = hourly_data["main"]["temp"]
+            min_temp = hourly_data["main"]["temp_min"]
+            max_temp = hourly_data["main"]["temp_max"]
+        except:
+            raise BusinessException(503, ErrorMessages.PARSING_DATA_FAILED)
+
+        if any([date, weather, icon, temp, min_temp, max_temp]) is None:
+            raise BusinessException(503, ErrorMessages.PARSING_DATA_FAILED)
+
 
         condition = WeatherCondition(
             date=date,

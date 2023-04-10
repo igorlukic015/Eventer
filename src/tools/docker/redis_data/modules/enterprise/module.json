@@ -1,0 +1,575 @@
+{
+    "add_command": [],
+    "architecture": "x86_64",
+    "author": "RedisLabs",
+    "capabilities": [
+        "types",
+        "replica_of",
+        "failover_migrate",
+        "persistence_aof",
+        "persistence_rdb",
+        "clustering",
+        "backup_restore",
+        "reshard_rebalance",
+        "flash",
+        "crdb",
+        "eviction_expiry",
+        "hash_policy",
+        "intershard_tls",
+        "intershard_tls_pass",
+        "ipv6"
+    ],
+    "command_line_args": "PARTITIONS AUTO",
+    "commands": [
+        {
+            "command_arity": -1,
+            "command_name": "_FT.CURSOR",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.DEL",
+            "first_key": 2,
+            "flags": [
+                "write"
+            ],
+            "last_key": 2,
+            "step": 1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.LSEARCH",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.SAFEADD",
+            "first_key": 2,
+            "flags": [
+                "write",
+                "denyoom"
+            ],
+            "last_key": 2,
+            "step": 1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT._LIST",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.SEARCH",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.DEL",
+            "first_key": 2,
+            "flags": [
+                "write"
+            ],
+            "last_key": 2,
+            "step": 1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.AGGREGATE",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 1,
+            "step": -2
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.INFO",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.DICTDUMP",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.SEARCH",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.MGET",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.EXPLAINCLI",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.SUGGET",
+            "first_key": 1,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 1,
+            "step": 1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.SUGDEL",
+            "first_key": 0,
+            "flags": [
+                "write"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.AGGREGATE",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.SAFEADD",
+            "first_key": 2,
+            "flags": [
+                "write",
+                "denyoom"
+            ],
+            "last_key": 2,
+            "step": 1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "search.CLUSTERSET",
+            "first_key": 0,
+            "flags": [
+                "readonly",
+                "loading"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.MGET",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.EXPLAIN",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.CURSOR",
+            "first_key": 3,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 1,
+            "step": -3
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.SPELLCHECK",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.PROFILE",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.ADD",
+            "first_key": 2,
+            "flags": [
+                "write",
+                "denyoom"
+            ],
+            "last_key": 2,
+            "step": 1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.TAGVALS",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.EXPLAIN",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.SUGGET",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.SYNDUMP",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.SUGLEN",
+            "first_key": 1,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 1,
+            "step": 1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.SUGADD",
+            "first_key": 0,
+            "flags": [
+                "write"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.SUGDEL",
+            "first_key": 1,
+            "flags": [
+                "write"
+            ],
+            "last_key": 1,
+            "step": 1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "search.CLUSTERREFRESH",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.DICTDUMP",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.GET",
+            "first_key": 2,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 2,
+            "step": 1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "search.CLUSTERINFO",
+            "first_key": 0,
+            "flags": [
+                "readonly",
+                "loading"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.GET",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.SYNADD",
+            "first_key": 0,
+            "flags": [
+                "write"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.SPELLCHECK",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.INFO",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.TAGVALS",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT._LIST",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.SYNDUMP",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.PROFILE",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": 0
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.FSEARCH",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.SUGLEN",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "_FT.SUGADD",
+            "first_key": 1,
+            "flags": [
+                "write",
+                "denyoom"
+            ],
+            "last_key": 1,
+            "step": 1
+        }
+    ],
+    "config_command": "_FT.CONFIG SET",
+    "crdb": {},
+    "dependencies": {},
+    "description": "High performance search index on top of Redis (with clustering)",
+    "display_name": "RediSearch 2",
+    "email": "meir@redislabs.com",
+    "exclude_commands": [
+        "FT.CREATE",
+        "FT.DROP",
+        "FT.DROPINDEX",
+        "FT.ALIASADD",
+        "FT.ALIASDEL",
+        "FT.ALIASUPDATE",
+        "FT.ALTER",
+        "FT.DICTADD",
+        "FT.DICTDEL",
+        "FT.SYNUPDATE",
+        "FT._CREATEIFNX",
+        "FT._DROPIFX",
+        "FT._DROPINDEXIFX",
+        "FT._ALTERIFNX",
+        "FT._ALIASADDIFNX",
+        "FT._ALIASDELIFX",
+        "_FT.CONFIG",
+        "_FT.DEBUG"
+    ],
+    "git_sha": "b'd0efac205c7b2c94c6fd803dd1caa483f35eb645'",
+    "homepage": "http://redisearch.io",
+    "license": "Redis Source Available License 2.0 (RSALv2) or the Server Side Public License v1 (SSPLv1)",
+    "min_redis_pack_version": "6.0.8",
+    "min_redis_version": "6.0",
+    "module_file": "module-enterprise.so",
+    "module_name": "search",
+    "operating_systems": [
+        "ubuntu20"
+    ],
+    "optional-dependencies": {},
+    "os": "Linux",
+    "overide_command": [
+        {
+            "command_arity": -1,
+            "command_name": "FT.SUGADD",
+            "first_key": 0,
+            "flags": [
+                "write"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.SUGDEL",
+            "first_key": 0,
+            "flags": [
+                "write"
+            ],
+            "last_key": 0,
+            "step": -1
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.AGGREGATE",
+            "first_key": 0,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 1,
+            "step": -2
+        },
+        {
+            "command_arity": -1,
+            "command_name": "FT.CURSOR",
+            "first_key": 3,
+            "flags": [
+                "readonly"
+            ],
+            "last_key": 1,
+            "step": -3
+        }
+    ],
+    "ramp_format_version": 1,
+    "semantic_version": "2.6.6",
+    "sha256": "88c4de54ac42b71d536ad6933ae6419ef9844f17dbe8cf4ea02e3c8f6768ca11",
+    "version": 20606.0
+}

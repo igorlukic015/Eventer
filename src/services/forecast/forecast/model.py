@@ -7,6 +7,7 @@ class BusinessException(HTTPException):
 
 class WeatherCondition:
     def __init__(self, **kwargs) -> None:
+        self.region = kwargs['region']
         self.date = kwargs['date']
         self.weather = kwargs['weather']
         self.icon = kwargs['icon']

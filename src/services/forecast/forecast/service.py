@@ -1,9 +1,8 @@
 import json
 import requests
 from datetime import date as datelib
-from statics import ErrorMessages
+from statics import ErrorMessages, Regions
 from model import BusinessException, WeatherCondition
-
 
 use_real_data = False
 
@@ -16,7 +15,9 @@ async def get_forecast(city: str):
 
     received_data = await send_request(lat, lon)
 
-    forecast = await parse_data(received_data)
+    region = await get_region(lat, lon)
+
+    forecast = await parse_data(region, received_data)
 
     for item in forecast:
         print(item)
@@ -35,7 +36,7 @@ async def get_coordinates(city):
     return None, None
 
 
-async def send_request(lat, lon):
+async def send_request(lat: str, lon: str):
     api_key = "0c6dde9d6c79cc7846ec4c1c53d53a14"
 
     url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={api_key}&units=metric"
@@ -58,30 +59,32 @@ async def send_request(lat, lon):
     return data
 
 
-async def parse_data(received_data):
+async def parse_data(region, received_data):
     try:
         forecast_data = received_data["list"]
+
     except:
         raise BusinessException(503, ErrorMessages.PARSING_DATA_FAILED)
-        
+
     conditions = []
 
     for hourly_data in forecast_data[::8]:
         try:
             date = datelib.fromtimestamp(int(hourly_data["dt"]))
             weather = hourly_data["weather"][0]["main"]
-            icon = map_icon_url(hourly_data["weather"][0]["icon"])
+            icon = await map_icon_url(hourly_data["weather"][0]["icon"])
             temp = hourly_data["main"]["temp"]
             min_temp = hourly_data["main"]["temp_min"]
             max_temp = hourly_data["main"]["temp_max"]
+
         except:
             raise BusinessException(503, ErrorMessages.PARSING_DATA_FAILED)
 
         if any([date, weather, icon, temp, min_temp, max_temp]) is None:
             raise BusinessException(503, ErrorMessages.PARSING_DATA_FAILED)
 
-
         condition = WeatherCondition(
+            region=region,
             date=date,
             icon=icon,
             temp=temp,
@@ -95,11 +98,23 @@ async def parse_data(received_data):
     return conditions
 
 
-def map_icon_url(iconcode):
+async def get_region(lat: str, lon: str):
+    latitude = float(lat)
+    longitude = float(lon)
+
+    if latitude > 44.5305:
+        return Regions.NORTH
+    elif latitude > 44.0291 and longitude < 20.9260:
+        return Regions.CENTRAL_UPPER_WEST
+    elif latitude > 44.0291 and longitude >= 20.9260:
+        return Regions.CENTRAL_UPPER_EAST
+    elif latitude > 43.3619 and longitude < 21.2778:
+        return Regions.CENTRAL_LOWER_WEST
+    elif latitude > 43.3619 and longitude >= 21.2778:
+        return Regions.CENTRAL_LOWER_EAST
+    else:
+        return Regions.SOUTH
+
+
+async def map_icon_url(iconcode):
     return f"http://openweathermap.org/img/w/{iconcode}.png"
-
-
-if __name__ == "__main__":
-    print("started")
-    get_forecast("Novi Sad")
-    print("finished")

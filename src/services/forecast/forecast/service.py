@@ -3,26 +3,48 @@ import requests
 from datetime import date as datelib
 from statics import ErrorMessages, Regions
 from model import BusinessException, WeatherCondition
+from cache import save_weather, get_weather
 
 use_real_data = False
 
 
 async def get_forecast(city: str):
+    date = datelib.today().isoformat()
     lat, lon = await get_coordinates(city)
 
     if lat is None or lon is None:
         raise BusinessException(404, ErrorMessages.COORDINATES_NOT_FOUND)
 
-    received_data = await send_request(lat, lon)
-
     region = await get_region(lat, lon)
+
+    cached_weather = await get_weather(region, date)
+
+    if cached_weather.total > 0:
+        forecast = json.loads(cached_weather.docs[0].json)
+
+        return WeatherCondition(
+            region=forecast['region'],
+            date=forecast['date'],
+            icon=forecast['icon'],
+            temp=forecast['temp'],
+            weather=forecast['weather'],
+            max_temp=forecast['max_temp'],
+            min_temp=forecast['min_temp'],
+        )
+
+    received_data = await send_request(lat, lon)
 
     forecast = await parse_data(region, received_data)
 
-    for item in forecast:
-        print(item)
+    searched_weather = None
 
-    return forecast
+    for weather in forecast:
+        if weather.date == date:
+            searched_weather = weather
+
+        await save_weather(weather)
+
+    return searched_weather
 
 
 async def get_coordinates(city):
@@ -45,6 +67,7 @@ async def send_request(lat: str, lon: str):
         print("REQUEST SENT")
         try:
             response = requests.get(url)
+
         except:
             raise BusinessException(503, ErrorMessages.GETTING_RESPONSE_FAILED)
 
@@ -70,7 +93,7 @@ async def parse_data(region, received_data):
 
     for hourly_data in forecast_data[::8]:
         try:
-            date = datelib.fromtimestamp(int(hourly_data["dt"]))
+            date = datelib.fromtimestamp(int(hourly_data["dt"])).isoformat()
             weather = hourly_data["weather"][0]["main"]
             icon = await map_icon_url(hourly_data["weather"][0]["icon"])
             temp = hourly_data["main"]["temp"]

@@ -17,6 +17,10 @@ async def get_forecast(city: str):
 
     region = await get_region(lat, lon)
 
+    return await fetch_forecast(region, date, lat, lon)
+
+
+async def fetch_forecast(region, date, lat, lon):
     cached_weather = await get_weather(region, date)
 
     if cached_weather.total > 0:

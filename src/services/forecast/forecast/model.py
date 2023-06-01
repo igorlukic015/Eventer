@@ -1,5 +1,4 @@
 from fastapi import HTTPException
-from json import dumps
 from redis.commands.search.field import TextField, NumericField
 
 

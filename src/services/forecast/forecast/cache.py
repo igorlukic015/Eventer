@@ -3,7 +3,7 @@ from redis.commands.json.path import Path
 from redis.commands.search.query import Query
 
 cache = redis.Redis(host='localhost', port=9001, username='default', password='a123456!')
-index = cache.ft("idx:forecast")
+forecast_index = cache.ft("idx:forecast")
 
 
 async def save_weather(weather):
@@ -11,4 +11,4 @@ async def save_weather(weather):
 
 
 async def get_weather(region, date):
-    return index.search(Query(f"@region:({region}) @date:({date.replace('-', 'x')})"))
+    return forecast_index.search(Query(f"@region:({region}) @date:({date.replace('-', 'x')})"))

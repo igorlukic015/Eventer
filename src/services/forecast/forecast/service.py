@@ -23,17 +23,15 @@ async def get_forecast(city: str):
 async def fetch_forecast(region, date, lat, lon):
     cached_weather = await get_weather(region, date)
 
-    if cached_weather.total > 0:
-        forecast = loads(cached_weather.docs[0].json)
-
+    if cached_weather is not None:
         return WeatherCondition(
-            region=forecast['region'],
-            date=forecast['date'],
-            icon=forecast['icon'],
-            temp=forecast['temp'],
-            weather=forecast['weather'],
-            max_temp=forecast['max_temp'],
-            min_temp=forecast['min_temp'],
+            region=cached_weather['region'],
+            date=cached_weather['date'],
+            icon=cached_weather['icon'],
+            temp=cached_weather['temp'],
+            weather=cached_weather['weather'],
+            max_temp=cached_weather['max_temp'],
+            min_temp=cached_weather['min_temp'],
         )
 
     received_data = await send_request(lat, lon)
@@ -47,6 +45,9 @@ async def fetch_forecast(region, date, lat, lon):
             searched_weather = weather
 
         await save_weather(weather)
+
+    if not use_real_data:
+        searched_weather = forecast[0]
 
     return searched_weather
 

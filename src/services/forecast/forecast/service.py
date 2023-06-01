@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from requests import get
 from json import load, loads
 from datetime import date as datelib
@@ -15,7 +17,7 @@ async def get_forecast(city: str):
     lat, lon = await get_coordinates(city)
 
     if lat is None or lon is None:
-        raise BusinessException(404, ErrorMessages.COORDINATES_NOT_FOUND)
+        raise BusinessException(HTTPStatus.NOT_FOUND, ErrorMessages.COORDINATES_NOT_FOUND)
 
     region = await get_region(lat, lon)
 
@@ -92,7 +94,7 @@ async def parse_data(region, received_data):
         forecast_data = received_data["list"]
 
     except:
-        raise BusinessException(503, ErrorMessages.PARSING_DATA_FAILED)
+        raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
 
     conditions = []
 
@@ -106,10 +108,10 @@ async def parse_data(region, received_data):
             max_temp = hourly_data["main"]["temp_max"]
 
         except:
-            raise BusinessException(503, ErrorMessages.PARSING_DATA_FAILED)
+            raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
 
         if any([date, weather, icon, temp, min_temp, max_temp]) is None:
-            raise BusinessException(503, ErrorMessages.PARSING_DATA_FAILED)
+            raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
 
         condition = WeatherCondition(
             region=region,

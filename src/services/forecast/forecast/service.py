@@ -1,7 +1,7 @@
-import json
-import requests
+from requests import get
+from json import load, loads
 from datetime import date as datelib
-from statics import ErrorMessages, Regions
+from statics import ErrorMessages, Regions, WEATHER_API_URL
 from model import BusinessException, WeatherCondition
 from cache import save_weather, get_weather
 
@@ -24,7 +24,7 @@ async def fetch_forecast(region, date, lat, lon):
     cached_weather = await get_weather(region, date)
 
     if cached_weather.total > 0:
-        forecast = json.loads(cached_weather.docs[0].json)
+        forecast = loads(cached_weather.docs[0].json)
 
         return WeatherCondition(
             region=forecast['region'],
@@ -53,7 +53,7 @@ async def fetch_forecast(region, date, lat, lon):
 
 async def get_coordinates(city):
     with open("./data/rs.json", "r", encoding="utf-8") as file:
-        data = json.load(file)
+        data = load(file)
 
     for city_data in data:
         if city_data["city"].lower() == city.lower():
@@ -65,23 +65,23 @@ async def get_coordinates(city):
 async def send_request(lat: str, lon: str):
     api_key = "0c6dde9d6c79cc7846ec4c1c53d53a14"
 
-    url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={api_key}&units=metric"
+    url = f"{WEATHER_API_URL}/data/2.5/forecast?lat={lat}&lon={lon}&appid={api_key}&units=metric"
 
     if use_real_data:
         print("REQUEST SENT")
         try:
-            response = requests.get(url)
+            response = get(url)
 
         except:
             raise BusinessException(503, ErrorMessages.GETTING_RESPONSE_FAILED)
 
         try:
-            data = json.loads(response.text)
+            data = loads(response.text)
         except:
             raise BusinessException(503, ErrorMessages.READING_RESPONSE_FAILED)
     else:
         with open("./data/example_response.json", "r", encoding="utf-8") as test_data:
-            data = json.load(test_data)
+            data = load(test_data)
 
     return data
 
@@ -143,5 +143,5 @@ async def get_region(lat: str, lon: str):
         return Regions.SOUTH
 
 
-async def map_icon_url(iconcode):
-    return f"http://openweathermap.org/img/w/{iconcode}.png"
+async def map_icon_url(icon_code):
+    return f"https://openweathermap.org/img/w/{icon_code}.png"

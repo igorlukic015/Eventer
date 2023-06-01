@@ -12,3 +12,10 @@ class Regions:
     CENTRAL_LOWER_EAST = 'C2E'
     CENTRAL_LOWER_WEST = 'C2W'
     SOUTH = 'S'
+
+
+class CacheIdentifiers:
+    FORECAST = 'forecast'
+
+
+WEATHER_API_URL = 'https://api.openweathermap.org'

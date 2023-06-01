@@ -1,26 +1,17 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, responses
 from service import get_forecast
 
 router = APIRouter()
+version = 1
 
 
-import time
-
-@router.get("/healthcheck")
+@router.get(f"/api/v{version}/healthcheck")
 async def healthcheck():
     return {"Health": "Good"}
 
 
-@router.get("/forecast")
+@router.get(f"/api/v{version}/forecast")
 async def get(city: str):
-    start = time.time()
-    print(f"Funciton started at {start}")
-
     result = await get_forecast(city)
 
-    end = time.time()
-    print(f"Function ended at {end}")
-    print("Elapsed time:")
-    print(end - start)
-
-    return result
+    return responses.JSONResponse(result.serialize())

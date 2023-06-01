@@ -1,5 +1,4 @@
 from fastapi import HTTPException
-from redis.commands.search.field import TextField, NumericField
 
 
 class BusinessException(HTTPException):
@@ -37,9 +36,3 @@ class WeatherCondition:
         dictionary['date'] = dictionary['date'].replace('-', 'x')
 
         return dictionary
-
-
-weather_schema = (
-    TextField("$.region", as_name="region"),
-    NumericField("$.date", as_name="date")
-)

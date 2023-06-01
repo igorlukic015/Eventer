@@ -17,5 +17,7 @@ class Configuration:
         self.cache_username = values.get('CACHE_USERNAME', '')
         self.cache_password = values.get('CACHE_PASSWORD', '')
 
+        self.forecast_api_key = values.get('FORECAST_API_KEY', '')
+
 
 config = Configuration()

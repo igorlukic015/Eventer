@@ -1,6 +1,8 @@
 from requests import get
 from json import load, loads
 from datetime import date as datelib
+
+from forecast.config import config
 from statics import ErrorMessages, Regions, WEATHER_API_URL
 from model import BusinessException, WeatherCondition
 from cache import save_weather, get_weather
@@ -64,9 +66,7 @@ async def get_coordinates(city):
 
 
 async def send_request(lat: str, lon: str):
-    api_key = "0c6dde9d6c79cc7846ec4c1c53d53a14"
-
-    url = f"{WEATHER_API_URL}/data/2.5/forecast?lat={lat}&lon={lon}&appid={api_key}&units=metric"
+    url = f"{WEATHER_API_URL}/data/2.5/forecast?lat={lat}&lon={lon}&appid={config.forecast_api_key}&units=metric"
 
     if use_real_data:
         print("REQUEST SENT")

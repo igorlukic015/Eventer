@@ -1,31 +1,29 @@
 from http import HTTPStatus
-
 from requests import get
 from json import load, loads
 from datetime import date as datelib
-
 from forecast.config import config
 from statics import ErrorMessages, Regions, WEATHER_API_URL
 from model import BusinessException, WeatherCondition
-from cache import save_weather, get_weather
+from cache import save_weather, load_weather, load_coordinates, save_coordinates
 
 use_real_data = False
 
 
 async def get_forecast(city: str):
     date = datelib.today().isoformat()
-    lat, lon = await get_coordinates(city)
+    lat, lon = load_coordinates(city.lower())
 
     if lat is None or lon is None:
         raise BusinessException(HTTPStatus.NOT_FOUND, ErrorMessages.COORDINATES_NOT_FOUND)
 
     region = await get_region(lat, lon)
 
-    return await fetch_forecast(region, date, lat, lon)
+    return await get_conditions(region, date, lat, lon)
 
 
-async def fetch_forecast(region, date, lat, lon):
-    cached_weather = await get_weather(region, date)
+async def get_conditions(region, date, lat, lon):
+    cached_weather = load_weather(region, date)
 
     if cached_weather is not None:
         return WeatherCondition(
@@ -48,23 +46,12 @@ async def fetch_forecast(region, date, lat, lon):
         if weather.date == date:
             searched_weather = weather
 
-        await save_weather(weather)
+        save_weather(weather)
 
     if not use_real_data:
         searched_weather = forecast[0]
 
     return searched_weather
-
-
-async def get_coordinates(city):
-    with open("./data/rs.json", "r", encoding="utf-8") as file:
-        data = load(file)
-
-    for city_data in data:
-        if city_data["city"].lower() == city.lower():
-            return city_data["lat"], city_data["lng"]
-
-    return None, None
 
 
 async def send_request(lat: str, lon: str):
@@ -148,3 +135,11 @@ async def get_region(lat: str, lon: str):
 
 async def map_icon_url(icon_code):
     return f"https://openweathermap.org/img/w/{icon_code}.png"
+
+
+def seed_city_cache():
+    with open("./data/rs.json", "r", encoding="utf-8") as file:
+        data = load(file)
+
+    for city_data in data:
+        save_coordinates(city_data['city'].lower(), mapping={'lat': city_data['lat'], 'lng': city_data['lng']})

@@ -63,12 +63,12 @@ async def send_request(lat: str, lon: str):
             response = get(url)
 
         except:
-            raise BusinessException(503, ErrorMessages.GETTING_RESPONSE_FAILED)
+            raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.GETTING_RESPONSE_FAILED)
 
         try:
             data = loads(response.text)
         except:
-            raise BusinessException(503, ErrorMessages.READING_RESPONSE_FAILED)
+            raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.READING_RESPONSE_FAILED)
     else:
         with open("./data/example_response.json", "r", encoding="utf-8") as test_data:
             data = load(test_data)

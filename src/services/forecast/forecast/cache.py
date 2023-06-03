@@ -1,6 +1,6 @@
 from redis import Redis
 from redis.commands.json.path import Path
-from forecast.statics import CacheIdentifiers
+from forecast.statics import CacheIdentifiers, TIME_TO_LIVE
 from forecast.config import config
 
 cache = Redis(host=config.cache_host,
@@ -12,10 +12,10 @@ cache = Redis(host=config.cache_host,
 
 def save_weather(weather):
     cache.json().set(f"{CacheIdentifiers.FORECAST}:{weather.region}@{weather.date}",
-                           Path.root_path(),
-                           weather.serialize())
+                     Path.root_path(),
+                     weather.serialize())
 
-    cache.expire(f"{CacheIdentifiers.FORECAST}:{weather.region}@{weather.date}", 86400)
+    cache.expire(f"{CacheIdentifiers.FORECAST}:{weather.region}@{weather.date}", TIME_TO_LIVE)
 
 
 def load_weather(region, date):

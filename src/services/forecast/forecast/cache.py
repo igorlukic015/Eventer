@@ -6,16 +6,27 @@ from forecast.config import config
 cache = Redis(host=config.cache_host,
               port=config.cache_port,
               username=config.cache_username,
-              password=config.cache_password)
+              password=config.cache_password,
+              decode_responses=True)
 
 
-async def save_weather(weather):
-    await cache.json().set(f"{CacheIdentifiers.FORECAST}:{weather.region}@{weather.date}",
+def save_weather(weather):
+    cache.json().set(f"{CacheIdentifiers.FORECAST}:{weather.region}@{weather.date}",
                            Path.root_path(),
                            weather.serialize())
 
-    await cache.expire(f"{CacheIdentifiers.FORECAST}:{weather.region}@{weather.date}", 86400)
+    cache.expire(f"{CacheIdentifiers.FORECAST}:{weather.region}@{weather.date}", 86400)
 
 
-async def get_weather(region, date):
-    return await cache.json().get(f"{CacheIdentifiers.FORECAST}:{region}@{date}")
+def load_weather(region, date):
+    return cache.json().get(f"{CacheIdentifiers.FORECAST}:{region}@{date}")
+
+
+def load_coordinates(city):
+    result = cache.hgetall(city)
+
+    return result.get('lat', None), result.get('lng', None)
+
+
+def save_coordinates(city, mapping):
+    cache.hset(city, mapping=mapping)

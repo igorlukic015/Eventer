@@ -19,3 +19,5 @@ class CacheIdentifiers:
 
 
 WEATHER_API_URL = 'https://api.openweathermap.org'
+
+TIME_TO_LIVE = 86400

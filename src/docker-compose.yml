@@ -1,4 +1,5 @@
 version: "3.9"
+name: redis-tools
 services:
   redis-cache:
     container_name: 
@@ -7,7 +8,7 @@ services:
     ports:
       - "9001:6379"
     volumes:
-      - ./redis_data:/data
+      - ./tools/docker/redis_data:/data
     command: "redis-server redis.conf"
 volumes:
     redis_data:

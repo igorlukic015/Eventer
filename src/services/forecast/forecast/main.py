@@ -2,9 +2,11 @@ from uvicorn import run as uvicorn_run
 from fastapi import FastAPI
 from forecast.config import config
 from forecast.service import seed_city_cache
+from forecast.statics import ErrorMessages
 from router import router
 from sys import argv, exit
 from getopt import getopt, GetoptError
+from logger import logger
 
 app = FastAPI()
 
@@ -16,7 +18,7 @@ def main(arguments):
         opts, args = getopt(arguments, "", ["seed="])
 
     except GetoptError:
-        print("Error parsing arguments")
+        logger.error(ErrorMessages.PARSING_ARGUMENTS_FAILED)
         exit(1)
 
     should_seed = False

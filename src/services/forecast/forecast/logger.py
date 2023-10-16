@@ -11,7 +11,7 @@ logging_levels = {"critical": 50,
 
 log_formatter = Formatter("%(levelname)s: %(asctime)s %(message)s")
 
-file_handler = FileHandler("{0}/{1}.log".format(LOG_FILE_PATH, LOG_FILE_NAME), mode="a")
+file_handler = FileHandler("{0}/{1}.log".format(LOG_FILE_PATH, LOG_FILE_NAME), mode="a", encoding="utf-8")
 file_handler.setFormatter(log_formatter)
 
 console_handler = StreamHandler()

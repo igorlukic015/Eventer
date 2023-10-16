@@ -1,127 +1,133 @@
 from http import HTTPStatus
+
+from redis import Redis
+
 from aiohttp import ClientSession
+
 from json import load
+
 from datetime import date as datelib
+
 from forecast.config import config
-from statics import ErrorMessages, Regions, WEATHER_API_URL
-from model import BusinessException, WeatherCondition
-from cache import save_weather, load_weather, load_coordinates, save_coordinates
-from logger import logger
-
-use_real_data = False
+from forecast.statics import ErrorMessages, Regions, WEATHER_API_URL
+from forecast.model import BusinessException, WeatherCondition
+from forecast.cache import get_cache, save_weather, load_weather, load_coordinates, save_coordinates
+from forecast.logger import logger
 
 
-async def get_forecast(city: str):
-    logger.info(f"Forecast requested for city {city}.")
-    date = datelib.today().isoformat()
-    lat, lon = load_coordinates(city.lower())
+class ForecastService:
+    def __init__(self, cache: Redis):
+        self.cache = cache
 
-    if lat is None or lon is None:
-        logger.error(ErrorMessages.COORDINATES_NOT_FOUND)
-        raise BusinessException(HTTPStatus.NOT_FOUND, ErrorMessages.COORDINATES_NOT_FOUND)
+    async def get_forecast(self, city: str):
+        logger.info(f"Forecast requested for city {city}.")
 
-    region = await get_region(lat, lon)
+        date = datelib.today().isoformat()
+        lat, lon = load_coordinates(city.lower(), self.cache)
 
-    return await get_conditions(region, date, lat, lon)
+        if lat is None or lon is None:
+            logger.error(ErrorMessages.COORDINATES_NOT_FOUND)
+            raise BusinessException(HTTPStatus.NOT_FOUND, ErrorMessages.COORDINATES_NOT_FOUND)
 
+        region = await get_region(lat, lon)
 
-async def get_conditions(region, date, lat, lon):
-    cached_weather = load_weather(region, date)
+        return await self.get_conditions(region, date, lat, lon)
 
-    if cached_weather is not None:
-        return WeatherCondition(
-            region=cached_weather['region'],
-            date=cached_weather['date'],
-            icon=cached_weather['icon'],
-            temp=cached_weather['temp'],
-            weather=cached_weather['weather'],
-            max_temp=cached_weather['max_temp'],
-            min_temp=cached_weather['min_temp'],
-        )
+    async def get_conditions(self, region, date, lat, lon):
+        cached_weather = load_weather(region, date, self.cache)
 
-    received_data = await send_request(lat, lon)
+        if cached_weather is not None:
+            return WeatherCondition(
+                region=cached_weather['region'],
+                date=cached_weather['date'],
+                icon=cached_weather['icon'],
+                temp=cached_weather['temp'],
+                weather=cached_weather['weather'],
+                max_temp=cached_weather['max_temp'],
+                min_temp=cached_weather['min_temp'],
+            )
 
-    forecast = await parse_data(region, received_data)
+        received_data = await self.send_request(lat, lon)
 
-    searched_weather = None
+        forecast = await self.parse_data(region, received_data)
 
-    for weather in forecast:
-        if weather.date == date:
-            searched_weather = weather
+        searched_weather = None
 
-        save_weather(weather)
+        for weather in forecast:
+            if weather.date == date:
+                searched_weather = weather
 
-    if not use_real_data:
-        searched_weather = forecast[0]
+            save_weather(weather, self.cache)
 
-    return searched_weather
+        if not config.use_real_data:
+            searched_weather = forecast[0]
 
+        return searched_weather
 
-async def send_request(lat: str, lon: str):
-    url = f"{WEATHER_API_URL}/data/2.5/forecast?lat={lat}&lon={lon}&appid={config.forecast_api_key}&units=metric"
+    async def send_request(self, lat: str, lon: str):
+        url = f"{WEATHER_API_URL}/data/2.5/forecast?lat={lat}&lon={lon}&appid={config.forecast_api_key}&units=metric"
 
-    if use_real_data:
-        logger.info("REQUEST_SENT")
+        if config.use_real_data:
+            logger.info("REQUEST_SENT")
 
-        async with ClientSession() as session:
-            async with session.get(url) as response:
-                if response.status != 200:
-                    logger.error(ErrorMessages.GETTING_RESPONSE_FAILED)
-                    raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.GETTING_RESPONSE_FAILED)
-                try:
-                    data = await response.json()
-                except:
-                    logger.error(ErrorMessages.READING_RESPONSE_FAILED)
-                    raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.READING_RESPONSE_FAILED)
+            async with ClientSession() as session:
+                async with session.get(url) as response:
+                    if response.status != 200:
+                        logger.error(ErrorMessages.GETTING_RESPONSE_FAILED)
+                        raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.GETTING_RESPONSE_FAILED)
+                    try:
+                        data = await response.json()
+                    except:
+                        logger.error(ErrorMessages.READING_RESPONSE_FAILED)
+                        raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.READING_RESPONSE_FAILED)
 
-                return data
+                    return data
 
-    else:
-        with open("./data/example_response.json", "r", encoding="utf-8") as test_data:
-            data = load(test_data)
-        return data
+        else:
+            with open("./data/example_response.json", "r", encoding="utf-8") as test_data:
+                data = load(test_data)
+            return data
 
-
-async def parse_data(region, received_data):
-    try:
-        forecast_data = received_data["list"]
-
-    except:
-        logger.error(ErrorMessages.PARSING_DATA_FAILED)
-        raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
-
-    conditions = []
-
-    for hourly_data in forecast_data[::8]:
+    async def parse_data(self, region, received_data):
         try:
-            date = datelib.fromtimestamp(int(hourly_data["dt"])).isoformat()
-            weather = hourly_data["weather"][0]["main"]
-            icon = await map_icon_url(hourly_data["weather"][0]["icon"])
-            temp = hourly_data["main"]["temp"]
-            min_temp = hourly_data["main"]["temp_min"]
-            max_temp = hourly_data["main"]["temp_max"]
+            forecast_data = received_data["list"]
 
         except:
             logger.error(ErrorMessages.PARSING_DATA_FAILED)
             raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
 
-        if any([date, weather, icon, temp, min_temp, max_temp]) is None:
-            logger.error(ErrorMessages.PARSING_DATA_FAILED)
-            raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
+        conditions = []
 
-        condition = WeatherCondition(
-            region=region,
-            date=date,
-            icon=icon,
-            temp=temp,
-            weather=weather,
-            max_temp=max_temp,
-            min_temp=min_temp,
-        )
+        for hourly_data in forecast_data[::8]:
+            try:
+                date = datelib.fromtimestamp(int(hourly_data["dt"])).isoformat()
+                weather = hourly_data["weather"][0]["main"]
+                icon = await map_icon_url(hourly_data["weather"][0]["icon"])
+                temp = hourly_data["main"]["temp"]
+                min_temp = hourly_data["main"]["temp_min"]
+                max_temp = hourly_data["main"]["temp_max"]
 
-        conditions.append(condition)
+            except:
+                logger.error(ErrorMessages.PARSING_DATA_FAILED)
+                raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
 
-    return conditions
+            if any([date, weather, icon, temp, min_temp, max_temp]) is None:
+                logger.error(ErrorMessages.PARSING_DATA_FAILED)
+                raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
+
+            condition = WeatherCondition(
+                region=region,
+                date=date,
+                icon=icon,
+                temp=temp,
+                weather=weather,
+                max_temp=max_temp,
+                min_temp=min_temp,
+            )
+
+            conditions.append(condition)
+
+        return conditions
 
 
 async def get_region(lat: str, lon: str):
@@ -153,4 +159,6 @@ def seed_city_cache():
         data = load(file)
 
     for city_data in data:
-        save_coordinates(city_data['city'].lower(), mapping={'lat': city_data['lat'], 'lng': city_data['lng']})
+        save_coordinates(city=city_data['city'].lower(),
+                         mapping={'lat': city_data['lat'], 'lng': city_data['lng']},
+                         cache=get_cache())

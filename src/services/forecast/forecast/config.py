@@ -18,5 +18,7 @@ class Configuration:
 
         self.forecast_api_key = decouple_config('FORECAST_API_KEY', default='')
 
+        self.use_real_data = decouple_config('USE_REAL_DATA', default=False, cast=bool)
+
 
 config = Configuration()

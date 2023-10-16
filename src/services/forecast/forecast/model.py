@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-
+from pydantic import BaseModel
 
 class BusinessException(HTTPException):
     def __repr__(self) -> str:
@@ -36,3 +36,13 @@ class WeatherCondition:
         dictionary['date'] = dictionary['date'].replace('-', 'x')
 
         return dictionary
+
+
+class WeatherResponse(BaseModel):
+    region: str
+    date: str
+    weather: str
+    icon: str
+    temp: float
+    min_temp: float
+    max_temp: float

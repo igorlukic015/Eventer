@@ -1,0 +1,39 @@
+{
+	"info": {
+		"_postman_id": "c8cb9e5c-3fce-4524-adba-afd316aefc87",
+		"name": "Eventer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Forecast",
+			"item": [
+				{
+					"name": "GetForecast",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{forecast_url}}/api/v1/forecast?city=Novi Sad",
+							"host": [
+								"{{forecast_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"forecast"
+							],
+							"query": [
+								{
+									"key": "city",
+									"value": "Novi Sad"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

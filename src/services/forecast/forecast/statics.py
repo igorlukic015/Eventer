@@ -29,3 +29,5 @@ TIME_TO_LIVE = 86400
 
 LOG_FILE_PATH = './logs'
 LOG_FILE_NAME = 'dump'
+
+API_VERSION = 1

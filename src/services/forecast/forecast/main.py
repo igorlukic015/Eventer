@@ -1,17 +1,26 @@
 from uvicorn import run as uvicorn_run
+
 from fastapi import FastAPI
+
 from forecast.config import config
+from forecast.model import BusinessException
 from forecast.service import seed_city_cache
 from forecast.statics import ErrorMessages
-from router import router
+from forecast.router import router
+from forecast.logger import logger
+from forecast.exception_handlers import general_exception_handler, business_exception_handler
+
 from sys import argv, exit
+
 from getopt import getopt, GetoptError
-from logger import logger
+
 
 app = FastAPI()
 
 app.include_router(router)
 
+app.add_exception_handler(Exception, general_exception_handler)
+app.add_exception_handler(BusinessException, business_exception_handler)
 
 def main(arguments):
     try:

@@ -1,7 +1,12 @@
 from fastapi import HTTPException
 from pydantic import BaseModel
 
+
 class BusinessException(HTTPException):
+    def __init__(self, status_code, detail: str, additional_info: str = None):
+        super().__init__(status_code=status_code, detail=detail)
+        self.additional_info = additional_info
+
     def __repr__(self) -> str:
         return f"Request failed with code {self.status_code} and message:\n{self.detail}"
 
@@ -46,3 +51,8 @@ class WeatherResponse(BaseModel):
     temp: float
     min_temp: float
     max_temp: float
+
+class ErrorResponse(BaseModel):
+    detail: str
+    status_code: int
+    additional_info: str = None

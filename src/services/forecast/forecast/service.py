@@ -47,9 +47,9 @@ class ForecastService:
                 min_temp=cached_weather['min_temp'],
             )
 
-        received_data = await self.send_request(lat, lon)
+        received_data = await send_request(lat, lon)
 
-        forecast = await self.parse_data(region, received_data)
+        forecast = await parse_data(region, received_data)
 
         searched_weather = None
 
@@ -63,71 +63,6 @@ class ForecastService:
             searched_weather = forecast[0]
 
         return searched_weather
-
-    async def send_request(self, lat: str, lon: str):
-        url = f"{WEATHER_API_URL}/data/2.5/forecast?lat={lat}&lon={lon}&appid={config.forecast_api_key}&units=metric"
-
-        if config.use_real_data:
-            logger.info("REQUEST_SENT")
-
-            async with ClientSession() as session:
-                async with session.get(url) as response:
-                    if response.status != 200:
-                        logger.error(ErrorMessages.GETTING_RESPONSE_FAILED)
-                        raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.GETTING_RESPONSE_FAILED)
-                    try:
-                        data = await response.json()
-                    except:
-                        logger.error(ErrorMessages.READING_RESPONSE_FAILED)
-                        raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.READING_RESPONSE_FAILED)
-
-                    return data
-
-        else:
-            with open("./data/example_response.json", "r", encoding="utf-8") as test_data:
-                data = load(test_data)
-            return data
-
-    async def parse_data(self, region, received_data):
-        try:
-            forecast_data = received_data["list"]
-
-        except:
-            logger.error(ErrorMessages.PARSING_DATA_FAILED)
-            raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
-
-        conditions = []
-
-        for hourly_data in forecast_data[::8]:
-            try:
-                date = datelib.fromtimestamp(int(hourly_data["dt"])).isoformat()
-                weather = hourly_data["weather"][0]["main"]
-                icon = await map_icon_url(hourly_data["weather"][0]["icon"])
-                temp = hourly_data["main"]["temp"]
-                min_temp = hourly_data["main"]["temp_min"]
-                max_temp = hourly_data["main"]["temp_max"]
-
-            except:
-                logger.error(ErrorMessages.PARSING_DATA_FAILED)
-                raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
-
-            if any([date, weather, icon, temp, min_temp, max_temp]) is None:
-                logger.error(ErrorMessages.PARSING_DATA_FAILED)
-                raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
-
-            condition = WeatherCondition(
-                region=region,
-                date=date,
-                icon=icon,
-                temp=temp,
-                weather=weather,
-                max_temp=max_temp,
-                min_temp=min_temp,
-            )
-
-            conditions.append(condition)
-
-        return conditions
 
 
 async def get_region(lat: str, lon: str):
@@ -146,6 +81,73 @@ async def get_region(lat: str, lon: str):
         return Regions.CENTRAL_LOWER_EAST
     else:
         return Regions.SOUTH
+
+
+async def send_request(lat: str, lon: str):
+    url = f"{WEATHER_API_URL}/data/2.5/forecast?lat={lat}&lon={lon}&appid={config.forecast_api_key}&units=metric"
+
+    if config.use_real_data:
+        logger.info("REQUEST_SENT")
+
+        async with ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status != 200:
+                    logger.error(ErrorMessages.GETTING_RESPONSE_FAILED)
+                    raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.GETTING_RESPONSE_FAILED)
+                try:
+                    data = await response.json()
+                except:
+                    logger.error(ErrorMessages.READING_RESPONSE_FAILED)
+                    raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.READING_RESPONSE_FAILED)
+
+                return data
+
+    else:
+        with open("./data/example_response.json", "r", encoding="utf-8") as test_data:
+            data = load(test_data)
+        return data
+
+
+async def parse_data(region, received_data):
+    try:
+        forecast_data = received_data["list"]
+
+    except:
+        logger.error(ErrorMessages.PARSING_DATA_FAILED)
+        raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
+
+    conditions = []
+
+    for hourly_data in forecast_data[::8]:
+        try:
+            date = datelib.fromtimestamp(int(hourly_data["dt"])).isoformat()
+            weather = hourly_data["weather"][0]["main"]
+            icon = await map_icon_url(hourly_data["weather"][0]["icon"])
+            temp = hourly_data["main"]["temp"]
+            min_temp = hourly_data["main"]["temp_min"]
+            max_temp = hourly_data["main"]["temp_max"]
+
+        except:
+            logger.error(ErrorMessages.PARSING_DATA_FAILED)
+            raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
+
+        if any([date, weather, icon, temp, min_temp, max_temp]) is None:
+            logger.error(ErrorMessages.PARSING_DATA_FAILED)
+            raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.PARSING_DATA_FAILED)
+
+        condition = WeatherCondition(
+            region=region,
+            date=date,
+            icon=icon,
+            temp=temp,
+            weather=weather,
+            max_temp=max_temp,
+            min_temp=min_temp,
+        )
+
+        conditions.append(condition)
+
+    return conditions
 
 
 async def map_icon_url(icon_code):

@@ -1,6 +1,6 @@
 from http import HTTPStatus
-from requests import get
-from json import load, loads
+from aiohttp import ClientSession
+from json import load
 from datetime import date as datelib
 from forecast.config import config
 from statics import ErrorMessages, Regions, WEATHER_API_URL
@@ -62,23 +62,24 @@ async def send_request(lat: str, lon: str):
 
     if use_real_data:
         logger.info("REQUEST_SENT")
-        try:
-            response = get(url)
 
-        except:
-            logger.error(ErrorMessages.GETTING_RESPONSE_FAILED)
-            raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.GETTING_RESPONSE_FAILED)
+        async with ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status != 200:
+                    logger.error(ErrorMessages.GETTING_RESPONSE_FAILED)
+                    raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.GETTING_RESPONSE_FAILED)
+                try:
+                    data = await response.json()
+                except:
+                    logger.error(ErrorMessages.READING_RESPONSE_FAILED)
+                    raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.READING_RESPONSE_FAILED)
 
-        try:
-            data = loads(response.text)
-        except:
-            logger.error(ErrorMessages.READING_RESPONSE_FAILED)
-            raise BusinessException(HTTPStatus.SERVICE_UNAVAILABLE, ErrorMessages.READING_RESPONSE_FAILED)
+                return data
+
     else:
         with open("./data/example_response.json", "r", encoding="utf-8") as test_data:
             data = load(test_data)
-
-    return data
+        return data
 
 
 async def parse_data(region, received_data):

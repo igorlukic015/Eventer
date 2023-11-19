@@ -1,4 +1,4 @@
-from redis import Redis
+import redis.asyncio as redis
 from redis.commands.json.path import Path
 
 from forecast.statics import CacheIdentifiers, TIME_TO_LIVE, ErrorMessages
@@ -6,55 +6,60 @@ from forecast.config import config
 from forecast.logger import logger
 
 
-def get_cache() -> Redis:
-    return Redis(host=config.cache_host,
-                 port=config.cache_port,
-                 username=config.cache_username,
-                 password=config.cache_password,
-                 decode_responses=True,
-                 encoding="utf-8")
+async def get_cache() -> redis:
+    return await redis.from_url(f"redis://{config.cache_username}:{config.cache_password}@{config.cache_host}:{config.cache_port}",
+                                encoding="utf-8",
+                                decode_responses=True)
 
 
-def save_weather(weather, cache: Redis):
+async def save_weather(weather, cache: redis):
     logger.info(f"Saving weather for {weather.region}@{weather.date}")
 
     try:
-        cache.json().set(f"{CacheIdentifiers.FORECAST}:{weather.region}@{weather.date}",
-                         Path.root_path(),
-                         weather.serialize())
-
-        cache.expire(f"{CacheIdentifiers.FORECAST}:{weather.region}@{weather.date}", TIME_TO_LIVE)
+        await cache.json().set(f"{CacheIdentifiers.FORECAST}:{weather.region}@{weather.date}",
+                               Path.root_path(),
+                               weather.serialize(),
+                               ex=TIME_TO_LIVE)
     except:
         logger.error(ErrorMessages.SAVING_WEATHER_FAILED)
 
+    finally:
+        await cache.close()
 
-def load_weather(region, date, cache: Redis):
+
+async def load_weather(region, date, cache: redis):
     logger.info(f"Loading weather for {region}@{date}")
 
     result = None
 
     try:
-        result = cache.json().get(f"{CacheIdentifiers.FORECAST}:{region}@{date}")
+        result = await cache.json().get(f"{CacheIdentifiers.FORECAST}:{region}@{date}")
     except:
         logger.error(ErrorMessages.LOADING_WEATHER_FAILED)
+    finally:
+        await cache.close()
 
     return result
 
 
-def load_coordinates(city, cache: Redis):
+async def load_coordinates(city, cache: redis):
     logger.info(f"Loading coordinates for {city}")
     try:
-        result = cache.hgetall(city)
+        result = await cache.hgetall(city)
     except:
         logger.error(ErrorMessages.LOADING_COORDINATES_FAILED)
         return None, None
+    finally:
+        await cache.close()
 
     return result.get('lat', None), result.get('lng', None)
 
 
-def save_coordinates(city, mapping, cache: Redis):
+async def save_coordinates(city, mapping, cache: redis):
     logger.info(f"Saving coordinates for {city}")
     try:
-        cache.hset(city, mapping=mapping)
+        await cache.hset(city, mapping=mapping)
     except:
         logger.error(ErrorMessages.SAVING_COORDINATES_FAILED)
+    finally:
+        await cache.close()

@@ -1,7 +1,5 @@
 from http import HTTPStatus
 
-from redis import Redis
-
 from aiohttp import ClientSession
 
 from json import load
@@ -15,54 +13,55 @@ from forecast.cache import get_cache, save_weather, load_weather, load_coordinat
 from forecast.logger import logger
 
 
-class ForecastService:
-    def __init__(self, cache: Redis):
-        self.cache = cache
+async def get_forecast(city: str):
+    logger.info(f"Forecast requested for city {city}.")
 
-    async def get_forecast(self, city: str):
-        logger.info(f"Forecast requested for city {city}.")
+    cache = await get_cache()
 
-        date = datelib.today().isoformat()
-        lat, lon = load_coordinates(city.lower(), self.cache)
+    date = datelib.today().isoformat()
+    lat, lon = await load_coordinates(city.lower(), cache)
 
-        if lat is None or lon is None:
-            logger.error(ErrorMessages.COORDINATES_NOT_FOUND)
-            raise BusinessException(HTTPStatus.NOT_FOUND, ErrorMessages.COORDINATES_NOT_FOUND)
+    if lat is None or lon is None:
+        logger.error(ErrorMessages.COORDINATES_NOT_FOUND)
+        raise BusinessException(HTTPStatus.NOT_FOUND, ErrorMessages.COORDINATES_NOT_FOUND)
 
-        region = await get_region(lat, lon)
+    region = await get_region(lat, lon)
 
-        return await self.get_conditions(region, date, lat, lon)
+    return await get_conditions(region, date, lat, lon)
 
-    async def get_conditions(self, region, date, lat, lon):
-        cached_weather = load_weather(region, date, self.cache)
 
-        if cached_weather is not None:
-            return WeatherCondition(
-                region=cached_weather['region'],
-                date=cached_weather['date'],
-                icon=cached_weather['icon'],
-                temp=cached_weather['temp'],
-                weather=cached_weather['weather'],
-                max_temp=cached_weather['max_temp'],
-                min_temp=cached_weather['min_temp'],
-            )
+async def get_conditions(region, date, lat, lon):
+    cache = await get_cache()
 
-        received_data = await send_request(lat, lon)
+    cached_weather = await load_weather(region, date, cache)
 
-        forecast = await parse_data(region, received_data)
+    if cached_weather is not None:
+        return WeatherCondition(
+            region=cached_weather['region'],
+            date=cached_weather['date'],
+            icon=cached_weather['icon'],
+            temp=cached_weather['temp'],
+            weather=cached_weather['weather'],
+            max_temp=cached_weather['max_temp'],
+            min_temp=cached_weather['min_temp'],
+        )
 
-        searched_weather = None
+    received_data = await send_request(lat, lon)
 
-        for weather in forecast:
-            if weather.date == date:
-                searched_weather = weather
+    forecast = await parse_data(region, received_data)
 
-            save_weather(weather, self.cache)
+    searched_weather = None
 
-        if not config.use_real_data:
-            searched_weather = forecast[0]
+    for weather in forecast:
+        if weather.date == date:
+            searched_weather = weather
 
-        return searched_weather
+        await save_weather(weather, cache)
+
+    if not config.use_real_data:
+        searched_weather = forecast[0]
+
+    return searched_weather
 
 
 async def get_region(lat: str, lon: str):
@@ -154,13 +153,15 @@ async def map_icon_url(icon_code):
     return f"https://openweathermap.org/img/w/{icon_code}.png"
 
 
-def seed_city_cache():
+async def seed_city_cache():
     logger.info("Seeding cities")
 
     with open("./data/rs.json", "r", encoding="utf-8") as file:
         data = load(file)
 
+    cache = await get_cache()
+
     for city_data in data:
-        save_coordinates(city=city_data['city'].lower(),
-                         mapping={'lat': city_data['lat'], 'lng': city_data['lng']},
-                         cache=get_cache())
+        await save_coordinates(city=city_data['city'].lower(),
+                               mapping={'lat': city_data['lat'], 'lng': city_data['lng']},
+                               cache=cache)

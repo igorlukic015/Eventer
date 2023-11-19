@@ -1,5 +1,5 @@
 version: "3.9"
-name: redis-tools
+name: eventer-tools
 services:
   redis-cache:
     container_name: 

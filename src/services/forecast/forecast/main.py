@@ -14,6 +14,8 @@ from sys import argv, exit
 
 from getopt import getopt, GetoptError
 
+from asyncio import run
+
 
 app = FastAPI()
 
@@ -37,7 +39,7 @@ def main(arguments):
             should_seed = bool(arg)
 
     if should_seed:
-        seed_city_cache()
+        run(seed_city_cache())
         exit(0)
 
     uvicorn_run("main:app",

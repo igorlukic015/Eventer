@@ -14,9 +14,9 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
     volumes:
-      - ./tools/docker/postgres_data:/var/lib/postgresql/data
+      - ./tools/docker/pgdata:/var/lib/postgresql/data
   redis-cache:
-    container_name: 
+    container_name:
       redis-cache
     image: redis
     ports:
@@ -26,4 +26,4 @@ services:
     command: "redis-server redis.conf"
 volumes:
     redis_data:
-    
+    pgdata:

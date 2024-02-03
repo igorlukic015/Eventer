@@ -6,7 +6,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "event")
-public class Event extends AbstractAuditingEntity {
+public class Event extends AbstractAuditingEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "event_seq")

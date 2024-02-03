@@ -37,6 +37,16 @@ public abstract class AbstractAuditingEntity<T> implements Serializable {
     @Column(name = "last_modified_date")
     private Instant lastModifiedDate = Instant.now();
 
+    public AbstractAuditingEntity() {
+    }
+
+    public AbstractAuditingEntity(String createdBy, Instant createdDate, String lastModifiedBy, Instant lastModifiedDate) {
+        this.createdBy = createdBy;
+        this.createdDate = createdDate;
+        this.lastModifiedBy = lastModifiedBy;
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
     public String getCreatedBy() {
         return createdBy;
     }

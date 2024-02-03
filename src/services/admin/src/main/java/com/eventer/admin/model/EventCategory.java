@@ -2,12 +2,13 @@ package com.eventer.admin.model;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.util.Set;
 
 
 @Entity
 @Table(name = "event_category")
-public class EventCategory extends AbstractAuditingEntity {
+public class EventCategory extends AbstractAuditingEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "event_category_seq")
@@ -25,13 +26,20 @@ public class EventCategory extends AbstractAuditingEntity {
     private Set<Event> events;
 
     public EventCategory() {
+
     }
 
-    public EventCategory(Long id, String name, String description, Set<Event> events) {
+    public EventCategory(String createdBy,
+                         Instant createdDate,
+                         String lastModifiedBy,
+                         Instant lastModifiedDate,
+                         Long id,
+                         String name,
+                         String description) {
+        super(createdBy, createdDate, lastModifiedBy, lastModifiedDate);
         this.id = id;
         this.name = name;
         this.description = description;
-        this.events = events;
     }
 
     public Long getId() {

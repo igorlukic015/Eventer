@@ -1,7 +1,8 @@
 package com.eventer.admin.domain;
 
+import com.eventer.admin.utils.Result;
+
 import java.time.Instant;
-import java.util.Optional;
 
 public class EventCategory {
 
@@ -11,46 +12,34 @@ public class EventCategory {
 
     private String description;
 
-    private String createdBy;
-
-    private Instant createdDate;
-
-    private String lastModifiedBy;
-
-    private Instant lastModifiedDate;
-
     private EventCategory(Long id,
                           String name,
-                          String description,
-                          String createdBy,
-                          Instant createdDate,
-                          String lastModifiedBy,
-                          Instant lastModifiedDate) {
+                          String description) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.createdBy = createdBy;
-        this.createdDate = createdDate;
-        this.lastModifiedBy = lastModifiedBy;
-        this.lastModifiedDate = lastModifiedDate;
     }
 
-    public Optional<EventCategory> create(Long id,
-                                          String name,
-                                          String description,
-                                          String createdBy,
-                                          Instant createdDate) {
+    public static Result<EventCategory> create(Long id,
+                                               String name,
+                                               String description) {
         EventCategory eventCategory =
                 new EventCategory(
                         id,
                         name,
-                        description,
-                        "system",
-                        Instant.now(),
-                        "system",
-                        Instant.now());
+                        description);
 
-        return Optional.of(eventCategory);
+        return Result.success(eventCategory);
+    }
+
+    public static Result<EventCategory> create(String name, String description) {
+        EventCategory eventCategory =
+                new EventCategory(
+                        0L,
+                        name,
+                        description);
+
+        return Result.success(eventCategory);
     }
 
     public Long getId() {
@@ -63,21 +52,5 @@ public class EventCategory {
 
     public String getDescription() {
         return description;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public Instant getCreatedDate() {
-        return createdDate;
-    }
-
-    public String getLastModifiedBy() {
-        return lastModifiedBy;
-    }
-
-    public Instant getLastModifiedDate() {
-        return lastModifiedDate;
     }
 }

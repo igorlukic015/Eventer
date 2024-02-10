@@ -8,7 +8,7 @@ public class Result<T> {
 
     private final String message;
 
-    private T value;
+    private final T value;
 
     private Result(ResultType type, boolean isFailure, String message) {
         this.type = type;

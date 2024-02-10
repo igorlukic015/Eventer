@@ -25,21 +25,14 @@ public abstract class ControllerBase {
     }
 
     private HttpStatus getHttpStatus(ResultType resultType) {
-        switch (resultType) {
-            case INVALID:
-                return HttpStatus.BAD_REQUEST;
-            case NOT_FOUND:
-                return HttpStatus.NOT_FOUND;
-            case CONFLICT:
-                return HttpStatus.CONFLICT;
-            case SUCCESS:
-                return HttpStatus.OK;
-            case UNAUTHORIZED:
-                return HttpStatus.UNAUTHORIZED;
-            case FORBIDDEN:
-                return HttpStatus.FORBIDDEN;
-            default:
-                return HttpStatus.INTERNAL_SERVER_ERROR;
-        }
+        return switch (resultType) {
+            case INVALID -> HttpStatus.BAD_REQUEST;
+            case NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case CONFLICT -> HttpStatus.CONFLICT;
+            case SUCCESS -> HttpStatus.OK;
+            case UNAUTHORIZED -> HttpStatus.UNAUTHORIZED;
+            case FORBIDDEN -> HttpStatus.FORBIDDEN;
+            default -> HttpStatus.INTERNAL_SERVER_ERROR;
+        };
     }
 }

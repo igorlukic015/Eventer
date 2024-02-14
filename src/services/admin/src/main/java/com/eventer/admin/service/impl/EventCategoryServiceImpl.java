@@ -1,10 +1,10 @@
 package com.eventer.admin.service.impl;
 
-import com.eventer.admin.mapper.EventCategoryMapper;
-import com.eventer.admin.utils.Result;
 import com.eventer.admin.domain.EventCategory;
+import com.eventer.admin.mapper.EventCategoryMapper;
 import com.eventer.admin.repository.EventCategoryRepository;
 import com.eventer.admin.service.EventCategoryService;
+import com.eventer.admin.utils.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,16 +36,19 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         com.eventer.admin.model.EventCategory eventCategory =
                 EventCategoryMapper.toModel(newCategoryOrError.getValue(), "SYSTEM");
 
-        com.eventer.admin.model.EventCategory result = this.eventCategoryRepository.save(eventCategory);
+        com.eventer.admin.model.EventCategory result =
+                this.eventCategoryRepository.save(eventCategory);
 
         return EventCategoryMapper.toDomain(result);
     }
 
     @Override
     public Result<Page<EventCategory>> getCategories(Pageable pageable) {
-        Page<com.eventer.admin.model.EventCategory> foundCategories = this.eventCategoryRepository.findAll(pageable);
+        Page<com.eventer.admin.model.EventCategory> foundCategories =
+                this.eventCategoryRepository.findAll(pageable);
 
-        Result<Page<EventCategory>> categoriesOrError = EventCategoryMapper.toDomainPage(foundCategories);
+        Result<Page<EventCategory>> categoriesOrError =
+                EventCategoryMapper.toDomainPage(foundCategories);
 
         if (categoriesOrError.isFailure()) {
             return Result.fromError(categoriesOrError);

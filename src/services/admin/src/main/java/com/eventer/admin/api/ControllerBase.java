@@ -21,7 +21,8 @@ public abstract class ControllerBase {
     private <T> ResponseEntity<ProblemDetail> getErrorResponse(Result<T> result) {
         HttpStatus status = getHttpStatus(result.getType());
 
-        return ResponseEntity.status(status).body(ProblemDetail.forStatusAndDetail(status, result.getMessage()));
+        return ResponseEntity.status(status)
+                .body(ProblemDetail.forStatusAndDetail(status, result.getMessage()));
     }
 
     private HttpStatus getHttpStatus(ResultType resultType) {

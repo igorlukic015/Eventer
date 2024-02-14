@@ -29,9 +29,12 @@ public class WeatherCondition {
 
     public static Result<WeatherCondition> create(String name) {
         Optional<WeatherCondition> foundCondition =
-                allConditions.stream().filter(condition -> Objects.equals(condition.getName(), name)).findFirst();
+                allConditions.stream()
+                        .filter(condition -> Objects.equals(condition.getName(), name))
+                        .findFirst();
 
-        return foundCondition.map(Result::success)
+        return foundCondition
+                .map(Result::success)
                 .orElseGet(() -> Result.invalid(ResultErrorMessages.invalidWeatherCondition));
     }
 

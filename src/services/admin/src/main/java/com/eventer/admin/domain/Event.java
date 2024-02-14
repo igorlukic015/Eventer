@@ -2,24 +2,22 @@ package com.eventer.admin.domain;
 
 import com.eventer.admin.utils.Result;
 
-import java.time.Instant;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Event {
-  private Long id;
+  private final Long id;
 
-  private String title;
+  private final String title;
 
-  private String description;
+  private final String description;
 
-  private String location;
+  private final String location;
 
-  private Set<WeatherCondition> weatherConditionAvailability;
+  private final Set<WeatherCondition> weatherConditionAvailability;
 
-  private Set<EventCategory> categories;
+  private final Set<EventCategory> categories;
 
   private Event(
       Long id,

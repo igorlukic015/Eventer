@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.Set;
 
-
 @Entity
 @Table(name = "event_category")
 public class EventCategory extends AbstractAuditingEntity<Long> {

@@ -11,20 +11,13 @@ import java.util.List;
 public class EventCategoryMapper {
 
     public static EventCategoryDTO toDTO(EventCategory domain) {
-        return new EventCategoryDTO(
-                domain.getId(),
-                domain.getName(),
-                domain.getDescription()
-        );
+        return new EventCategoryDTO(domain.getId(), domain.getName(), domain.getDescription());
     }
 
     public static Page<EventCategoryDTO> toDTOs(Page<EventCategory> categories) {
         List<EventCategoryDTO> dtos = categories.stream().map(EventCategoryMapper::toDTO).toList();
 
-        return new PageImpl<>(
-                dtos,
-                categories.getPageable(),
-                categories.getTotalElements());
+        return new PageImpl<>(dtos, categories.getPageable(), categories.getTotalElements());
     }
 
     public static Result<EventCategory> toDomain(com.eventer.admin.model.EventCategory model) {
@@ -38,22 +31,27 @@ public class EventCategoryMapper {
         return eventCategoryOrError;
     }
 
-    public static Result<Page<EventCategory>> toDomainPage(Page<com.eventer.admin.model.EventCategory> foundCategories) {
-        List<Result<EventCategory>> categories = foundCategories.stream().map(EventCategoryMapper::toDomain).toList();
+    public static Result<Page<EventCategory>> toDomainPage(
+            Page<com.eventer.admin.model.EventCategory> foundCategories) {
+        List<Result<EventCategory>> categories =
+                foundCategories.stream().map(EventCategoryMapper::toDomain).toList();
 
         if (categories.stream().anyMatch(Result::isFailure)) {
-            return Result.fromError(categories.stream().filter(Result::isFailure).findFirst().get());
+            return Result.fromError(
+                    categories.stream().filter(Result::isFailure).findFirst().get());
         }
 
-        Page<EventCategory> result = new PageImpl<>(
-                categories.stream().map(Result::getValue).toList(),
-                foundCategories.getPageable(),
-                foundCategories.getTotalElements());
+        Page<EventCategory> result =
+                new PageImpl<>(
+                        categories.stream().map(Result::getValue).toList(),
+                        foundCategories.getPageable(),
+                        foundCategories.getTotalElements());
 
         return Result.success(result);
     }
 
-    public static com.eventer.admin.model.EventCategory toModel(EventCategory eventCategory, String createdBy) {
+    public static com.eventer.admin.model.EventCategory toModel(
+            EventCategory eventCategory, String createdBy) {
         var model = new com.eventer.admin.model.EventCategory();
 
         model.setId(eventCategory.getId());

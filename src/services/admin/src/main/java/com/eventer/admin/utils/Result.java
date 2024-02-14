@@ -64,7 +64,9 @@ public class Result<T> {
         return isFailure;
     }
 
-    public boolean isSuccess() { return !isFailure; }
+    public boolean isSuccess() {
+        return !isFailure;
+    }
 
     public String getMessage() {
         return message;

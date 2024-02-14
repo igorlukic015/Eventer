@@ -18,14 +18,20 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Result<Event> create(CreateEventRequestDTO request) {
-        Result<Event> eventOrError = Event.create(request.title(), request.description(), request.location(),
-                request.weatherConditions(), request.eventCategories());
+        Result<Event> eventOrError =
+                Event.create(
+                        request.title(),
+                        request.description(),
+                        request.location(),
+                        request.weatherConditions(),
+                        request.eventCategories());
 
         if (eventOrError.isFailure()) {
             return Result.fromError(eventOrError);
         }
 
-        com.eventer.admin.model.Event event = EventMapper.toModel(eventOrError.getValue(), "SYSTEM");
+        com.eventer.admin.model.Event event =
+                EventMapper.toModel(eventOrError.getValue(), "SYSTEM");
 
         com.eventer.admin.model.Event result = this.eventRepository.save(event);
 

@@ -23,7 +23,8 @@ public class EventCategoryController extends ControllerBase {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody EventCategoryDTO dto) {
-        Result<EventCategory> result = this.eventCategoryService.create(dto.name(), dto.description());
+        Result<EventCategory> result =
+                this.eventCategoryService.create(dto.name(), dto.description());
         return this.okOrError(result, EventCategoryMapper::toDTO);
     }
 

@@ -2,6 +2,7 @@ package com.eventer.admin.model;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.util.Set;
 
 @Entity
@@ -14,11 +15,20 @@ public class Event extends AbstractAuditingEntity<Long> {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 255, unique = true)
-    private String name;
+    @Column(name = "title", nullable = false, length = 255, unique = true)
+    private String title;
 
     @Column(name = "description", length = 255)
     private String description;
+
+    @Column(name = "location", length = 255, nullable = false)
+    private String location;
+
+    @Column(name = "weather_condition_availability", length = 255, nullable = false)
+    private String weatherConditionAvailability;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Image> images;
 
     @ManyToMany
     @JoinTable(
@@ -28,10 +38,31 @@ public class Event extends AbstractAuditingEntity<Long> {
     )
     private Set<EventCategory> categories;
 
-
     public Event() {
     }
 
+    public Event(String createdBy,
+                 Instant createdDate,
+                 String lastModifiedBy,
+                 Instant lastModifiedDate,
+                 Long id,
+                 String title,
+                 String description,
+                 String location,
+                 String weatherConditionAvailability,
+                 Set<Image> images,
+                 Set<EventCategory> categories) {
+        super(createdBy, createdDate, lastModifiedBy, lastModifiedDate);
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.location = location;
+        this.weatherConditionAvailability = weatherConditionAvailability;
+        this.images = images;
+        this.categories = categories;
+    }
+
+    @Override
     public Long getId() {
         return id;
     }
@@ -40,12 +71,12 @@ public class Event extends AbstractAuditingEntity<Long> {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -62,5 +93,29 @@ public class Event extends AbstractAuditingEntity<Long> {
 
     public void setCategories(Set<EventCategory> categories) {
         this.categories = categories;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getWeatherConditionAvailability() {
+        return weatherConditionAvailability;
+    }
+
+    public void setWeatherConditionAvailability(String weatherConditionAvailability) {
+        this.weatherConditionAvailability = weatherConditionAvailability;
+    }
+
+    public Set<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<Image> images) {
+        this.images = images;
     }
 }

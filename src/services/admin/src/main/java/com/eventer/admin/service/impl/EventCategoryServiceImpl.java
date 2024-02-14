@@ -23,14 +23,18 @@ public class EventCategoryServiceImpl implements EventCategoryService {
     public Result<EventCategory> create(String name, String description) {
         boolean isDuplicate = this.eventCategoryRepository.existsByNameIgnoreCase(name);
 
-        if (isDuplicate){
+        if (isDuplicate) {
             return Result.conflict(ResultErrorMessages.categoryAlreadyExists);
         }
 
-        com.eventer.admin.model.EventCategory eventCategory = new com.eventer.admin.model.EventCategory();
-        eventCategory.setName(name);
-        eventCategory.setDescription(description);
-        eventCategory.setCreatedBy("SYSTEM");
+        Result<EventCategory> newCategoryOrError = EventCategory.create(name, description);
+
+        if (newCategoryOrError.isFailure()) {
+            return Result.fromError(newCategoryOrError);
+        }
+
+        com.eventer.admin.model.EventCategory eventCategory =
+                EventCategoryMapper.toModel(newCategoryOrError.getValue(), "SYSTEM");
 
         com.eventer.admin.model.EventCategory result = this.eventCategoryRepository.save(eventCategory);
 
@@ -43,7 +47,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
 
         Result<Page<EventCategory>> categoriesOrError = EventCategoryMapper.toDomainPage(foundCategories);
 
-        if (categoriesOrError.isFailure()){
+        if (categoriesOrError.isFailure()) {
             return Result.fromError(categoriesOrError);
         }
 

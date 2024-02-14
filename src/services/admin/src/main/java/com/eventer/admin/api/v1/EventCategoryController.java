@@ -2,7 +2,7 @@ package com.eventer.admin.api.v1;
 
 import com.eventer.admin.api.ControllerBase;
 import com.eventer.admin.domain.EventCategory;
-import com.eventer.admin.dto.EventCategoryDTO;
+import com.eventer.admin.dto.eventCategory.EventCategoryDTO;
 import com.eventer.admin.mapper.EventCategoryMapper;
 import com.eventer.admin.service.EventCategoryService;
 import com.eventer.admin.utils.Result;

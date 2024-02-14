@@ -1,12 +1,11 @@
 package com.eventer.admin.mapper;
 
-import com.eventer.admin.dto.EventCategoryDTO;
+import com.eventer.admin.dto.eventCategory.EventCategoryDTO;
 import com.eventer.admin.utils.Result;
 import com.eventer.admin.domain.EventCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EventCategoryMapper {
@@ -29,30 +28,39 @@ public class EventCategoryMapper {
     }
 
     public static Result<EventCategory> toDomain(com.eventer.admin.model.EventCategory model) {
-        return EventCategory.create(
-                model.getId(),
-                model.getName(),
-                model.getDescription());
+        Result<EventCategory> eventCategoryOrError =
+                EventCategory.create(model.getId(), model.getName(), model.getDescription());
+
+        if (eventCategoryOrError.isFailure()) {
+            return Result.fromError(eventCategoryOrError);
+        }
+
+        return eventCategoryOrError;
     }
 
     public static Result<Page<EventCategory>> toDomainPage(Page<com.eventer.admin.model.EventCategory> foundCategories) {
-        ArrayList<EventCategory> categories = new ArrayList<>();
+        List<Result<EventCategory>> categories = foundCategories.stream().map(EventCategoryMapper::toDomain).toList();
 
-        for (com.eventer.admin.model.EventCategory foundCategory : foundCategories) {
-            Result<EventCategory> domainOrError = toDomain(foundCategory);
-
-            if (domainOrError.isFailure()){
-                return Result.fromError(domainOrError);
-            }
-
-            categories.add(domainOrError.getValue());
+        if (categories.stream().anyMatch(Result::isFailure)) {
+            return Result.fromError(categories.stream().filter(Result::isFailure).findFirst().get());
         }
 
         Page<EventCategory> result = new PageImpl<>(
-                categories,
+                categories.stream().map(Result::getValue).toList(),
                 foundCategories.getPageable(),
                 foundCategories.getTotalElements());
 
         return Result.success(result);
+    }
+
+    public static com.eventer.admin.model.EventCategory toModel(EventCategory eventCategory, String createdBy) {
+        var model = new com.eventer.admin.model.EventCategory();
+
+        model.setId(eventCategory.getId());
+        model.setName(eventCategory.getName());
+        model.setDescription(eventCategory.getDescription());
+        model.setCreatedBy(createdBy);
+
+        return model;
     }
 }

@@ -1,72 +1,114 @@
 package com.eventer.admin.domain;
 
+import com.eventer.admin.utils.Result;
+
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Event {
-    private Long id;
+  private Long id;
 
-    private String name;
+  private String title;
 
-    private String description;
+  private String description;
 
-    private String createdBy;
+  private String location;
 
-    private Instant createdDate;
+  private Set<WeatherCondition> weatherConditionAvailability;
 
-    private String lastModifiedBy;
+  private Set<EventCategory> categories;
 
-    private Instant lastModifiedDate;
+  private Event(
+      Long id,
+      String title,
+      String description,
+      String location,
+      Set<WeatherCondition> weatherConditionAvailability,
+      Set<EventCategory> categories) {
+    this.id = id;
+    this.title = title;
+    this.description = description;
+    this.location = location;
+    this.weatherConditionAvailability = weatherConditionAvailability;
+    this.categories = categories;
+  }
 
-    private Set<EventCategory> categories;
+  public static Result<Event> create(
+      Long id,
+      String title,
+      String description,
+      String location,
+      String weatherConditionAvailability,
+      Set<EventCategory> categories) {
+    HashSet<WeatherCondition> weatherConditions = new HashSet<>();
 
-    public Event(Long id,
-                 String name,
-                 String description,
-                 String createdBy,
-                 Instant createdDate,
-                 String lastModifiedBy,
-                 Instant lastModifiedDate,
-                 Set<EventCategory> categories) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.createdBy = createdBy;
-        this.createdDate = createdDate;
-        this.lastModifiedBy = lastModifiedBy;
-        this.lastModifiedDate = lastModifiedDate;
-        this.categories = categories;
+    String[] weatherConditionArray = weatherConditionAvailability.split(";");
+
+    for (String weatherCondition : weatherConditionArray) {
+      Result<WeatherCondition> weatherConditionOrError = WeatherCondition.create(weatherCondition);
+
+      if (weatherConditionOrError.isFailure()) {
+        return Result.fromError(weatherConditionOrError);
+      }
+
+      weatherConditions.add(weatherConditionOrError.getValue());
     }
 
-    public Long getId() {
-        return id;
+    Event event = new Event(id, title, description, location, weatherConditions, categories);
+
+    return Result.success(event);
+  }
+
+  public static Result<Event> create(
+      String title,
+      String description,
+      String location,
+      Set<String> weatherConditions,
+      Set<EventCategory> categories) {
+    Set<Result<WeatherCondition>> weatherConditionsOrError =
+        weatherConditions.stream().map(WeatherCondition::create).collect(Collectors.toSet());
+
+    if (weatherConditionsOrError.stream().anyMatch(Result::isFailure)) {
+      return Result.fromError(
+          weatherConditionsOrError.stream().filter(Result::isFailure).findFirst().get());
     }
 
-    public String getName() {
-        return name;
-    }
+    Event event =
+        new Event(
+            0L,
+            title,
+            description,
+            location,
+            weatherConditionsOrError.stream().map(Result::getValue).collect(Collectors.toSet()),
+            categories);
 
-    public String getDescription() {
-        return description;
-    }
+    return Result.success(event);
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public Instant getCreatedDate() {
-        return createdDate;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public String getLastModifiedBy() {
-        return lastModifiedBy;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public Instant getLastModifiedDate() {
-        return lastModifiedDate;
-    }
+  public String getLocation() {
+    return location;
+  }
 
-    public Set<EventCategory> getCategories() {
-        return categories;
-    }
+  public Set<WeatherCondition> getWeatherConditionAvailability() {
+    return weatherConditionAvailability;
+  }
+
+  public Set<EventCategory> getCategories() {
+    return categories;
+  }
 }

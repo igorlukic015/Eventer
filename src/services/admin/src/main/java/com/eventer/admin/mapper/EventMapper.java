@@ -1,8 +1,11 @@
 package com.eventer.admin.mapper;
 
+import com.eventer.admin.contracts.event.CreateEventRequest;
 import com.eventer.admin.service.domain.Event;
+import com.eventer.admin.service.domain.WeatherCondition;
 import com.eventer.admin.utils.Result;
 
+import com.eventer.admin.web.dto.event.CreateEventDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
@@ -10,6 +13,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EventMapper {
+
+    public static CreateEventRequest toRequest(CreateEventDTO dto) {
+
+        return new CreateEventRequest(
+                dto.title(),
+                dto.description(),
+                dto.location(),
+                dto.weatherConditions().stream()
+                        .map(WeatherCondition::create)
+                        .collect(Collectors.toSet()),
+                dto.eventCategories().stream()
+                        .map(EventCategoryMapper::toRequest)
+                        .collect(Collectors.toSet()),
+                dto.eventCategories().stream()
+                        .map(EventCategoryMapper::toDomain)
+                        .collect(Collectors.toSet()));
+    }
 
     public static Result<Event> toDomain(com.eventer.admin.data.model.Event model) {
         Result<Event> eventOrError =
@@ -19,9 +39,9 @@ public class EventMapper {
                         model.getDescription(),
                         model.getLocation(),
                         model.getWeatherConditionAvailability(),
-                        model.getCategories().stream().map(EventCategoryMapper::toDomain).collect(
-                                Collectors.toSet()
-                        ));
+                        model.getCategories().stream()
+                                .map(EventCategoryMapper::toDomain)
+                                .collect(Collectors.toSet()));
 
         if (eventOrError.isFailure()) {
             return Result.fromError(eventOrError);

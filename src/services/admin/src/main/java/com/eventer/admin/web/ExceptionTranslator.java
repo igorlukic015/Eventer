@@ -1,4 +1,4 @@
-package com.eventer.admin.api;
+package com.eventer.admin.web;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;

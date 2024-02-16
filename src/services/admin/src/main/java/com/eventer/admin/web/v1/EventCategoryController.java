@@ -1,8 +1,9 @@
-package com.eventer.admin.api.v1;
+package com.eventer.admin.web.v1;
 
-import com.eventer.admin.api.ControllerBase;
+import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
+import com.eventer.admin.web.ControllerBase;
 import com.eventer.admin.domain.EventCategory;
-import com.eventer.admin.dto.eventCategory.EventCategoryDTO;
+import com.eventer.admin.web.dto.eventcategory.EventCategoryDTO;
 import com.eventer.admin.mapper.EventCategoryMapper;
 import com.eventer.admin.service.EventCategoryService;
 import com.eventer.admin.utils.Result;
@@ -24,7 +25,7 @@ public class EventCategoryController extends ControllerBase {
     @PostMapping
     public ResponseEntity<?> create(@RequestBody EventCategoryDTO dto) {
         Result<EventCategory> result =
-                this.eventCategoryService.create(dto.name(), dto.description());
+                this.eventCategoryService.create(EventCategoryMapper.toRequest(dto));
         return this.okOrError(result, EventCategoryMapper::toDTO);
     }
 

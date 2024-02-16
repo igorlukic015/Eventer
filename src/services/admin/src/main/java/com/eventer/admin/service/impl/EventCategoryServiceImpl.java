@@ -1,5 +1,6 @@
 package com.eventer.admin.service.impl;
 
+import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
 import com.eventer.admin.domain.EventCategory;
 import com.eventer.admin.mapper.EventCategoryMapper;
 import com.eventer.admin.repository.EventCategoryRepository;
@@ -20,14 +21,14 @@ public class EventCategoryServiceImpl implements EventCategoryService {
     }
 
     @Override
-    public Result<EventCategory> create(String name, String description) {
-        boolean isDuplicate = this.eventCategoryRepository.existsByNameIgnoreCase(name);
+    public Result<EventCategory> create(CreateEventCategoryRequest request) {
+        boolean isDuplicate = this.eventCategoryRepository.existsByNameIgnoreCase(request.name());
 
         if (isDuplicate) {
             return Result.conflict(ResultErrorMessages.categoryAlreadyExists);
         }
 
-        Result<EventCategory> newCategoryOrError = EventCategory.create(name, description);
+        Result<EventCategory> newCategoryOrError = EventCategory.create(request.name(), request.description());
 
         if (newCategoryOrError.isFailure()) {
             return Result.fromError(newCategoryOrError);

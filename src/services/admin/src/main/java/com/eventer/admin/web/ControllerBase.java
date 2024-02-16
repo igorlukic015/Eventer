@@ -1,4 +1,4 @@
-package com.eventer.admin.api;
+package com.eventer.admin.web;
 
 import com.eventer.admin.utils.Result;
 import com.eventer.admin.utils.ResultType;

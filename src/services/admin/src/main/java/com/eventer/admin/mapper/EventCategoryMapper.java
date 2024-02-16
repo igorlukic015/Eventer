@@ -1,6 +1,7 @@
 package com.eventer.admin.mapper;
 
-import com.eventer.admin.dto.eventCategory.EventCategoryDTO;
+import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
+import com.eventer.admin.web.dto.eventcategory.EventCategoryDTO;
 import com.eventer.admin.utils.Result;
 import com.eventer.admin.domain.EventCategory;
 import org.springframework.data.domain.Page;
@@ -60,5 +61,9 @@ public class EventCategoryMapper {
         model.setCreatedBy(createdBy);
 
         return model;
+    }
+
+    public static CreateEventCategoryRequest toRequest(EventCategoryDTO dto) {
+        return new CreateEventCategoryRequest(dto.name(), dto.description());
     }
 }

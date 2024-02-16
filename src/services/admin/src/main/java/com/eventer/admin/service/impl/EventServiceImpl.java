@@ -63,7 +63,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Result<Page<Event>> getEvents(Pageable pageable) {
-        Page<com.eventer.admin.data.model.Event> foundEvents = this.eventRepository.findAll(pageable);
+        Page<com.eventer.admin.data.model.Event> foundEvents =
+                this.eventRepository.findAll(pageable);
 
         Result<Page<Event>> eventsOrError = EventMapper.toDomainPage(foundEvents);
 

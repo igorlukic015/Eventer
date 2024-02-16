@@ -21,6 +21,17 @@ public class EventCategoryMapper {
         return new PageImpl<>(dtos, categories.getPageable(), categories.getTotalElements());
     }
 
+    public static Result<EventCategory> toDomain(EventCategoryDTO dto) {
+        Result<EventCategory> eventCategoryOrError =
+                EventCategory.create(dto.id(), dto.name(), dto.description());
+
+        if (eventCategoryOrError.isFailure()) {
+            return Result.fromError(eventCategoryOrError);
+        }
+
+        return eventCategoryOrError;
+    }
+
     public static Result<EventCategory> toDomain(com.eventer.admin.data.model.EventCategory model) {
         Result<EventCategory> eventCategoryOrError =
                 EventCategory.create(model.getId(), model.getName(), model.getDescription());

@@ -6,6 +6,7 @@ import com.eventer.admin.service.domain.WeatherCondition;
 import com.eventer.admin.utils.Result;
 
 import com.eventer.admin.web.dto.event.CreateEventDTO;
+import com.eventer.admin.web.dto.event.EventDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
@@ -14,17 +15,33 @@ import java.util.stream.Collectors;
 
 public class EventMapper {
 
-    public static CreateEventRequest toRequest(CreateEventDTO dto) {
+    public static EventDTO toDTO(Event domain) {
+        return new EventDTO(
+                domain.getId(),
+                domain.getTitle(),
+                domain.getDescription(),
+                domain.getLocation(),
+                domain.getWeatherConditionAvailability().stream()
+                        .map(WeatherCondition::getName)
+                        .collect(Collectors.toSet()),
+                domain.getCategories().stream()
+                        .map(EventCategoryMapper::toDTO)
+                        .collect(Collectors.toSet()));
+    }
 
+    public static Page<EventDTO> toDTOs(Page<Event> domainPage) {
+        List<EventDTO> dtos = domainPage.stream().map(EventMapper::toDTO).toList();
+
+        return new PageImpl<>(dtos, domainPage.getPageable(), domainPage.getTotalElements());
+    }
+
+    public static CreateEventRequest toRequest(CreateEventDTO dto) {
         return new CreateEventRequest(
                 dto.title(),
                 dto.description(),
                 dto.location(),
                 dto.weatherConditions().stream()
                         .map(WeatherCondition::create)
-                        .collect(Collectors.toSet()),
-                dto.eventCategories().stream()
-                        .map(EventCategoryMapper::toRequest)
                         .collect(Collectors.toSet()),
                 dto.eventCategories().stream()
                         .map(EventCategoryMapper::toDomain)

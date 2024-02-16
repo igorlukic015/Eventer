@@ -1,8 +1,7 @@
 package com.eventer.admin.web.v1;
 
-import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
 import com.eventer.admin.web.ControllerBase;
-import com.eventer.admin.domain.EventCategory;
+import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.web.dto.eventcategory.EventCategoryDTO;
 import com.eventer.admin.mapper.EventCategoryMapper;
 import com.eventer.admin.service.EventCategoryService;

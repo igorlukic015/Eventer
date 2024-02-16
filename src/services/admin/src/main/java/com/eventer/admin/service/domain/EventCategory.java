@@ -1,6 +1,8 @@
-package com.eventer.admin.domain;
+package com.eventer.admin.service.domain;
 
+import com.eventer.admin.utils.Helpers;
 import com.eventer.admin.utils.Result;
+import com.eventer.admin.utils.ResultErrorMessages;
 
 public class EventCategory {
 
@@ -23,6 +25,14 @@ public class EventCategory {
   }
 
   public static Result<EventCategory> create(String name, String description) {
+    if (Helpers.isNullOrEmpty(name) || name.length() > 255) {
+      return Result.invalid(ResultErrorMessages.invalidEventCategoryName);
+    }
+    
+    if (description.length() > 255) {
+        return Result.invalid(ResultErrorMessages.invalidEventCategoryDescription);
+    }
+    
     EventCategory eventCategory = new EventCategory(0L, name, description);
 
     return Result.success(eventCategory);

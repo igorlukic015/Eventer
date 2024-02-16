@@ -1,4 +1,4 @@
-package com.eventer.admin.domain;
+package com.eventer.admin.service.domain;
 
 import com.eventer.admin.utils.Result;
 import com.eventer.admin.utils.ResultErrorMessages;

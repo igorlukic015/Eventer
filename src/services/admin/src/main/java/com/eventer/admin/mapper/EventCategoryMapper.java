@@ -3,7 +3,7 @@ package com.eventer.admin.mapper;
 import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
 import com.eventer.admin.web.dto.eventcategory.EventCategoryDTO;
 import com.eventer.admin.utils.Result;
-import com.eventer.admin.domain.EventCategory;
+import com.eventer.admin.service.domain.EventCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
@@ -21,7 +21,7 @@ public class EventCategoryMapper {
         return new PageImpl<>(dtos, categories.getPageable(), categories.getTotalElements());
     }
 
-    public static Result<EventCategory> toDomain(com.eventer.admin.model.EventCategory model) {
+    public static Result<EventCategory> toDomain(com.eventer.admin.data.model.EventCategory model) {
         Result<EventCategory> eventCategoryOrError =
                 EventCategory.create(model.getId(), model.getName(), model.getDescription());
 
@@ -33,7 +33,7 @@ public class EventCategoryMapper {
     }
 
     public static Result<Page<EventCategory>> toDomainPage(
-            Page<com.eventer.admin.model.EventCategory> foundCategories) {
+            Page<com.eventer.admin.data.model.EventCategory> foundCategories) {
         List<Result<EventCategory>> categories =
                 foundCategories.stream().map(EventCategoryMapper::toDomain).toList();
 
@@ -51,9 +51,9 @@ public class EventCategoryMapper {
         return Result.success(result);
     }
 
-    public static com.eventer.admin.model.EventCategory toModel(
+    public static com.eventer.admin.data.model.EventCategory toModel(
             EventCategory eventCategory, String createdBy) {
-        var model = new com.eventer.admin.model.EventCategory();
+        var model = new com.eventer.admin.data.model.EventCategory();
 
         model.setId(eventCategory.getId());
         model.setName(eventCategory.getName());

@@ -1,4 +1,4 @@
-package com.eventer.admin.model;
+package com.eventer.admin.data.model;
 
 import jakarta.persistence.*;
 
@@ -15,7 +15,7 @@ public class Event extends AbstractAuditingEntity<Long> {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "title", nullable = false, length = 255, unique = true)
+    @Column(name = "title", nullable = false, length = 255)
     private String title;
 
     @Column(name = "description", length = 255)

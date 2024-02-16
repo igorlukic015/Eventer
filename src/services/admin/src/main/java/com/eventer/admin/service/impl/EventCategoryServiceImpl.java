@@ -1,9 +1,9 @@
 package com.eventer.admin.service.impl;
 
 import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
-import com.eventer.admin.domain.EventCategory;
+import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.mapper.EventCategoryMapper;
-import com.eventer.admin.repository.EventCategoryRepository;
+import com.eventer.admin.data.repository.EventCategoryRepository;
 import com.eventer.admin.service.EventCategoryService;
 import com.eventer.admin.utils.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
@@ -34,10 +34,10 @@ public class EventCategoryServiceImpl implements EventCategoryService {
             return Result.fromError(newCategoryOrError);
         }
 
-        com.eventer.admin.model.EventCategory eventCategory =
+        com.eventer.admin.data.model.EventCategory eventCategory =
                 EventCategoryMapper.toModel(newCategoryOrError.getValue(), "SYSTEM");
 
-        com.eventer.admin.model.EventCategory result =
+        com.eventer.admin.data.model.EventCategory result =
                 this.eventCategoryRepository.save(eventCategory);
 
         return EventCategoryMapper.toDomain(result);
@@ -45,7 +45,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
 
     @Override
     public Result<Page<EventCategory>> getCategories(Pageable pageable) {
-        Page<com.eventer.admin.model.EventCategory> foundCategories =
+        Page<com.eventer.admin.data.model.EventCategory> foundCategories =
                 this.eventCategoryRepository.findAll(pageable);
 
         Result<Page<EventCategory>> categoriesOrError =

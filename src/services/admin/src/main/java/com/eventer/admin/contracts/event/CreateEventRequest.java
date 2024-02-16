@@ -10,18 +10,18 @@ public record CreateEventRequest(
         String title,
         String description,
         String location,
-        Set<Result<WeatherCondition>> weatherConditions,
-        Set<Result<EventCategory>> eventCategories) {
+        Result<Set<WeatherCondition>> weatherConditionsOrError,
+        Result<Set<EventCategory>> eventCategoriesOrError) {
     public CreateEventRequest(
             String title,
             String description,
             String location,
-            Set<Result<WeatherCondition>> weatherConditions,
-            Set<Result<EventCategory>> eventCategories) {
+            Result<Set<WeatherCondition>> weatherConditionsOrError,
+            Result<Set<EventCategory>> eventCategoriesOrError) {
         this.title = title;
         this.description = description;
         this.location = location;
-        this.weatherConditions = weatherConditions;
-        this.eventCategories = eventCategories;
+        this.weatherConditionsOrError = weatherConditionsOrError;
+        this.eventCategoriesOrError = eventCategoriesOrError;
     }
 }

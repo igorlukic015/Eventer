@@ -2,6 +2,7 @@ package com.eventer.admin.mapper;
 
 import com.eventer.admin.contracts.event.CreateEventRequest;
 import com.eventer.admin.service.domain.Event;
+import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.service.domain.WeatherCondition;
 import com.eventer.admin.utils.Result;
 
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class EventMapper {
@@ -36,16 +38,24 @@ public class EventMapper {
     }
 
     public static CreateEventRequest toRequest(CreateEventDTO dto) {
+        Result<Set<WeatherCondition>> conditionsOrError =
+                Result.getResultValueSet(
+                        dto.weatherConditions().stream()
+                                .map(WeatherCondition::create)
+                                .collect(Collectors.toSet()));
+
+        Result<Set<EventCategory>> categoriesOrError =
+                Result.getResultValueSet(
+                        dto.eventCategories().stream()
+                                .map(EventCategoryMapper::toDomain)
+                                .collect(Collectors.toSet()));
+
         return new CreateEventRequest(
                 dto.title(),
                 dto.description(),
                 dto.location(),
-                dto.weatherConditions().stream()
-                        .map(WeatherCondition::create)
-                        .collect(Collectors.toSet()),
-                dto.eventCategories().stream()
-                        .map(EventCategoryMapper::toDomain)
-                        .collect(Collectors.toSet()));
+                conditionsOrError,
+                categoriesOrError);
     }
 
     public static Result<Event> toDomain(com.eventer.admin.data.model.Event model) {
@@ -91,6 +101,19 @@ public class EventMapper {
         model.setTitle(event.getTitle());
         model.setDescription(event.getDescription());
         model.setLocation(event.getLocation());
+
+        model.setWeatherConditionAvailability(
+                String.join(
+                        ";",
+                        event.getWeatherConditionAvailability().stream()
+                                .map(WeatherCondition::getName)
+                                .toList()));
+
+        model.setCategories(
+                event.getCategories().stream()
+                        .map(EventCategoryMapper::toModel)
+                        .collect(Collectors.toSet()));
+
         model.setCreatedBy(createdBy);
 
         return model;

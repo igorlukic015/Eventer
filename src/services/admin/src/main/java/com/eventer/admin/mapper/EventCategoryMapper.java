@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class EventCategoryMapper {
 
@@ -43,14 +46,30 @@ public class EventCategoryMapper {
         return eventCategoryOrError;
     }
 
+    public static Result<Set<EventCategory>> toDomainSet(
+            List<com.eventer.admin.data.model.EventCategory> models) {
+        Set<Result<EventCategory>> eventCategoriesOrError =
+                models.stream().map(EventCategoryMapper::toDomain).collect(Collectors.toSet());
+
+        Optional<Result<EventCategory>> failureOrNull =
+                eventCategoriesOrError.stream().filter(Result::isFailure).findFirst();
+
+        if (failureOrNull.isPresent()) {
+            return Result.fromError(failureOrNull.get());
+        }
+        return Result.success(
+                eventCategoriesOrError.stream().map(Result::getValue).collect(Collectors.toSet()));
+    }
+
     public static Result<Page<EventCategory>> toDomainPage(
             Page<com.eventer.admin.data.model.EventCategory> foundCategories) {
         List<Result<EventCategory>> categories =
                 foundCategories.stream().map(EventCategoryMapper::toDomain).toList();
 
-        if (categories.stream().anyMatch(Result::isFailure)) {
-            return Result.fromError(
-                    categories.stream().filter(Result::isFailure).findFirst().get());
+        Optional<Result<EventCategory>> failureOrNull = categories.stream().filter(Result::isFailure).findFirst();
+
+        if (failureOrNull.isPresent()) {
+            return Result.fromError(failureOrNull.get());
         }
 
         Page<EventCategory> result =
@@ -60,6 +79,18 @@ public class EventCategoryMapper {
                         foundCategories.getTotalElements());
 
         return Result.success(result);
+    }
+
+    public static com.eventer.admin.data.model.EventCategory toModel(
+            EventCategory eventCategory) {
+        var model = new com.eventer.admin.data.model.EventCategory();
+
+        model.setId(eventCategory.getId());
+        model.setName(eventCategory.getName());
+        model.setDescription(eventCategory.getDescription());
+        model.setCreatedBy("SYSTEM");
+
+        return model;
     }
 
     public static com.eventer.admin.data.model.EventCategory toModel(

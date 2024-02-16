@@ -11,6 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 public class EventCategoryServiceImpl implements EventCategoryService {
 
@@ -28,7 +31,8 @@ public class EventCategoryServiceImpl implements EventCategoryService {
             return Result.conflict(ResultErrorMessages.categoryAlreadyExists);
         }
 
-        Result<EventCategory> newCategoryOrError = EventCategory.create(request.name(), request.description());
+        Result<EventCategory> newCategoryOrError =
+                EventCategory.create(request.name(), request.description());
 
         if (newCategoryOrError.isFailure()) {
             return Result.fromError(newCategoryOrError);
@@ -56,5 +60,17 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         }
 
         return categoriesOrError;
+    }
+
+    @Override
+    public Result<Set<EventCategory>> getCategoriesByIds(Set<Long> ids) {
+        List<com.eventer.admin.data.model.EventCategory> foundCategories =
+                this.eventCategoryRepository.findAllById(ids);
+
+        if (foundCategories.size() == 0) {
+            return Result.notFound(ResultErrorMessages.categoriesNotFound);
+        }
+
+        return EventCategoryMapper.toDomainSet(foundCategories);
     }
 }

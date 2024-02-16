@@ -1,40 +1,50 @@
 package com.eventer.admin.service.impl;
 
 import com.eventer.admin.contracts.event.CreateEventRequest;
+import com.eventer.admin.service.EventCategoryService;
 import com.eventer.admin.service.domain.Event;
 import com.eventer.admin.mapper.EventMapper;
 import com.eventer.admin.data.repository.EventRepository;
 import com.eventer.admin.service.EventService;
+import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.utils.Result;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
+@Service
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
+    private final EventCategoryService eventCategoryService;
 
-    public EventServiceImpl(EventRepository eventRepository) {
+    public EventServiceImpl(
+            EventRepository eventRepository, EventCategoryService eventCategoryService) {
         this.eventRepository = eventRepository;
+        this.eventCategoryService = eventCategoryService;
     }
 
     @Override
     public Result<Event> create(CreateEventRequest createEventRequest) {
-        if (createEventRequest.weatherConditions().stream().anyMatch(Result::isFailure)) {
-            return Result.fromError(
-                    createEventRequest.weatherConditions().stream()
-                            .filter(Result::isFailure)
-                            .findFirst()
-                            .get());
+        if (createEventRequest.weatherConditionsOrError().isFailure()) {
+            return Result.fromError(createEventRequest.weatherConditionsOrError());
         }
 
-        if (createEventRequest.eventCategories().stream().anyMatch(Result::isFailure)) {
-            return Result.fromError(
-                    createEventRequest.eventCategories().stream()
-                            .filter(Result::isFailure)
-                            .findFirst()
-                            .get());
+        if (createEventRequest.eventCategoriesOrError().isFailure()) {
+            return Result.fromError(createEventRequest.eventCategoriesOrError());
+        }
+
+        Result<Set<EventCategory>> categoriesOrError =
+                this.eventCategoryService.getCategoriesByIds(
+                        createEventRequest.eventCategoriesOrError().getValue().stream()
+                                .map(EventCategory::getId)
+                                .collect(Collectors.toSet()));
+
+        if (categoriesOrError.isFailure()) {
+            return Result.fromError(categoriesOrError);
         }
 
         Result<Event> eventOrError =
@@ -42,12 +52,8 @@ public class EventServiceImpl implements EventService {
                         createEventRequest.title(),
                         createEventRequest.description(),
                         createEventRequest.location(),
-                        createEventRequest.weatherConditions().stream()
-                                .map(Result::getValue)
-                                .collect(Collectors.toSet()),
-                        createEventRequest.eventCategories().stream()
-                                .map(Result::getValue)
-                                .collect(Collectors.toSet()));
+                        createEventRequest.weatherConditionsOrError().getValue(),
+                        createEventRequest.eventCategoriesOrError().getValue());
 
         if (eventOrError.isFailure()) {
             return Result.fromError(eventOrError);

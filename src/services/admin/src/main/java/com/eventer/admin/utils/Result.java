@@ -1,5 +1,9 @@
 package com.eventer.admin.utils;
 
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class Result<T> {
 
     private final ResultType type;
@@ -54,6 +58,20 @@ public class Result<T> {
 
     public static <T> Result<T> fromError(Result error) {
         return new Result<T>(error.getType(), true, error.getMessage());
+    }
+
+    public static <T> Result<Set<T>> getResultValueSet(Set<Result<T>> setOfResults) {
+        Optional<Result<T>> firstFailureOrNull =
+                setOfResults.stream().filter(Result::isFailure).findFirst();
+
+        return firstFailureOrNull
+                .<Result<Set<T>>>map(Result::fromError)
+                .orElseGet(
+                        () ->
+                                Result.success(
+                                        setOfResults.stream()
+                                                .map(Result::getValue)
+                                                .collect(Collectors.toSet())));
     }
 
     public ResultType getType() {

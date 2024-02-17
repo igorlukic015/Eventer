@@ -2,6 +2,7 @@ package com.eventer.admin.data.model;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 
@@ -23,6 +24,9 @@ public class Event extends AbstractAuditingEntity<Long> {
 
     @Column(name = "location", length = 255, nullable = false)
     private String location;
+
+    @Column(name = "date", nullable = false)
+    private Instant date;
 
     @Column(name = "weather_condition_availability", length = 255, nullable = false)
     private String weatherConditionAvailability;
@@ -92,6 +96,14 @@ public class Event extends AbstractAuditingEntity<Long> {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Instant getDate() {
+        return date;
+    }
+
+    public void setDate(Instant date) {
+        this.date = date;
     }
 
     public String getWeatherConditionAvailability() {

@@ -8,6 +8,7 @@ public class CreateEventDTO {
     private String title;
     private String description;
     private String location;
+    private String date;
     private Set<String> weatherConditions;
     private Set<EventCategoryDTO> eventCategories;
 
@@ -17,6 +18,7 @@ public class CreateEventDTO {
             String title,
             String description,
             String location,
+            String date,
             Set<String> weatherConditions,
             Set<EventCategoryDTO> eventCategories) {
         this.title = title;
@@ -50,6 +52,14 @@ public class CreateEventDTO {
         this.location = location;
     }
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
     public Set<String> getWeatherConditions() {
         return weatherConditions;
     }
@@ -66,4 +76,3 @@ public class CreateEventDTO {
         this.eventCategories = eventCategories;
     }
 }
-

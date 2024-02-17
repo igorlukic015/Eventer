@@ -37,6 +37,10 @@ public class EventServiceImpl implements EventService {
             return Result.fromError(createEventRequest.eventCategoriesOrError());
         }
 
+        if (createEventRequest.dateOrError().isFailure()) {
+            return Result.fromError(createEventRequest.dateOrError());
+        }
+
         Result<Set<EventCategory>> categoriesOrError =
                 this.eventCategoryService.getCategoriesByIds(
                         createEventRequest.eventCategoriesOrError().getValue().stream()
@@ -52,6 +56,7 @@ public class EventServiceImpl implements EventService {
                         createEventRequest.title(),
                         createEventRequest.description(),
                         createEventRequest.location(),
+                        createEventRequest.dateOrError().getValue(),
                         createEventRequest.weatherConditionsOrError().getValue(),
                         createEventRequest.eventCategoriesOrError().getValue(),
                         createEventRequest.imagesOrError().getValue());
@@ -60,8 +65,7 @@ public class EventServiceImpl implements EventService {
             return Result.fromError(eventOrError);
         }
 
-        com.eventer.admin.data.model.Event event =
-                EventMapper.toModel(eventOrError.getValue());
+        com.eventer.admin.data.model.Event event = EventMapper.toModel(eventOrError.getValue());
 
         com.eventer.admin.data.model.Event result = this.eventRepository.save(event);
 

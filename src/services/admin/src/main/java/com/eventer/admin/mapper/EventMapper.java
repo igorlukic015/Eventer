@@ -12,6 +12,8 @@ import com.eventer.admin.web.dto.event.EventDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,10 +51,19 @@ public class EventMapper {
         Result<Set<EventCategory>> categoriesOrError =
                 EventCategoryMapper.toDomainSet(dto.getEventCategories());
 
+        Result<Instant> dateOrError;
+
+        try {
+            dateOrError = Result.success(Instant.parse(dto.getDate()));
+        } catch (DateTimeParseException e) {
+            dateOrError = Result.invalid(e.getMessage());
+        }
+
         return new CreateEventRequest(
                 dto.getTitle(),
                 dto.getDescription(),
                 dto.getLocation(),
+                dateOrError,
                 conditionsOrError,
                 categoriesOrError,
                 Result.invalid(""));
@@ -75,6 +86,7 @@ public class EventMapper {
                 model.getTitle(),
                 model.getDescription(),
                 model.getLocation(),
+                model.getDate(),
                 model.getWeatherConditionAvailability(),
                 categoriesOrError,
                 imagesOrError);

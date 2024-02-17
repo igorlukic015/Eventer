@@ -4,6 +4,7 @@ import com.eventer.admin.utils.Helpers;
 import com.eventer.admin.utils.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,6 +18,8 @@ public class Event {
 
     private final String location;
 
+    private final Instant date;
+
     private final Set<WeatherCondition> weatherConditionAvailability;
 
     private final Set<EventCategory> categories;
@@ -28,6 +31,7 @@ public class Event {
             String title,
             String description,
             String location,
+            Instant date,
             Set<WeatherCondition> weatherConditionAvailability,
             Set<EventCategory> categories,
             Set<Image> images) {
@@ -35,6 +39,7 @@ public class Event {
         this.title = title;
         this.description = description;
         this.location = location;
+        this.date = date;
         this.weatherConditionAvailability = weatherConditionAvailability;
         this.categories = categories;
         this.images = images;
@@ -45,6 +50,7 @@ public class Event {
             String title,
             String description,
             String location,
+            Instant date,
             String weatherConditionAvailability,
             Result<Set<EventCategory>> categoriesOrError,
             Result<Set<Image>> imagesOrError) {
@@ -74,6 +80,7 @@ public class Event {
                         title,
                         description,
                         location,
+                        date,
                         weatherConditionsOrError.getValue(),
                         categoriesOrError.getValue(),
                         imagesOrError.getValue());
@@ -85,6 +92,7 @@ public class Event {
             String title,
             String description,
             String location,
+            Instant date,
             Set<WeatherCondition> weatherConditions,
             Set<EventCategory> categories,
             Set<Image> images) {
@@ -102,7 +110,15 @@ public class Event {
         }
 
         Event event =
-                new Event(null, title, description, location, weatherConditions, categories, images);
+                new Event(
+                        null,
+                        title,
+                        description,
+                        location,
+                        date,
+                        weatherConditions,
+                        categories,
+                        images);
 
         return Result.success(event);
     }
@@ -121,6 +137,10 @@ public class Event {
 
     public String getLocation() {
         return location;
+    }
+
+    public Instant getDate() {
+        return date;
     }
 
     public Set<WeatherCondition> getWeatherConditionAvailability() {

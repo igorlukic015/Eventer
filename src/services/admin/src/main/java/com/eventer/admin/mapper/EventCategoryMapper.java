@@ -25,14 +25,12 @@ public class EventCategoryMapper {
     }
 
     public static Result<EventCategory> toDomain(EventCategoryDTO dto) {
-        Result<EventCategory> eventCategoryOrError =
-                EventCategory.create(dto.id(), dto.name(), dto.description());
+        return EventCategory.create(dto.id(), dto.name(), dto.description());
+    }
 
-        if (eventCategoryOrError.isFailure()) {
-            return Result.fromError(eventCategoryOrError);
-        }
-
-        return eventCategoryOrError;
+    public static Result<Set<EventCategory>> toDomainSet(Set<EventCategoryDTO> dtos) {
+        return Result.getResultValueSet(
+                dtos.stream().map(EventCategoryMapper::toDomain).collect(Collectors.toSet()));
     }
 
     public static Result<EventCategory> toDomain(com.eventer.admin.data.model.EventCategory model) {
@@ -48,41 +46,31 @@ public class EventCategoryMapper {
 
     public static Result<Set<EventCategory>> toDomainSet(
             List<com.eventer.admin.data.model.EventCategory> models) {
-        Set<Result<EventCategory>> eventCategoriesOrError =
-                models.stream().map(EventCategoryMapper::toDomain).collect(Collectors.toSet());
-
-        Optional<Result<EventCategory>> failureOrNull =
-                eventCategoriesOrError.stream().filter(Result::isFailure).findFirst();
-
-        if (failureOrNull.isPresent()) {
-            return Result.fromError(failureOrNull.get());
-        }
-        return Result.success(
-                eventCategoriesOrError.stream().map(Result::getValue).collect(Collectors.toSet()));
+        return Result.getResultValueSet(
+                models.stream().map(EventCategoryMapper::toDomain).collect(Collectors.toSet()));
     }
 
     public static Result<Page<EventCategory>> toDomainPage(
             Page<com.eventer.admin.data.model.EventCategory> foundCategories) {
-        List<Result<EventCategory>> categories =
-                foundCategories.stream().map(EventCategoryMapper::toDomain).toList();
+        Result<List<EventCategory>> categoriesOrError =
+                Result.getResultValueSet(
+                        foundCategories.stream().map(EventCategoryMapper::toDomain).toList(),
+                        Collectors.toList());
 
-        Optional<Result<EventCategory>> failureOrNull = categories.stream().filter(Result::isFailure).findFirst();
-
-        if (failureOrNull.isPresent()) {
-            return Result.fromError(failureOrNull.get());
+        if (categoriesOrError.isFailure()) {
+            return Result.fromError(categoriesOrError);
         }
 
         Page<EventCategory> result =
                 new PageImpl<>(
-                        categories.stream().map(Result::getValue).toList(),
+                        categoriesOrError.getValue(),
                         foundCategories.getPageable(),
                         foundCategories.getTotalElements());
 
         return Result.success(result);
     }
 
-    public static com.eventer.admin.data.model.EventCategory toModel(
-            EventCategory eventCategory) {
+    public static com.eventer.admin.data.model.EventCategory toModel(EventCategory eventCategory) {
         var model = new com.eventer.admin.data.model.EventCategory();
 
         model.setId(eventCategory.getId());

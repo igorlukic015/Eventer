@@ -53,7 +53,8 @@ public class EventServiceImpl implements EventService {
                         createEventRequest.description(),
                         createEventRequest.location(),
                         createEventRequest.weatherConditionsOrError().getValue(),
-                        createEventRequest.eventCategoriesOrError().getValue());
+                        createEventRequest.eventCategoriesOrError().getValue(),
+                        createEventRequest.imagesOrError().getValue());
 
         if (eventOrError.isFailure()) {
             return Result.fromError(eventOrError);

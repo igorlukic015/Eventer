@@ -10,20 +10,4 @@ public record EventDTO(
         String description,
         String location,
         Set<String> weatherConditions,
-        Set<EventCategoryDTO> categories) {
-
-    public EventDTO(
-            Long id,
-            String title,
-            String description,
-            String location,
-            Set<String> weatherConditions,
-            Set<EventCategoryDTO> categories) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.location = location;
-        this.weatherConditions = weatherConditions;
-        this.categories = categories;
-    }
-}
+        Set<EventCategoryDTO> categories) {}

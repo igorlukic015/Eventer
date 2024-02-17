@@ -1,7 +1,9 @@
 package com.eventer.admin.utils;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class Result<T> {
@@ -60,18 +62,33 @@ public class Result<T> {
         return new Result<T>(error.getType(), true, error.getMessage());
     }
 
-    public static <T> Result<Set<T>> getResultValueSet(Set<Result<T>> setOfResults) {
+    public static <T> Result<Set<T>> getResultValueSet(Set<Result<T>> collectionOfResults) {
         Optional<Result<T>> firstFailureOrNull =
-                setOfResults.stream().filter(Result::isFailure).findFirst();
+                collectionOfResults.stream().filter(Result::isFailure).findFirst();
 
         return firstFailureOrNull
                 .<Result<Set<T>>>map(Result::fromError)
                 .orElseGet(
                         () ->
                                 Result.success(
-                                        setOfResults.stream()
+                                        collectionOfResults.stream()
                                                 .map(Result::getValue)
                                                 .collect(Collectors.toSet())));
+    }
+
+    public static <T, C extends Collection<T>> Result<C> getResultValueSet(
+            Collection<Result<T>> collectionOfResults, Collector<T, ?, C> collector) {
+        Optional<Result<T>> firstFailureOrNull =
+                collectionOfResults.stream().filter(Result::isFailure).findFirst();
+
+        return firstFailureOrNull
+                .<Result<C>>map(Result::fromError)
+                .orElseGet(
+                        () ->
+                                Result.success(
+                                        collectionOfResults.stream()
+                                                .map(Result::getValue)
+                                                .collect(collector)));
     }
 
     public ResultType getType() {

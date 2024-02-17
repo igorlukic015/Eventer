@@ -21,19 +21,23 @@ public class Event {
 
     private final Set<EventCategory> categories;
 
+    private final Set<Image> images;
+
     private Event(
             Long id,
             String title,
             String description,
             String location,
             Set<WeatherCondition> weatherConditionAvailability,
-            Set<EventCategory> categories) {
+            Set<EventCategory> categories,
+            Set<Image> images) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.location = location;
         this.weatherConditionAvailability = weatherConditionAvailability;
         this.categories = categories;
+        this.images = images;
     }
 
     public static Result<Event> create(
@@ -42,20 +46,26 @@ public class Event {
             String description,
             String location,
             String weatherConditionAvailability,
-            Set<Result<EventCategory>> categoriesOrError) {
-        if (categoriesOrError.stream().anyMatch(Result::isFailure)) {
-            return Result.fromError(
-                    categoriesOrError.stream().filter(Result::isFailure).findFirst().get());
+            Result<Set<EventCategory>> categoriesOrError,
+            Result<Set<Image>> imagesOrError) {
+        if (categoriesOrError.isFailure()) {
+            return Result.fromError(categoriesOrError);
         }
 
-        Set<Result<WeatherCondition>> weatherConditionsOrError =
-                Arrays.stream(weatherConditionAvailability.split(";"))
-                        .map(WeatherCondition::create)
-                        .collect(Collectors.toSet());
+        if (imagesOrError.isFailure()) {
+            return Result.fromError(imagesOrError);
+        }
 
-        if (weatherConditionsOrError.stream().anyMatch(Result::isFailure)) {
-            return Result.fromError(
-                    weatherConditionsOrError.stream().filter(Result::isFailure).findFirst().get());
+        Result<Set<WeatherCondition>> weatherConditionsOrError =
+                Result.getResultValueSet(
+                        Arrays.stream(
+                                        weatherConditionAvailability.split(
+                                                WeatherCondition.serializationSeparator))
+                                .map(WeatherCondition::create)
+                                .collect(Collectors.toSet()));
+
+        if (weatherConditionsOrError.isFailure()) {
+            return Result.fromError(weatherConditionsOrError);
         }
 
         Event event =
@@ -64,12 +74,9 @@ public class Event {
                         title,
                         description,
                         location,
-                        weatherConditionsOrError.stream()
-                                .map(Result::getValue)
-                                .collect(Collectors.toSet()),
-                        categoriesOrError.stream()
-                                .map(Result::getValue)
-                                .collect(Collectors.toSet()));
+                        weatherConditionsOrError.getValue(),
+                        categoriesOrError.getValue(),
+                        imagesOrError.getValue());
 
         return Result.success(event);
     }
@@ -79,21 +86,23 @@ public class Event {
             String description,
             String location,
             Set<WeatherCondition> weatherConditions,
-            Set<EventCategory> categories) {
+            Set<EventCategory> categories,
+            Set<Image> images) {
 
         if (Helpers.isNullOrEmpty(title) || title.length() > 255) {
             return Result.invalid(ResultErrorMessages.invalidEventTitle);
         }
 
-        if (description.length() > 255){
-          return Result.invalid(ResultErrorMessages.invalidEventDescription);
+        if (description.length() > 255) {
+            return Result.invalid(ResultErrorMessages.invalidEventDescription);
         }
 
         if (Helpers.isNullOrEmpty(location) || location.length() > 255) {
             return Result.invalid(ResultErrorMessages.invalidEventLocation);
         }
 
-        Event event = new Event(0L, title, description, location, weatherConditions, categories);
+        Event event =
+                new Event(0L, title, description, location, weatherConditions, categories, images);
 
         return Result.success(event);
     }

@@ -3,6 +3,7 @@ package com.eventer.admin.mapper;
 import com.eventer.admin.contracts.event.CreateEventRequest;
 import com.eventer.admin.service.domain.Event;
 import com.eventer.admin.service.domain.EventCategory;
+import com.eventer.admin.service.domain.Image;
 import com.eventer.admin.service.domain.WeatherCondition;
 import com.eventer.admin.utils.Result;
 
@@ -40,54 +41,56 @@ public class EventMapper {
     public static CreateEventRequest toRequest(CreateEventDTO dto) {
         Result<Set<WeatherCondition>> conditionsOrError =
                 Result.getResultValueSet(
-                        dto.weatherConditions().stream()
+                        dto.getWeatherConditions().stream()
                                 .map(WeatherCondition::create)
                                 .collect(Collectors.toSet()));
 
         Result<Set<EventCategory>> categoriesOrError =
-                Result.getResultValueSet(
-                        dto.eventCategories().stream()
-                                .map(EventCategoryMapper::toDomain)
-                                .collect(Collectors.toSet()));
+                EventCategoryMapper.toDomainSet(dto.getEventCategories());
 
         return new CreateEventRequest(
-                dto.title(),
-                dto.description(),
-                dto.location(),
+                dto.getTitle(),
+                dto.getDescription(),
+                dto.getLocation(),
                 conditionsOrError,
-                categoriesOrError);
+                categoriesOrError,
+                Result.invalid(""));
     }
 
     public static Result<Event> toDomain(com.eventer.admin.data.model.Event model) {
-        Result<Event> eventOrError =
-                Event.create(
-                        model.getId(),
-                        model.getTitle(),
-                        model.getDescription(),
-                        model.getLocation(),
-                        model.getWeatherConditionAvailability(),
+        Result<Set<EventCategory>> categoriesOrError =
+                Result.getResultValueSet(
                         model.getCategories().stream()
                                 .map(EventCategoryMapper::toDomain)
                                 .collect(Collectors.toSet()));
 
-        if (eventOrError.isFailure()) {
-            return Result.fromError(eventOrError);
-        }
+        Result<Set<Image>> imagesOrError =
+                ImageMapper.toDomainSet(model.getImages().stream().toList());
 
-        return eventOrError;
+        return Event.create(
+                model.getId(),
+                model.getTitle(),
+                model.getDescription(),
+                model.getLocation(),
+                model.getWeatherConditionAvailability(),
+                categoriesOrError,
+                imagesOrError);
     }
 
     public static Result<Page<Event>> toDomainPage(
             Page<com.eventer.admin.data.model.Event> foundEvents) {
-        List<Result<Event>> events = foundEvents.stream().map(EventMapper::toDomain).toList();
+        Result<List<Event>> eventsOrError =
+                Result.getResultValueSet(
+                        foundEvents.stream().map(EventMapper::toDomain).toList(),
+                        Collectors.toList());
 
-        if (events.stream().anyMatch(Result::isFailure)) {
-            return Result.fromError(events.stream().filter(Result::isFailure).findFirst().get());
+        if (eventsOrError.isFailure()) {
+            return Result.fromError(eventsOrError);
         }
 
         Page<Event> result =
                 new PageImpl<>(
-                        events.stream().map(Result::getValue).toList(),
+                        eventsOrError.getValue(),
                         foundEvents.getPageable(),
                         foundEvents.getTotalElements());
 
@@ -104,7 +107,7 @@ public class EventMapper {
 
         model.setWeatherConditionAvailability(
                 String.join(
-                        ";",
+                        WeatherCondition.serializationSeparator,
                         event.getWeatherConditionAvailability().stream()
                                 .map(WeatherCondition::getName)
                                 .toList()));

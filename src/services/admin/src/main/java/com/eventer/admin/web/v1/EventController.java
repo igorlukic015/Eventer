@@ -8,6 +8,7 @@ import com.eventer.admin.web.dto.event.CreateEventDTO;
 import com.eventer.admin.mapper.EventMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +21,8 @@ public class EventController extends ControllerBase {
         this.eventService = eventService;
     }
 
-    @PostMapping
-    public ResponseEntity<?> create(@RequestBody CreateEventDTO dto) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> create(@ModelAttribute CreateEventDTO dto) {
         Result<Event> result = this.eventService.create(EventMapper.toRequest(dto));
         return this.okOrError(result, EventMapper::toDTO);
     }

@@ -76,19 +76,6 @@ public class EventCategoryMapper {
         model.setId(eventCategory.getId());
         model.setName(eventCategory.getName());
         model.setDescription(eventCategory.getDescription());
-        model.setCreatedBy("SYSTEM");
-
-        return model;
-    }
-
-    public static com.eventer.admin.data.model.EventCategory toModel(
-            EventCategory eventCategory, String createdBy) {
-        var model = new com.eventer.admin.data.model.EventCategory();
-
-        model.setId(eventCategory.getId());
-        model.setName(eventCategory.getName());
-        model.setDescription(eventCategory.getDescription());
-        model.setCreatedBy(createdBy);
 
         return model;
     }

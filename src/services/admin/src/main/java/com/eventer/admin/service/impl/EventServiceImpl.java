@@ -61,7 +61,7 @@ public class EventServiceImpl implements EventService {
         }
 
         com.eventer.admin.data.model.Event event =
-                EventMapper.toModel(eventOrError.getValue(), "SYSTEM");
+                EventMapper.toModel(eventOrError.getValue());
 
         com.eventer.admin.data.model.Event result = this.eventRepository.save(event);
 

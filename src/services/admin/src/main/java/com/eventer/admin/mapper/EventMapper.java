@@ -12,6 +12,7 @@ import com.eventer.admin.web.dto.event.EventDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,7 +66,9 @@ public class EventMapper {
                                 .collect(Collectors.toSet()));
 
         Result<Set<Image>> imagesOrError =
-                ImageMapper.toDomainSet(model.getImages().stream().toList());
+                model.getImages() == null
+                        ? Result.success(new HashSet<>())
+                        : ImageMapper.toDomainSet(model.getImages().stream().toList());
 
         return Event.create(
                 model.getId(),
@@ -97,7 +100,7 @@ public class EventMapper {
         return Result.success(result);
     }
 
-    public static com.eventer.admin.data.model.Event toModel(Event event, String createdBy) {
+    public static com.eventer.admin.data.model.Event toModel(Event event) {
         var model = new com.eventer.admin.data.model.Event();
 
         model.setId(event.getId());
@@ -116,8 +119,6 @@ public class EventMapper {
                 event.getCategories().stream()
                         .map(EventCategoryMapper::toModel)
                         .collect(Collectors.toSet()));
-
-        model.setCreatedBy(createdBy);
 
         return model;
     }

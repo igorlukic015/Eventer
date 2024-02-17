@@ -1,18 +1,15 @@
 package com.eventer.admin.web.dto.event;
 
 import com.eventer.admin.web.dto.eventcategory.EventCategoryDTO;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
 public class CreateEventDTO {
-
     private String title;
     private String description;
     private String location;
     private Set<String> weatherConditions;
     private Set<EventCategoryDTO> eventCategories;
-    private Set<MultipartFile> images;
 
     public CreateEventDTO() {}
 
@@ -21,14 +18,12 @@ public class CreateEventDTO {
             String description,
             String location,
             Set<String> weatherConditions,
-            Set<EventCategoryDTO> eventCategories,
-            Set<MultipartFile> images) {
+            Set<EventCategoryDTO> eventCategories) {
         this.title = title;
         this.description = description;
         this.location = location;
         this.weatherConditions = weatherConditions;
         this.eventCategories = eventCategories;
-        this.images = images;
     }
 
     public String getTitle() {
@@ -70,12 +65,5 @@ public class CreateEventDTO {
     public void setEventCategories(Set<EventCategoryDTO> eventCategories) {
         this.eventCategories = eventCategories;
     }
-
-    public Set<MultipartFile> getImages() {
-        return images;
-    }
-
-    public void setImages(Set<MultipartFile> images) {
-        this.images = images;
-    }
 }
+

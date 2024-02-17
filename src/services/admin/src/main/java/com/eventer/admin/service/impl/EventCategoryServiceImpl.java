@@ -39,7 +39,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         }
 
         com.eventer.admin.data.model.EventCategory eventCategory =
-                EventCategoryMapper.toModel(newCategoryOrError.getValue(), "SYSTEM");
+                EventCategoryMapper.toModel(newCategoryOrError.getValue());
 
         com.eventer.admin.data.model.EventCategory result =
                 this.eventCategoryRepository.save(eventCategory);

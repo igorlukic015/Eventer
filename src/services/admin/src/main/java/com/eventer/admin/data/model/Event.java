@@ -2,7 +2,7 @@ package com.eventer.admin.data.model;
 
 import jakarta.persistence.*;
 
-import java.time.Instant;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -27,40 +27,31 @@ public class Event extends AbstractAuditingEntity<Long> {
     @Column(name = "weather_condition_availability", length = 255, nullable = false)
     private String weatherConditionAvailability;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @JoinColumn(name = "event_id")
     private Set<Image> images;
 
     @ManyToMany
     @JoinTable(
             name = "linked_categories",
-            joinColumns = @JoinColumn(name = "event_category_id"),
-            inverseJoinColumns = @JoinColumn(name = "id")
-    )
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_category_id"))
     private Set<EventCategory> categories;
 
-    public Event() {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        return Objects.equals(id, event.id);
     }
 
-    public Event(String createdBy,
-                 Instant createdDate,
-                 String lastModifiedBy,
-                 Instant lastModifiedDate,
-                 Long id,
-                 String title,
-                 String description,
-                 String location,
-                 String weatherConditionAvailability,
-                 Set<Image> images,
-                 Set<EventCategory> categories) {
-        super(createdBy, createdDate, lastModifiedBy, lastModifiedDate);
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.location = location;
-        this.weatherConditionAvailability = weatherConditionAvailability;
-        this.images = images;
-        this.categories = categories;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
+
+    public Event() {}
 
     @Override
     public Long getId() {

@@ -2,8 +2,7 @@ package com.eventer.admin.data.model;
 
 import jakarta.persistence.*;
 
-import java.time.Instant;
-import java.util.Set;
+import java.util.Objects;
 
 @Entity
 @Table(name = "event_category")
@@ -21,25 +20,20 @@ public class EventCategory extends AbstractAuditingEntity<Long> {
     @Column(name = "description", length = 255)
     private String description;
 
-    @ManyToMany(mappedBy = "categories")
-    private Set<Event> events;
-
-    public EventCategory() {
-
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EventCategory that = (EventCategory) o;
+        return Objects.equals(id, that.id);
     }
 
-    public EventCategory(String createdBy,
-                         Instant createdDate,
-                         String lastModifiedBy,
-                         Instant lastModifiedDate,
-                         Long id,
-                         String name,
-                         String description) {
-        super(createdBy, createdDate, lastModifiedBy, lastModifiedDate);
-        this.id = id;
-        this.name = name;
-        this.description = description;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
+
+    public EventCategory() {}
 
     public Long getId() {
         return id;

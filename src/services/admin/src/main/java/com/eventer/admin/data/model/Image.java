@@ -2,7 +2,7 @@ package com.eventer.admin.data.model;
 
 import jakarta.persistence.*;
 
-import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table(name = "image")
@@ -17,24 +17,20 @@ public class Image extends AbstractAuditingEntity<Long> {
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id")
-    private Event event;
-
-    public Image() {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Image image = (Image) o;
+        return Objects.equals(id, image.id);
     }
 
-    public Image(String createdBy,
-                 Instant createdDate,
-                 String lastModifiedBy,
-                 Instant lastModifiedDate,
-                 Long id,
-                 String name,
-                 Event event) {
-        super(createdBy, createdDate, lastModifiedBy, lastModifiedDate);
-        this.id = id;
-        this.name = name;
-        this.event = event;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public Image() {
     }
 
     @Override
@@ -52,13 +48,5 @@ public class Image extends AbstractAuditingEntity<Long> {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
     }
 }

@@ -33,7 +33,7 @@ public class EventCategory {
         return Result.invalid(ResultErrorMessages.invalidEventCategoryDescription);
     }
     
-    EventCategory eventCategory = new EventCategory(0L, name, description);
+    EventCategory eventCategory = new EventCategory(null, name, description);
 
     return Result.success(eventCategory);
   }

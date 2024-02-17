@@ -102,7 +102,7 @@ public class Event {
         }
 
         Event event =
-                new Event(0L, title, description, location, weatherConditions, categories, images);
+                new Event(null, title, description, location, weatherConditions, categories, images);
 
         return Result.success(event);
     }

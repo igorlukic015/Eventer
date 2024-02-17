@@ -3,8 +3,8 @@ package com.eventer.admin.service.domain;
 import com.eventer.admin.utils.Result;
 
 public class Image {
-    private Long id;
-    private String name;
+    private final Long id;
+    private final String name;
 
     private Image(Long id, String name) {
         this.id = id;
@@ -16,7 +16,7 @@ public class Image {
     }
 
     public static Result<Image> create(String name) {
-        return Result.success(new Image(0L, name));
+        return Result.success(new Image(null, name));
     }
 
     public Long getId() {

@@ -1,12 +1,12 @@
 package com.eventer.admin.web.v1;
 
 import com.eventer.admin.service.EventService;
+import com.eventer.admin.service.ImageService;
 import com.eventer.admin.service.domain.Event;
 import com.eventer.admin.utils.Result;
 import com.eventer.admin.web.ControllerBase;
 import com.eventer.admin.web.dto.event.CreateEventDTO;
 import com.eventer.admin.mapper.EventMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,29 +15,47 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/event")
 public class EventController extends ControllerBase {
     private final EventService eventService;
+    private final ImageService imageService;
     private final ObjectMapper objectMapper;
 
-    public EventController(EventService eventService, ObjectMapper objectMapper) {
+    public EventController(
+            EventService eventService, ImageService imageService, ObjectMapper objectMapper) {
         this.eventService = eventService;
+        this.imageService = imageService;
         this.objectMapper = objectMapper;
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(
             @RequestParam("data") String data, @RequestParam("images") List<MultipartFile> images) {
+        Set<Path> savedImages =
+                this.imageService.saveImageFiles(images, Event.class.getSimpleName());
+
+        CreateEventDTO dto;
         try {
-            CreateEventDTO dto = this.objectMapper.readValue(data, CreateEventDTO.class);
-            Result<Event> result = this.eventService.create(EventMapper.toRequest(dto));
-            return this.okOrError(result, EventMapper::toDTO);
-        } catch (JsonProcessingException e) {
-            return this.okOrError(Result.invalid("INVALID_FORM_DATA"), EventMapper::toDTO);
+            dto = this.objectMapper.readValue(data, CreateEventDTO.class);
+        } catch (Exception e) {
+            this.imageService.deleteOnFailure(savedImages);
+            return this.okOrError(Result.invalid("INVALID_FORM_DATA"), null);
         }
+
+        Result<Event> result;
+        try{
+            result = this.eventService.create(EventMapper.toRequest(dto, savedImages));
+        } catch (Exception e) {
+            this.imageService.deleteOnFailure(savedImages);
+            return this.okOrError(Result.internalError(e.getMessage()), null);
+        }
+
+        return this.okOrError(result, EventMapper::toDTO);
     }
 
     @GetMapping

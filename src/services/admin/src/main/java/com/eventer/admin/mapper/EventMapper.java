@@ -12,9 +12,9 @@ import com.eventer.admin.web.dto.event.EventDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,7 +32,8 @@ public class EventMapper {
                         .collect(Collectors.toSet()),
                 domain.getCategories().stream()
                         .map(EventCategoryMapper::toDTO)
-                        .collect(Collectors.toSet()));
+                        .collect(Collectors.toSet()),
+                domain.getImages().stream().map(ImageMapper::toDTO).collect(Collectors.toSet()));
     }
 
     public static Page<EventDTO> toDTOs(Page<Event> domainPage) {
@@ -41,7 +42,7 @@ public class EventMapper {
         return new PageImpl<>(dtos, domainPage.getPageable(), domainPage.getTotalElements());
     }
 
-    public static CreateEventRequest toRequest(CreateEventDTO dto) {
+    public static CreateEventRequest toRequest(CreateEventDTO dto, Set<Path> savedImages) {
         Result<Set<WeatherCondition>> conditionsOrError =
                 Result.getResultValueSet(
                         dto.getWeatherConditions().stream()
@@ -66,7 +67,7 @@ public class EventMapper {
                 dateOrError,
                 conditionsOrError,
                 categoriesOrError,
-                Result.invalid(""));
+                savedImages);
     }
 
     public static Result<Event> toDomain(com.eventer.admin.data.model.Event model) {
@@ -77,9 +78,7 @@ public class EventMapper {
                                 .collect(Collectors.toSet()));
 
         Result<Set<Image>> imagesOrError =
-                model.getImages() == null
-                        ? Result.success(new HashSet<>())
-                        : ImageMapper.toDomainSet(model.getImages().stream().toList());
+                ImageMapper.toDomainSet(model.getImages().stream().toList());
 
         return Event.create(
                 model.getId(),
@@ -112,13 +111,14 @@ public class EventMapper {
         return Result.success(result);
     }
 
-    public static com.eventer.admin.data.model.Event toModel(Event event) {
+    public static com.eventer.admin.data.model.Event toModel(Event event, Set<Image> images) {
         var model = new com.eventer.admin.data.model.Event();
 
         model.setId(event.getId());
         model.setTitle(event.getTitle());
         model.setDescription(event.getDescription());
         model.setLocation(event.getLocation());
+        model.setDate(event.getDate());
 
         model.setWeatherConditionAvailability(
                 String.join(
@@ -130,6 +130,11 @@ public class EventMapper {
         model.setCategories(
                 event.getCategories().stream()
                         .map(EventCategoryMapper::toModel)
+                        .collect(Collectors.toSet()));
+
+        model.setImages(
+                images.stream()
+                        .map(image -> ImageMapper.toModel(image, Event.class.getSimpleName()))
                         .collect(Collectors.toSet()));
 
         return model;

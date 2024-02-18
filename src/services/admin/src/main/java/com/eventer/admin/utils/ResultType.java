@@ -6,5 +6,6 @@ public enum ResultType {
     CONFLICT,
     SUCCESS,
     UNAUTHORIZED,
-    FORBIDDEN
+    FORBIDDEN,
+    INTERNAL_SERVER_ERROR
 }

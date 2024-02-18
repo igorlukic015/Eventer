@@ -58,6 +58,10 @@ public class Result<T> {
         return new Result<>(ResultType.FORBIDDEN, true, message);
     }
 
+    public static <T> Result<T> internalError(String message) {
+        return new Result<>(ResultType.INTERNAL_SERVER_ERROR, true, message);
+    }
+
     public static <T> Result<T> fromError(Result error) {
         return new Result<T>(error.getType(), true, error.getMessage());
     }

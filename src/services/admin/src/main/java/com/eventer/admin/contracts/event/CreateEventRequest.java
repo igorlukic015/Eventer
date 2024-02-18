@@ -5,6 +5,7 @@ import com.eventer.admin.service.domain.Image;
 import com.eventer.admin.service.domain.WeatherCondition;
 import com.eventer.admin.utils.Result;
 
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Set;
 
@@ -15,4 +16,4 @@ public record CreateEventRequest(
         Result<Instant> dateOrError,
         Result<Set<WeatherCondition>> weatherConditionsOrError,
         Result<Set<EventCategory>> eventCategoriesOrError,
-        Result<Set<Image>> imagesOrError) {}
+        Set<Path> savedImages) {}

@@ -10,4 +10,5 @@ public record EventDTO(
         String description,
         String location,
         Set<String> weatherConditions,
-        Set<EventCategoryDTO> categories) {}
+        Set<EventCategoryDTO> categories,
+        Set<ImageDTO> images) {}

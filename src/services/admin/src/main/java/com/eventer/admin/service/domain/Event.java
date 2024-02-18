@@ -150,4 +150,8 @@ public class Event {
     public Set<EventCategory> getCategories() {
         return categories;
     }
+
+    public Set<Image> getImages() {
+        return images;
+    }
 }

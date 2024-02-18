@@ -16,4 +16,7 @@ public class ResultErrorMessages {
 
     // WEATHER CONDITION
     public static final String invalidWeatherCondition = "INVALID_WEATHER_CONDITION";
+
+    // IMAGE
+    public static final String imagesNotFound = "IMAGES_NOT_FOUND";
 }

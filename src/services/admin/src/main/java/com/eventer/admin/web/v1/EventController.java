@@ -1,8 +1,8 @@
 package com.eventer.admin.web.v1;
 
 import com.eventer.admin.service.EventService;
-import com.eventer.admin.service.ImageService;
 import com.eventer.admin.service.domain.Event;
+import com.eventer.admin.utils.Helpers;
 import com.eventer.admin.utils.Result;
 import com.eventer.admin.web.ControllerBase;
 import com.eventer.admin.web.dto.event.CreateEventDTO;
@@ -23,13 +23,11 @@ import java.util.Set;
 @RequestMapping("/api/v1/event")
 public class EventController extends ControllerBase {
     private final EventService eventService;
-    private final ImageService imageService;
     private final ObjectMapper objectMapper;
 
     public EventController(
-            EventService eventService, ImageService imageService, ObjectMapper objectMapper) {
+            EventService eventService, ObjectMapper objectMapper) {
         this.eventService = eventService;
-        this.imageService = imageService;
         this.objectMapper = objectMapper;
     }
 
@@ -37,13 +35,13 @@ public class EventController extends ControllerBase {
     public ResponseEntity<?> create(
             @RequestParam("data") String data, @RequestParam("images") List<MultipartFile> images) {
         Set<Path> savedImages =
-                this.imageService.saveImageFiles(images, Event.class.getSimpleName());
+                Helpers.saveImages(images, Event.class.getSimpleName());
 
         CreateEventDTO dto;
         try {
             dto = this.objectMapper.readValue(data, CreateEventDTO.class);
         } catch (Exception e) {
-            this.imageService.deleteOnFailure(savedImages);
+            Helpers.deleteFilesFromPathSet(savedImages);
             return this.okOrError(Result.invalid("INVALID_FORM_DATA"), null);
         }
 
@@ -51,7 +49,7 @@ public class EventController extends ControllerBase {
         try{
             result = this.eventService.create(EventMapper.toRequest(dto, savedImages));
         } catch (Exception e) {
-            this.imageService.deleteOnFailure(savedImages);
+            Helpers.deleteFilesFromPathSet(savedImages);
             return this.okOrError(Result.internalError(e.getMessage()), null);
         }
 

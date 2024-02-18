@@ -1,14 +1,16 @@
 package com.eventer.admin.service.impl;
 
 import com.eventer.admin.contracts.event.CreateEventRequest;
+import com.eventer.admin.data.repository.ImageRepository;
+import com.eventer.admin.mapper.ImageMapper;
 import com.eventer.admin.service.EventCategoryService;
-import com.eventer.admin.service.ImageService;
 import com.eventer.admin.service.domain.Event;
 import com.eventer.admin.mapper.EventMapper;
 import com.eventer.admin.data.repository.EventRepository;
 import com.eventer.admin.service.EventService;
 import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.service.domain.Image;
+import com.eventer.admin.utils.Helpers;
 import com.eventer.admin.utils.Result;
 
 import org.springframework.data.domain.Page;
@@ -24,31 +26,31 @@ import java.util.stream.Collectors;
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final EventCategoryService eventCategoryService;
-    private final ImageService imageService;
+
+    private final ImageRepository imageRepository;
 
     public EventServiceImpl(
             EventRepository eventRepository,
-            EventCategoryService eventCategoryService,
-            ImageService imageService) {
+            EventCategoryService eventCategoryService, ImageRepository imageRepository) {
         this.eventRepository = eventRepository;
         this.eventCategoryService = eventCategoryService;
-        this.imageService = imageService;
+        this.imageRepository = imageRepository;
     }
 
     @Override
     public Result<Event> create(CreateEventRequest createEventRequest) {
         if (createEventRequest.weatherConditionsOrError().isFailure()) {
-            this.imageService.deleteOnFailure(createEventRequest.savedImages());
+            Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(createEventRequest.weatherConditionsOrError());
         }
 
         if (createEventRequest.eventCategoriesOrError().isFailure()) {
-            this.imageService.deleteOnFailure(createEventRequest.savedImages());
+            Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(createEventRequest.eventCategoriesOrError());
         }
 
         if (createEventRequest.dateOrError().isFailure()) {
-            this.imageService.deleteOnFailure(createEventRequest.savedImages());
+            Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(createEventRequest.dateOrError());
         }
 
@@ -59,7 +61,7 @@ public class EventServiceImpl implements EventService {
                                 .collect(Collectors.toSet()));
 
         if (categoriesOrError.isFailure()) {
-            this.imageService.deleteOnFailure(createEventRequest.savedImages());
+            Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(categoriesOrError);
         }
 
@@ -71,20 +73,20 @@ public class EventServiceImpl implements EventService {
             Result<Image> imageOrError = Image.create(imageName);
 
             if (imageOrError.isFailure()) {
-                this.imageService.deleteOnFailure(createEventRequest.savedImages());
+                Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
                 return Result.invalid("INVALID_IMAGE");
             }
 
-            Result<Image> savedImageOrError =
-                    this.imageService.saveImage(
-                            imageOrError.getValue(), Event.class.getSimpleName());
-
-            if (savedImageOrError.isFailure()) {
-                this.imageService.deleteOnFailure(createEventRequest.savedImages());
-                return Result.fromError(savedImageOrError);
+            com.eventer.admin.data.model.Image savedimage;
+            try {
+                savedimage = this.imageRepository.save(ImageMapper.toModel(imageOrError.getValue(), Event.class.getSimpleName()));
+                imageOrError.getValue().setId(savedimage.getId());
+            } catch (Exception e){
+                Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
+                throw e;
             }
 
-            savedImages.add(savedImageOrError.getValue());
+            savedImages.add(imageOrError.getValue());
         }
 
         Result<Event> eventOrError =
@@ -98,7 +100,7 @@ public class EventServiceImpl implements EventService {
                         savedImages);
 
         if (eventOrError.isFailure()) {
-            this.imageService.deleteOnFailure(createEventRequest.savedImages());
+            Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(eventOrError);
         }
 

@@ -3,12 +3,12 @@ package com.eventer.admin.service.domain;
 import com.eventer.admin.utils.Result;
 
 public class Image {
-    private final Long id;
-    private final String name;
+    private Long id;
+    private final String url;
 
     private Image(Long id, String name) {
         this.id = id;
-        this.name = name;
+        this.url = name;
     }
 
     public static Result<Image> create(Long id, String name) {
@@ -23,7 +23,11 @@ public class Image {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

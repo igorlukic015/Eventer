@@ -1,6 +1,7 @@
 package com.eventer.admin.mapper;
 
 import com.eventer.admin.config.ApplicationConfiguration;
+import com.eventer.admin.service.domain.Event;
 import com.eventer.admin.service.domain.Image;
 import com.eventer.admin.utils.Result;
 import com.eventer.admin.web.dto.event.ImageDTO;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class ImageMapper {
     public static ImageDTO toDTO(Image domain) {
-        return new ImageDTO(domain.getId(), domain.getName());
+        return new ImageDTO(domain.getId(), domain.getUrl());
     }
 
     public static Result<Image> toDomain(ImageDTO dto) {
@@ -24,10 +25,16 @@ public class ImageMapper {
     }
 
     public static Result<Image> toDomain(com.eventer.admin.data.model.Image model) {
-        return Image.create(
-                model.getId(),
+        String url =
                 String.format(
-                        "%s/%s", ApplicationConfiguration.getImageBaseUrl(), model.getName()));
+                        "%s%s%s%s%s",
+                        ApplicationConfiguration.getImageBaseUrl(),
+                        ApplicationConfiguration.getImageUrlSeparator(),
+                        Event.class.getSimpleName(),
+                        ApplicationConfiguration.getImageUrlSeparator(),
+                        model.getName()).replace(ApplicationConfiguration.getImageUrlSeparator(), "/");
+
+        return Image.create(model.getId(), url);
     }
 
     public static Result<Set<Image>> toDomainSet(List<com.eventer.admin.data.model.Image> models) {
@@ -36,13 +43,14 @@ public class ImageMapper {
     }
 
     public static com.eventer.admin.data.model.Image toModel(Image domain, String entityName) {
-        String name =
-                domain.getName()
-                        .replace(
-                                String.format(
-                                        "%s/%s",
-                                        ApplicationConfiguration.getImageBaseUrl(), entityName),
-                                "");
+        String whatToReplace =
+                String.format(
+                        "%s%s%s/",
+                        ApplicationConfiguration.getImageBaseUrl(),
+                        ApplicationConfiguration.getImageUrlSeparator(),
+                        entityName).replace(ApplicationConfiguration.getImageUrlSeparator(), "/");
+
+        String name = domain.getUrl().replace(whatToReplace, "");
 
         com.eventer.admin.data.model.Image model = new com.eventer.admin.data.model.Image();
         model.setId(domain.getId());

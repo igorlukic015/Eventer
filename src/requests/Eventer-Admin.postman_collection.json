@@ -1,0 +1,147 @@
+{
+	"info": {
+		"_postman_id": "eb97350e-396e-4687-bc84-4f9782f38126",
+		"name": "Eventer-Admin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10262694"
+	},
+	"item": [
+		{
+			"name": "Event",
+			"item": [
+				{
+					"name": "GetEvents",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:9002/api/v1/event?page=0&size=3",
+							"host": [
+								"localhost"
+							],
+							"port": "9002",
+							"path": [
+								"api",
+								"v1",
+								"event"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateEvent",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "images",
+									"type": "file",
+									"src": [
+										"/C:/Users/Igor/Desktop/51299565578_5f8d908210_o-1.jpg",
+										"/C:/Users/Igor/Desktop/EXIT-festival-2021-1.jpg"
+									]
+								},
+								{
+									"key": "data",
+									"value": "{\n    \"id\": 0,\n    \"title\": \"Event 3\",\n    \"description\": \"Test event 3\",\n    \"location\": \"Novi Sad\",\n    \"date\": \"2024-02-18T12:10:03Z\",\n    \"weatherConditions\": [\"CLEAR\"],\n    \"eventCategories\": [\n        {\n            \"id\": 1,\n            \"name\": \"Category 3\",\n            \"description\": \"Test category 3\"\n        }\n    ]\n}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:9002/api/v1/event",
+							"host": [
+								"localhost"
+							],
+							"port": "9002",
+							"path": [
+								"api",
+								"v1",
+								"event"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "EventCategory",
+			"item": [
+				{
+					"name": "CreateCategory",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": null,\r\n    \"name\": \"Category 2\",\r\n    \"description\": \"Test category 2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:9002/api/v1/event-category",
+							"host": [
+								"localhost"
+							],
+							"port": "9002",
+							"path": [
+								"api",
+								"v1",
+								"event-category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCategories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:9002/api/v1/event-category?page=0&size=3",
+							"host": [
+								"localhost"
+							],
+							"port": "9002",
+							"path": [
+								"api",
+								"v1",
+								"event-category"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

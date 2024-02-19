@@ -38,8 +38,6 @@ class WeatherCondition:
     def serialize(self):
         dictionary = dict(self)
 
-        dictionary['date'] = dictionary['date'].replace('-', 'x')
-
         return dictionary
 
 

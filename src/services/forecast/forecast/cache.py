@@ -7,19 +7,24 @@ from forecast.logger import logger
 
 
 async def get_cache() -> redis:
-    return await redis.from_url(f"redis://{config.cache_username}:{config.cache_password}@{config.cache_host}:{config.cache_port}",
-                                encoding="utf-8",
-                                decode_responses=True)
+    return await redis.from_url(
+        f"redis://{config.cache_username}:{config.cache_password}@{config.cache_host}:{config.cache_port}",
+        encoding="utf-8",
+        decode_responses=True)
 
 
 async def save_weather(weather, cache: redis):
     logger.info(f"Saving weather for {weather.region}@{weather.date}")
 
+    data = weather.serialize()
+
     try:
-        await cache.json().set(f"{CacheIdentifiers.FORECAST}:{weather.region}@{weather.date}",
-                               Path.root_path(),
-                               weather.serialize(),
-                               ex=TIME_TO_LIVE)
+        await cache.json().set(f"{CacheIdentifiers.FORECAST}:{weather.region}@{data['date']}",
+                               "$",
+                               data)
+
+        await cache.expire(f"{CacheIdentifiers.FORECAST}:{weather.region}@{data['date']}", TIME_TO_LIVE)
+
     except:
         logger.error(ErrorMessages.SAVING_WEATHER_FAILED)
 

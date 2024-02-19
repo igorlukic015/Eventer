@@ -18,7 +18,6 @@ async def get_forecast(city: str):
 
     cache = await get_cache()
 
-    date = datelib.today().isoformat()
     lat, lon = await load_coordinates(city.lower(), cache)
 
     if lat is None or lon is None:
@@ -27,11 +26,13 @@ async def get_forecast(city: str):
 
     region = await get_region(lat, lon)
 
-    return await get_conditions(region, date, lat, lon)
+    return await get_conditions(region, lat, lon)
 
 
-async def get_conditions(region, date, lat, lon):
+async def get_conditions(region, lat, lon):
     cache = await get_cache()
+
+    date = datelib.today().isoformat()
 
     cached_weather = await load_weather(region, date, cache)
 

@@ -106,9 +106,14 @@ public class EventServiceImpl implements EventService {
 
         com.eventer.admin.data.model.Event event = EventMapper.toModel(eventOrError.getValue(), savedImages);
 
-        com.eventer.admin.data.model.Event result = this.eventRepository.save(event);
+        try{
+            event = this.eventRepository.save(event);
+        } catch (Exception e) {
+            Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
+            throw e;
+        }
 
-        return EventMapper.toDomain(result);
+        return EventMapper.toDomain(event);
     }
 
     @Override

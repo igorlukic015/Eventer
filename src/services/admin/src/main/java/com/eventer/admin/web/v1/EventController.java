@@ -4,6 +4,7 @@ import com.eventer.admin.service.EventService;
 import com.eventer.admin.service.domain.Event;
 import com.eventer.admin.utils.Helpers;
 import com.eventer.admin.utils.Result;
+import com.eventer.admin.utils.ResultErrorMessages;
 import com.eventer.admin.web.ControllerBase;
 import com.eventer.admin.web.dto.event.CreateEventDTO;
 import com.eventer.admin.mapper.EventMapper;
@@ -42,7 +43,7 @@ public class EventController extends ControllerBase {
             dto = this.objectMapper.readValue(data, CreateEventDTO.class);
         } catch (Exception e) {
             Helpers.deleteFilesFromPathSet(savedImages);
-            return this.okOrError(Result.invalid("INVALID_FORM_DATA"), null);
+            return this.okOrError(Result.invalid(ResultErrorMessages.invalidCreateEventFormData), null);
         }
 
         Result<Event> result;

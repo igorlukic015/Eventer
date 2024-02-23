@@ -10,6 +10,7 @@ import com.eventer.admin.service.AdminService;
 import com.eventer.admin.service.domain.Admin;
 import com.eventer.admin.service.domain.Role;
 import com.eventer.admin.utils.Result;
+import com.eventer.admin.utils.ResultErrorMessages;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +37,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Result<Admin> register(RegisterRequest request) {
         if (this.adminRepository.existsByUsername(request.username())) {
-            return Result.conflict("ADMIN_USERNAME_CONFLICTED");
+            return Result.conflict(ResultErrorMessages.adminUsernameConflicted);
         }
 
         PasswordEncoder passwordEncoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
@@ -61,7 +62,7 @@ public class AdminServiceImpl implements AdminService {
         com.eventer.admin.data.model.Admin foundAdmin = this.adminRepository.findByUsername(username).orElseGet(null);
 
         if (foundAdmin == null) {
-            return Result.notFound("AMDIN_NOT_FDOUD");
+            return Result.notFound(ResultErrorMessages.adminNotFound);
         }
 
         return AdminMapper.toDomain(foundAdmin);

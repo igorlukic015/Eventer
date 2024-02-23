@@ -1,6 +1,7 @@
 package com.eventer.admin.service.domain;
 
 import com.eventer.admin.utils.Result;
+import com.eventer.admin.utils.ResultErrorMessages;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -23,7 +24,7 @@ public class Role {
         Optional<Role> foundRole =
                 allRoles.stream().filter(role -> Objects.equals(role.getName(), name)).findFirst();
 
-        return foundRole.map(Result::success).orElseGet(() -> Result.invalid("INVALID ROLE"));
+        return foundRole.map(Result::success).orElseGet(() -> Result.invalid(ResultErrorMessages.invalidRole));
     }
 
     public int getId() {

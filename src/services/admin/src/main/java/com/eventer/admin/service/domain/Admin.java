@@ -2,6 +2,7 @@ package com.eventer.admin.service.domain;
 
 import com.eventer.admin.utils.Helpers;
 import com.eventer.admin.utils.Result;
+import com.eventer.admin.utils.ResultErrorMessages;
 
 public class Admin {
     private final Long id;
@@ -33,11 +34,11 @@ public class Admin {
 
     public static Result<Admin> create(String username, String password, Role role) {
         if (Helpers.isNullOrEmpty(username) || username.length() > 255) {
-            return Result.invalid("INVALID USERNAME");
+            return Result.invalid(ResultErrorMessages.invalidAdminUsername);
         }
 
         if (Helpers.isNullOrEmpty(password) || password.length() < 6 || password.length() > 255) {
-            return Result.invalid("INVALID PASSWORD");
+            return Result.invalid(ResultErrorMessages.invalidPassword);
         }
 
         Admin admin = new Admin(null, username, password, role);

@@ -6,6 +6,7 @@ public class ResultErrorMessages {
     public static final String invalidEventTitle = "INVALID_EVENT_TITLE";
     public static final String invalidEventDescription = "INVALID_EVENT_DESCRIPTION";
     public static final String invalidEventLocation = "INVALID_EVENT_LOCATION";
+    public static final String invalidCreateEventFormData = "INVALID_CREATE_EVENT_FORM_DATA";
 
     // EVENT CATEGORY
     public static final String categoryAlreadyExists = "CATEGORY_ALREADY_EXISTS";
@@ -19,4 +20,13 @@ public class ResultErrorMessages {
 
     // IMAGE
     public static final String imagesNotFound = "IMAGES_NOT_FOUND";
+    public static final String invalidImage = "INVALID_IMAGE";
+
+
+    // ADMIN
+    public static String adminUsernameConflicted = "ADMIN_USERNAME_CONFLICTED";
+    public static String adminNotFound = "ADMIN_NOT_FOUND";
+    public static String invalidAdminUsername = "INVALID_ADMIN_USERNAME";
+    public static String invalidPassword = "INVALID_ADMIN_PASSWORD";
+    public static String invalidRole = "INVALID_ROLE";
 }

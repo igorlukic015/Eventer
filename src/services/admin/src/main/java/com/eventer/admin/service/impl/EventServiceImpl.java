@@ -13,6 +13,7 @@ import com.eventer.admin.service.domain.Image;
 import com.eventer.admin.utils.Helpers;
 import com.eventer.admin.utils.Result;
 
+import com.eventer.admin.utils.ResultErrorMessages;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -74,7 +75,7 @@ public class EventServiceImpl implements EventService {
 
             if (imageOrError.isFailure()) {
                 Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
-                return Result.invalid("INVALID_IMAGE");
+                return Result.invalid(ResultErrorMessages.invalidImage);
             }
 
             com.eventer.admin.data.model.Image savedimage;

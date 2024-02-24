@@ -33,4 +33,10 @@ public class EventCategoryController extends ControllerBase {
         Result<Page<EventCategory>> result = this.eventCategoryService.getCategories(pageable);
         return this.okOrError(result, EventCategoryMapper::toDTOs);
     }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        this.eventCategoryService.testMessages();
+        return ResponseEntity.ok().build();
+    }
 }

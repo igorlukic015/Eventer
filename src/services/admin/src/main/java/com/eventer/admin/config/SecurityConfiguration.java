@@ -48,6 +48,8 @@ public class SecurityConfiguration {
                                         .hasAuthority(AuthorityConstants.ADMINISTRATOR)
                                         .requestMatchers("/api/v1/auth/authenticate")
                                         .permitAll()
+                                        .requestMatchers("/api/v1/event-category/test")
+                                        .permitAll()
                                         .requestMatchers("/api/v1/event")
                                         .hasAuthority(AuthorityConstants.EVENT_MANAGER)
                                         .requestMatchers("/api/v1/event-category")

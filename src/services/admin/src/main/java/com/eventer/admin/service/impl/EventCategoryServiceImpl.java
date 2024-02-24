@@ -1,6 +1,8 @@
 package com.eventer.admin.service.impl;
 
+import com.eventer.admin.contracts.ApplicationStatics;
 import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
+import com.eventer.admin.service.MessageSenderService;
 import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.mapper.EventCategoryMapper;
 import com.eventer.admin.data.repository.EventCategoryRepository;
@@ -18,9 +20,11 @@ import java.util.Set;
 public class EventCategoryServiceImpl implements EventCategoryService {
 
     private final EventCategoryRepository eventCategoryRepository;
+    private final MessageSenderService messageSenderService;
 
-    public EventCategoryServiceImpl(EventCategoryRepository eventCategoryRepository) {
+    public EventCategoryServiceImpl(EventCategoryRepository eventCategoryRepository, MessageSenderService messageSenderService) {
         this.eventCategoryRepository = eventCategoryRepository;
+        this.messageSenderService = messageSenderService;
     }
 
     @Override
@@ -72,5 +76,15 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         }
 
         return EventCategoryMapper.toDomainSet(foundCategories);
+    }
+
+    @Override
+    public void testMessages() {
+        List<com.eventer.admin.data.model.EventCategory> foundCategories =
+                this.eventCategoryRepository.findAll();
+
+        String msg = foundCategories.stream().findFirst().orElseThrow().getName();
+
+        this.messageSenderService.sendMessage(ApplicationStatics.EVENTER_DATA_MESSAGE_QUEUE, msg);
     }
 }

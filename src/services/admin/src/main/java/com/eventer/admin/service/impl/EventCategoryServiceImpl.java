@@ -5,7 +5,7 @@ import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.mapper.EventCategoryMapper;
 import com.eventer.admin.data.repository.EventCategoryRepository;
 import com.eventer.admin.service.EventCategoryService;
-import com.eventer.admin.utils.Result;
+import com.github.cigor99.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

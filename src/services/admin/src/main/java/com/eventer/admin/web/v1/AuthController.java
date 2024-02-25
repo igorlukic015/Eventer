@@ -4,16 +4,16 @@ import com.eventer.admin.contracts.auth.AuthenticationResponse;
 import com.eventer.admin.mapper.AdminMapper;
 import com.eventer.admin.service.AdminService;
 import com.eventer.admin.service.domain.Admin;
-import com.eventer.admin.utils.Result;
-import com.eventer.admin.web.ControllerBase;
+import com.github.cigor99.resulter.Result;
 import com.eventer.admin.web.dto.auth.LoginDTO;
 import com.eventer.admin.web.dto.auth.RegisterDTO;
+import com.github.cigor99.resulter.ResultUnwrapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-public class AuthController extends ControllerBase {
+public class AuthController implements ResultUnwrapper {
     private final AdminService adminService;
 
     public AuthController(AdminService adminService) {

@@ -4,7 +4,7 @@ import com.eventer.admin.contracts.auth.AuthenticationResponse;
 import com.eventer.admin.contracts.auth.LoginRequest;
 import com.eventer.admin.contracts.auth.RegisterRequest;
 import com.eventer.admin.service.domain.Admin;
-import com.eventer.admin.utils.Result;
+import com.github.cigor99.resulter.Result;
 import com.eventer.admin.web.dto.admin.AdminDTO;
 import com.eventer.admin.web.dto.auth.AuthenticationResponseDTO;
 import com.eventer.admin.web.dto.auth.LoginDTO;

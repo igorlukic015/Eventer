@@ -1,6 +1,6 @@
 package com.eventer.user.service.domain;
 
-import com.eventer.user.utils.Result;
+import com.github.cigor99.resulter.Result;
 
 public class Image {
     private Long id;

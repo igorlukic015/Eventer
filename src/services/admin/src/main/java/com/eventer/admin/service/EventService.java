@@ -2,7 +2,7 @@ package com.eventer.admin.service;
 
 import com.eventer.admin.service.domain.Event;
 import com.eventer.admin.contracts.event.CreateEventRequest;
-import com.eventer.admin.utils.Result;
+import com.github.cigor99.resulter.Result;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

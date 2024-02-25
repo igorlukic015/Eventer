@@ -1,6 +1,6 @@
 package com.eventer.user.service.domain;
 
-import com.eventer.user.utils.Result;
+import com.github.cigor99.resulter.Result;
 import org.springframework.util.StringUtils;
 
 public class User {

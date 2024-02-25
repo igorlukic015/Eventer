@@ -11,7 +11,7 @@ import com.eventer.admin.service.EventService;
 import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.service.domain.Image;
 import com.eventer.admin.utils.Helpers;
-import com.eventer.admin.utils.Result;
+import com.github.cigor99.resulter.Result;
 
 import com.eventer.admin.utils.ResultErrorMessages;
 import org.springframework.data.domain.Page;

@@ -5,7 +5,7 @@ import com.eventer.admin.service.domain.Event;
 import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.service.domain.Image;
 import com.eventer.admin.service.domain.WeatherCondition;
-import com.eventer.admin.utils.Result;
+import com.github.cigor99.resulter.Result;
 
 import com.eventer.admin.web.dto.event.CreateEventDTO;
 import com.eventer.admin.web.dto.event.EventDTO;

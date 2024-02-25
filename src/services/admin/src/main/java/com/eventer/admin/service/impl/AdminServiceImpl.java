@@ -9,7 +9,7 @@ import com.eventer.admin.security.contracts.JwtService;
 import com.eventer.admin.service.AdminService;
 import com.eventer.admin.service.domain.Admin;
 import com.eventer.admin.service.domain.Role;
-import com.eventer.admin.utils.Result;
+import com.github.cigor99.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;

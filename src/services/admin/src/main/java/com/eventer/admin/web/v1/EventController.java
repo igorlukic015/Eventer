@@ -3,12 +3,12 @@ package com.eventer.admin.web.v1;
 import com.eventer.admin.service.EventService;
 import com.eventer.admin.service.domain.Event;
 import com.eventer.admin.utils.Helpers;
-import com.eventer.admin.utils.Result;
+import com.github.cigor99.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
-import com.eventer.admin.web.ControllerBase;
 import com.eventer.admin.web.dto.event.CreateEventDTO;
 import com.eventer.admin.mapper.EventMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.cigor99.resulter.ResultUnwrapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -22,7 +22,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/event")
-public class EventController extends ControllerBase {
+public class EventController implements ResultUnwrapper {
     private final EventService eventService;
     private final ObjectMapper objectMapper;
 

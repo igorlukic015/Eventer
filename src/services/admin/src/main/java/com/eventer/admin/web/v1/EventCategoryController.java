@@ -1,11 +1,11 @@
 package com.eventer.admin.web.v1;
 
-import com.eventer.admin.web.ControllerBase;
 import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.web.dto.eventcategory.EventCategoryDTO;
 import com.eventer.admin.mapper.EventCategoryMapper;
 import com.eventer.admin.service.EventCategoryService;
-import com.eventer.admin.utils.Result;
+import com.github.cigor99.resulter.Result;
+import com.github.cigor99.resulter.ResultUnwrapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/event-category")
-public class EventCategoryController extends ControllerBase {
+public class EventCategoryController implements ResultUnwrapper {
 
     private final EventCategoryService eventCategoryService;
 

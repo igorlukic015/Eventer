@@ -1,18 +1,22 @@
 package com.eventer.admin.service.impl;
 
 import com.eventer.admin.contracts.ApplicationStatics;
+import com.eventer.admin.contracts.Message;
 import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
 import com.eventer.admin.service.MessageSenderService;
 import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.mapper.EventCategoryMapper;
 import com.eventer.admin.data.repository.EventCategoryRepository;
 import com.eventer.admin.service.EventCategoryService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cigor99.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
@@ -21,10 +25,15 @@ public class EventCategoryServiceImpl implements EventCategoryService {
 
     private final EventCategoryRepository eventCategoryRepository;
     private final MessageSenderService messageSenderService;
+    private final ObjectMapper objectMapper;
 
-    public EventCategoryServiceImpl(EventCategoryRepository eventCategoryRepository, MessageSenderService messageSenderService) {
+    public EventCategoryServiceImpl(
+            EventCategoryRepository eventCategoryRepository,
+            MessageSenderService messageSenderService,
+            ObjectMapper objectMapper) {
         this.eventCategoryRepository = eventCategoryRepository;
         this.messageSenderService = messageSenderService;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -80,11 +89,25 @@ public class EventCategoryServiceImpl implements EventCategoryService {
 
     @Override
     public void testMessages() {
-        List<com.eventer.admin.data.model.EventCategory> foundCategories =
-                this.eventCategoryRepository.findAll();
 
-        String msg = foundCategories.stream().findFirst().orElseThrow().getName();
+        Result<EventCategory> cat = EventCategory.create(10L, "aa", "aaaaaaa");
 
-        this.messageSenderService.sendMessage(ApplicationStatics.EVENTER_DATA_MESSAGE_QUEUE, msg);
+        Message message =
+                new Message(
+                        "New Message",
+                        Instant.now(),
+                        EventCategory.class.getSimpleName(),
+                        "UPDATE",
+                        cat.getValue());
+
+        String payload;
+        try {
+            payload = this.objectMapper.writeValueAsString(message);
+        } catch (JsonProcessingException e) {
+            return;
+        }
+
+        this.messageSenderService.sendMessage(
+                ApplicationStatics.EVENTER_DATA_MESSAGE_QUEUE, payload);
     }
 }

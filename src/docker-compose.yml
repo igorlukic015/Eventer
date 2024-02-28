@@ -37,7 +37,7 @@ services:
     command: "redis-server redis.conf"
 
   rabbitmq:
-    image: rabbitmq:3.13.0
+    image: rabbitmq:3.13.0-management
     env_file:
       - .env
     ports:

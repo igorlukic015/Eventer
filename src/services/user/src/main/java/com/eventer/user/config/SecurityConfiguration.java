@@ -1,6 +1,6 @@
 package com.eventer.user.config;
 
-import com.eventer.user.security.jwt.JwtAuthenticationFilter;
+import com.eventer.user.security.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

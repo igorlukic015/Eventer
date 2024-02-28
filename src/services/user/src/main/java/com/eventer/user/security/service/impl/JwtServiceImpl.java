@@ -1,6 +1,6 @@
-package com.eventer.user.security.jwt;
+package com.eventer.user.security.service.impl;
 
-import com.eventer.user.security.contracts.JwtService;
+import com.eventer.user.security.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

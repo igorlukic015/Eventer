@@ -1,6 +1,6 @@
-package com.eventer.user.security.jwt;
+package com.eventer.user.security.filter;
 
-import com.eventer.user.security.contracts.JwtService;
+import com.eventer.user.security.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

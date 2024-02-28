@@ -1,4 +1,4 @@
-package com.eventer.user.security;
+package com.eventer.user.security.service.impl;
 
 import com.eventer.user.data.repository.UserRepository;
 import com.eventer.user.data.model.User;

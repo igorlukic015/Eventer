@@ -101,8 +101,8 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         return EventCategoryMapper.toDomainSet(foundCategories);
     }
 
-    public Result sendMessage(String action, EventCategory category) {
-        Message categoryCreatedMessage =
+    private Result sendMessage(String action, EventCategory category) {
+        Message categoryMessage =
                 new Message(
                         MessageStatics.NAME_ENTITY_UPDATED,
                         Instant.now(),
@@ -112,7 +112,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
 
         String messagePayload;
         try {
-            messagePayload = this.objectMapper.writeValueAsString(categoryCreatedMessage);
+            messagePayload = this.objectMapper.writeValueAsString(categoryMessage);
         } catch (JsonProcessingException e) {
             return Result.internalError(ResultErrorMessages.failedToSendMessage);
         }

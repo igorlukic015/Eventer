@@ -3,6 +3,7 @@ package com.eventer.admin.service.domain;
 import com.eventer.admin.utils.Helpers;
 import com.github.cigor99.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
+import org.springframework.util.StringUtils;
 
 public class Admin {
     private final Long id;
@@ -33,11 +34,11 @@ public class Admin {
     }
 
     public static Result<Admin> create(String username, String password, Role role) {
-        if (Helpers.isNullOrEmpty(username) || username.length() > 255) {
+        if (StringUtils.hasText(username) || username.length() > 255) {
             return Result.invalid(ResultErrorMessages.invalidAdminUsername);
         }
 
-        if (Helpers.isNullOrEmpty(password) || password.length() < 6 || password.length() > 255) {
+        if (StringUtils.hasText(password) || password.length() < 6 || password.length() > 255) {
             return Result.invalid(ResultErrorMessages.invalidPassword);
         }
 

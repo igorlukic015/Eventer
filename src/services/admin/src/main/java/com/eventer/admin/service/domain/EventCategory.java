@@ -3,6 +3,7 @@ package com.eventer.admin.service.domain;
 import com.eventer.admin.utils.Helpers;
 import com.github.cigor99.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
+import org.springframework.util.StringUtils;
 
 public class EventCategory {
 
@@ -25,7 +26,7 @@ public class EventCategory {
   }
 
   public static Result<EventCategory> create(String name, String description) {
-    if (Helpers.isNullOrEmpty(name) || name.length() > 255) {
+    if (StringUtils.hasText(name) || name.length() > 255) {
       return Result.invalid(ResultErrorMessages.invalidEventCategoryName);
     }
     

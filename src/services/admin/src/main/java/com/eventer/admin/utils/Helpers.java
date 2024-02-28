@@ -12,10 +12,6 @@ import java.time.Instant;
 import java.util.*;
 
 public class Helpers {
-    public static boolean isNullOrEmpty(String str) {
-        return str == null || str.isEmpty() || str.isBlank();
-    }
-
     public static void deleteFilesFromPathSet(Set<Path> savedFilePaths) {
         for (Path path : savedFilePaths) {
             try {

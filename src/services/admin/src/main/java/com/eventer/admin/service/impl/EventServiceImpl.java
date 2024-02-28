@@ -23,6 +23,8 @@ import com.eventer.admin.utils.ResultErrorMessages;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.nio.file.Path;
 import java.time.Instant;
@@ -51,19 +53,23 @@ public class EventServiceImpl implements EventService {
         this.objectMapper = objectMapper;
     }
 
+    @Transactional
     @Override
     public Result<Event> create(CreateEventRequest createEventRequest) {
         if (createEventRequest.weatherConditionsOrError().isFailure()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(createEventRequest.weatherConditionsOrError());
         }
 
         if (createEventRequest.eventCategoriesOrError().isFailure()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(createEventRequest.eventCategoriesOrError());
         }
 
         if (createEventRequest.dateOrError().isFailure()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(createEventRequest.dateOrError());
         }
@@ -75,6 +81,7 @@ public class EventServiceImpl implements EventService {
                                 .collect(Collectors.toSet()));
 
         if (categoriesOrError.isFailure()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(categoriesOrError);
         }
@@ -87,6 +94,7 @@ public class EventServiceImpl implements EventService {
             Result<Image> imageOrError = Image.create(imageName);
 
             if (imageOrError.isFailure()) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
                 return Result.invalid(ResultErrorMessages.invalidImage);
             }
@@ -99,6 +107,7 @@ public class EventServiceImpl implements EventService {
                                         imageOrError.getValue(), Event.class.getSimpleName()));
                 imageOrError.getValue().setId(savedimage.getId());
             } catch (Exception e) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
                 throw e;
             }
@@ -117,6 +126,7 @@ public class EventServiceImpl implements EventService {
                         savedImages);
 
         if (eventOrError.isFailure()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(eventOrError);
         }
@@ -127,6 +137,7 @@ public class EventServiceImpl implements EventService {
         try {
             event = this.eventRepository.save(event);
         } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             throw e;
         }
@@ -134,6 +145,7 @@ public class EventServiceImpl implements EventService {
         Result<Event> createdEventOrError = EventMapper.toDomain(event);
 
         if (createdEventOrError.isFailure()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.internalError(ResultErrorMessages.failedToSendMessage);
         }
 
@@ -141,12 +153,14 @@ public class EventServiceImpl implements EventService {
                 this.sendMessage(MessageStatics.ACTION_CREATED, createdEventOrError.getValue());
 
         if (messageSentOrError.isFailure()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.internalError(ResultErrorMessages.failedToSendMessage);
         }
 
         return createdEventOrError;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Result<Page<Event>> getEvents(Pageable pageable) {
         Page<com.eventer.admin.data.model.Event> foundEvents =

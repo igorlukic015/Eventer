@@ -16,6 +16,8 @@ import com.eventer.admin.utils.ResultErrorMessages;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.Instant;
 import java.util.List;
@@ -37,11 +39,13 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         this.objectMapper = objectMapper;
     }
 
+    @Transactional
     @Override
     public Result<EventCategory> create(CreateEventCategoryRequest request) {
         boolean isDuplicate = this.eventCategoryRepository.existsByNameIgnoreCase(request.name());
 
         if (isDuplicate) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.conflict(ResultErrorMessages.categoryAlreadyExists);
         }
 
@@ -49,6 +53,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
                 EventCategory.create(request.name(), request.description());
 
         if (newCategoryOrError.isFailure()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.fromError(newCategoryOrError);
         }
 
@@ -61,6 +66,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         Result<EventCategory> createdCategoryOrError = EventCategoryMapper.toDomain(result);
 
         if (createdCategoryOrError.isFailure()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.internalError(ResultErrorMessages.failedToSendMessage);
         }
 
@@ -68,12 +74,14 @@ public class EventCategoryServiceImpl implements EventCategoryService {
                 this.sendMessage(MessageStatics.ACTION_CREATED, createdCategoryOrError.getValue());
 
         if (messageSentOrError.isFailure()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.fromError(messageSentOrError);
         }
 
         return createdCategoryOrError;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Result<Page<EventCategory>> getCategories(Pageable pageable) {
         Page<com.eventer.admin.data.model.EventCategory> foundCategories =
@@ -89,6 +97,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         return categoriesOrError;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Result<Set<EventCategory>> getCategoriesByIds(Set<Long> ids) {
         List<com.eventer.admin.data.model.EventCategory> foundCategories =

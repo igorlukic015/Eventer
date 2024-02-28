@@ -18,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.Optional;
 
@@ -36,9 +38,11 @@ public class AdminServiceImpl implements AdminService {
         this.adminRepository = adminRepository;
     }
 
+    @Transactional
     @Override
     public Result<Admin> register(RegisterRequest request) {
         if (this.adminRepository.existsByUsername(request.username())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.conflict(ResultErrorMessages.adminUsernameConflicted);
         }
 
@@ -49,6 +53,7 @@ public class AdminServiceImpl implements AdminService {
                 Admin.create(request.username(), encodedPassword, Role.EVENT_MANAGER);
 
         if (adminOrError.isFailure()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.fromError(adminOrError);
         }
 
@@ -59,6 +64,7 @@ public class AdminServiceImpl implements AdminService {
         return AdminMapper.toDomain(admin);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Result<Admin> getAdminByUsername(String username) {
         Optional<com.eventer.admin.data.model.Admin> foundAdmin = this.adminRepository.findByUsername(username);
@@ -70,11 +76,13 @@ public class AdminServiceImpl implements AdminService {
         return AdminMapper.toDomain(foundAdmin.get());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Result<Admin> getEventManagers(Pageable pageable) {
         return null;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Result<AuthenticationResponse> authenticate(LoginRequest loginRequest) {
         Result<Admin> adminOrError = this.getAdminByUsername(loginRequest.username());

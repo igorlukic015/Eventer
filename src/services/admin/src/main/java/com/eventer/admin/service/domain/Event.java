@@ -3,6 +3,7 @@ package com.eventer.admin.service.domain;
 import com.eventer.admin.utils.Helpers;
 import com.github.cigor99.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
+import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -97,7 +98,7 @@ public class Event {
             Set<EventCategory> categories,
             Set<Image> images) {
 
-        if (Helpers.isNullOrEmpty(title) || title.length() > 255) {
+        if (StringUtils.hasText(title) || title.length() > 255) {
             return Result.invalid(ResultErrorMessages.invalidEventTitle);
         }
 
@@ -105,7 +106,7 @@ public class Event {
             return Result.invalid(ResultErrorMessages.invalidEventDescription);
         }
 
-        if (Helpers.isNullOrEmpty(location) || location.length() > 255) {
+        if (StringUtils.hasText(location) || location.length() > 255) {
             return Result.invalid(ResultErrorMessages.invalidEventLocation);
         }
 

@@ -1,4 +1,4 @@
-package com.eventer.admin.security;
+package com.eventer.admin.security.service.impl;
 
 import com.eventer.admin.data.model.Admin;
 import com.eventer.admin.data.repository.AdminRepository;

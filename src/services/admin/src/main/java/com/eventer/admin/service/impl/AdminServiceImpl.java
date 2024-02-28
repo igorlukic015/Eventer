@@ -5,7 +5,7 @@ import com.eventer.admin.contracts.auth.LoginRequest;
 import com.eventer.admin.contracts.auth.RegisterRequest;
 import com.eventer.admin.data.repository.AdminRepository;
 import com.eventer.admin.mapper.AdminMapper;
-import com.eventer.admin.security.contracts.JwtService;
+import com.eventer.admin.security.service.JwtService;
 import com.eventer.admin.service.AdminService;
 import com.eventer.admin.service.domain.Admin;
 import com.eventer.admin.service.domain.Role;

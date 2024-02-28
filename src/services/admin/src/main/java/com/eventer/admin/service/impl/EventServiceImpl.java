@@ -27,12 +27,12 @@ import java.util.stream.Collectors;
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final EventCategoryService eventCategoryService;
-
     private final ImageRepository imageRepository;
 
     public EventServiceImpl(
             EventRepository eventRepository,
-            EventCategoryService eventCategoryService, ImageRepository imageRepository) {
+            EventCategoryService eventCategoryService,
+            ImageRepository imageRepository) {
         this.eventRepository = eventRepository;
         this.eventCategoryService = eventCategoryService;
         this.imageRepository = imageRepository;
@@ -80,9 +80,12 @@ public class EventServiceImpl implements EventService {
 
             com.eventer.admin.data.model.Image savedimage;
             try {
-                savedimage = this.imageRepository.save(ImageMapper.toModel(imageOrError.getValue(), Event.class.getSimpleName()));
+                savedimage =
+                        this.imageRepository.save(
+                                ImageMapper.toModel(
+                                        imageOrError.getValue(), Event.class.getSimpleName()));
                 imageOrError.getValue().setId(savedimage.getId());
-            } catch (Exception e){
+            } catch (Exception e) {
                 Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
                 throw e;
             }
@@ -105,9 +108,10 @@ public class EventServiceImpl implements EventService {
             return Result.fromError(eventOrError);
         }
 
-        com.eventer.admin.data.model.Event event = EventMapper.toModel(eventOrError.getValue(), savedImages);
+        com.eventer.admin.data.model.Event event =
+                EventMapper.toModel(eventOrError.getValue(), savedImages);
 
-        try{
+        try {
             event = this.eventRepository.save(event);
         } catch (Exception e) {
             Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());

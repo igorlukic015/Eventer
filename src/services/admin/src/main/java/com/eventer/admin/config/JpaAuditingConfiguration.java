@@ -13,6 +13,9 @@ import java.util.Optional;
 @EnableJpaAuditing
 public class JpaAuditingConfiguration {
 
+    private static final String ANONYMOUS_USER = "anonymousUser";
+    private static final String DEFAULT_USER = "SYSTEM";
+
     @Bean
     public AuditorAware<String> auditorProvider() {
         return () -> {
@@ -20,10 +23,10 @@ public class JpaAuditingConfiguration {
             if (authentication != null
                     && authentication.isAuthenticated()
                     && !(authentication.getPrincipal() instanceof String
-                            && "anonymousUser".equals(authentication.getPrincipal()))) {
+                            && ANONYMOUS_USER.equals(authentication.getPrincipal()))) {
                 return Optional.ofNullable(authentication.getName());
             }
-            return Optional.of("SYSTEM");
+            return Optional.of(DEFAULT_USER);
         };
     }
 }

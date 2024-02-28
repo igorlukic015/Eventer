@@ -1,6 +1,6 @@
-package com.eventer.admin.security.jwt;
+package com.eventer.admin.security.service.impl;
 
-import com.eventer.admin.security.contracts.JwtService;
+import com.eventer.admin.security.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

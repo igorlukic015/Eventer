@@ -1,7 +1,7 @@
 package com.eventer.admin.config;
 
 import com.eventer.admin.security.contracts.AuthorityConstants;
-import com.eventer.admin.security.jwt.JwtAuthenticationFilter;
+import com.eventer.admin.security.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

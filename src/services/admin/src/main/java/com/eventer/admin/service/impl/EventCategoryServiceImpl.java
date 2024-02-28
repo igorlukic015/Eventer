@@ -1,8 +1,9 @@
 package com.eventer.admin.service.impl;
 
 import com.eventer.admin.contracts.ApplicationStatics;
-import com.eventer.admin.contracts.Message;
+import com.eventer.admin.contracts.message.Message;
 import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
+import com.eventer.admin.contracts.message.MessageStatics;
 import com.eventer.admin.service.MessageSenderService;
 import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.mapper.EventCategoryMapper;
@@ -57,7 +58,20 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         com.eventer.admin.data.model.EventCategory result =
                 this.eventCategoryRepository.save(eventCategory);
 
-        return EventCategoryMapper.toDomain(result);
+        Result<EventCategory> createdCategoryOrError = EventCategoryMapper.toDomain(result);
+
+        if (createdCategoryOrError.isFailure()) {
+            return Result.internalError(ResultErrorMessages.failedToSendMessage);
+        }
+
+        Result messageSentOrError =
+                this.sendMessage(MessageStatics.ACTION_CREATED, createdCategoryOrError.getValue());
+
+        if (messageSentOrError.isFailure()) {
+            return Result.fromError(messageSentOrError);
+        }
+
+        return createdCategoryOrError;
     }
 
     @Override
@@ -87,27 +101,25 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         return EventCategoryMapper.toDomainSet(foundCategories);
     }
 
-    @Override
-    public void testMessages() {
-
-        Result<EventCategory> cat = EventCategory.create(10L, "aa", "aaaaaaa");
-
-        Message message =
+    public Result sendMessage(String action, EventCategory category) {
+        Message categoryCreatedMessage =
                 new Message(
-                        "New Message",
+                        MessageStatics.NAME_ENTITY_UPDATED,
                         Instant.now(),
                         EventCategory.class.getSimpleName(),
-                        "UPDATE",
-                        cat.getValue());
+                        action,
+                        category);
 
-        String payload;
+        String messagePayload;
         try {
-            payload = this.objectMapper.writeValueAsString(message);
+            messagePayload = this.objectMapper.writeValueAsString(categoryCreatedMessage);
         } catch (JsonProcessingException e) {
-            return;
+            return Result.internalError(ResultErrorMessages.failedToSendMessage);
         }
 
         this.messageSenderService.sendMessage(
-                ApplicationStatics.EVENTER_DATA_MESSAGE_QUEUE, payload);
+                ApplicationStatics.EVENTER_DATA_MESSAGE_QUEUE, messagePayload);
+
+        return Result.success();
     }
 }

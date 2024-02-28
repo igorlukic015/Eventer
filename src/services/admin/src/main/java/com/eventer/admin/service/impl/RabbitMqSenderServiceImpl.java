@@ -1,6 +1,5 @@
 package com.eventer.admin.service.impl;
 
-import com.eventer.admin.contracts.Message;
 import com.eventer.admin.service.MessageSenderService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;

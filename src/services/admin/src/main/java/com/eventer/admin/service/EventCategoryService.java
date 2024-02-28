@@ -14,6 +14,4 @@ public interface EventCategoryService {
     Result<Page<EventCategory>> getCategories(Pageable pageable);
 
     Result<Set<EventCategory>> getCategoriesByIds(Set<Long> ids);
-
-    void testMessages();
 }

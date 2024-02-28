@@ -1,4 +1,4 @@
-package com.eventer.admin.contracts;
+package com.eventer.admin.contracts.message;
 
 import java.io.Serializable;
 import java.time.Instant;

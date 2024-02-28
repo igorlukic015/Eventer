@@ -13,8 +13,6 @@ import java.nio.file.Path;
 public class ApplicationConfiguration {
     private static String imageBaseUrl;
 
-    private static String separator;
-
     public static String getImageBaseUrl() {
         return imageBaseUrl;
     }

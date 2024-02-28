@@ -1,7 +1,7 @@
 package com.eventer.admin.config;
 
 import com.eventer.admin.security.contracts.AuthorityConstants;
-import com.eventer.admin.security.jwt.JwtAuthenticationFilter;
+import com.eventer.admin.security.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -47,6 +47,8 @@ public class SecurityConfiguration {
                                 auth.requestMatchers("/api/v1/auth/register")
                                         .hasAuthority(AuthorityConstants.ADMINISTRATOR)
                                         .requestMatchers("/api/v1/auth/authenticate")
+                                        .permitAll()
+                                        .requestMatchers("/api/v1/event-category/test")
                                         .permitAll()
                                         .requestMatchers("/api/v1/event")
                                         .hasAuthority(AuthorityConstants.EVENT_MANAGER)

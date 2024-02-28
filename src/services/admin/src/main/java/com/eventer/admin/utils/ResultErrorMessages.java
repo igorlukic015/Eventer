@@ -29,4 +29,7 @@ public class ResultErrorMessages {
     public static String invalidAdminUsername = "INVALID_ADMIN_USERNAME";
     public static String invalidPassword = "INVALID_ADMIN_PASSWORD";
     public static String invalidRole = "INVALID_ROLE";
+
+    // GENERAL
+    public static String failedToSendMessage = "FAILED_TO_SEND_MESSAGE";
 }

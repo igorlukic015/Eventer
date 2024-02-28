@@ -2,3 +2,5 @@ redis_data/appendonlydir
 redis_data/dump.rdb
 pgdata_admin/
 pgdata_user/
+rabbitmq_data/
+rabbitmq_config/

@@ -5,7 +5,7 @@ import com.eventer.admin.contracts.auth.LoginRequest;
 import com.eventer.admin.contracts.auth.RegisterRequest;
 import com.eventer.admin.data.repository.AdminRepository;
 import com.eventer.admin.mapper.AdminMapper;
-import com.eventer.admin.security.contracts.JwtService;
+import com.eventer.admin.security.service.JwtService;
 import com.eventer.admin.service.AdminService;
 import com.eventer.admin.service.domain.Admin;
 import com.eventer.admin.service.domain.Role;
@@ -18,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -59,13 +61,13 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Result<Admin> getAdminByUsername(String username) {
-        com.eventer.admin.data.model.Admin foundAdmin = this.adminRepository.findByUsername(username).orElseGet(null);
+        Optional<com.eventer.admin.data.model.Admin> foundAdmin = this.adminRepository.findByUsername(username);
 
-        if (foundAdmin == null) {
+        if (foundAdmin.isEmpty()) {
             return Result.notFound(ResultErrorMessages.adminNotFound);
         }
 
-        return AdminMapper.toDomain(foundAdmin);
+        return AdminMapper.toDomain(foundAdmin.get());
     }
 
     @Override

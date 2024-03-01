@@ -1,7 +1,7 @@
 package com.eventer.user.security.service.impl;
 
 import com.eventer.user.data.repository.UserRepository;
-import com.eventer.user.data.model.User;
+import com.eventer.user.data.model.sql.User;
 import com.eventer.user.security.contracts.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

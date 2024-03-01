@@ -1,4 +1,4 @@
-package com.eventer.user.data.model;
+package com.eventer.user.data.model.sql;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

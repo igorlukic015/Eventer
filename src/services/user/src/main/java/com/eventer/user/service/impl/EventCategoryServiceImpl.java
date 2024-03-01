@@ -1,5 +1,6 @@
 package com.eventer.user.service.impl;
 
+import com.eventer.user.data.model.document.EventCategoryRepository;
 import com.eventer.user.security.service.JwtService;
 import com.eventer.user.service.EventCategoryService;
 import com.eventer.user.service.domain.EventCategory;
@@ -26,14 +27,17 @@ public class EventCategoryServiceImpl implements EventCategoryService {
 
     private final JwtService jwtService;
     private final String eventCategoryUri = "/api/v1/event-category/get-all";
+    private final EventCategoryRepository eventCategoryRepository;
     private static final Logger logger = LoggerFactory.getLogger(EventCategoryServiceImpl.class);
 
-    public EventCategoryServiceImpl(JwtService jwtService) {
+    public EventCategoryServiceImpl(
+            JwtService jwtService, EventCategoryRepository eventCategoryRepository) {
         this.jwtService = jwtService;
+        this.eventCategoryRepository = eventCategoryRepository;
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
-    private void reloadCategories() {
+    public void reloadCategories() {
         String token = this.jwtService.generateServiceToken();
 
         WebClient.builder()
@@ -47,6 +51,20 @@ public class EventCategoryServiceImpl implements EventCategoryService {
                 .doOnSuccess(this::saveCategories)
                 .doOnError(error -> logger.error(error.getMessage()))
                 .subscribe();
+    }
+
+    @Override
+    public void test() {
+
+        List<com.eventer.user.data.model.document.EventCategory> getCategs = this.eventCategoryRepository.findAll();
+        logger.info(
+                String.join(
+                        ",",
+                        getCategs.stream()
+                                .map(com.eventer.user.data.model.document.EventCategory::getId)
+                                .map(Objects::toString)
+                                .toList()));
+
     }
 
     private void saveCategories(List<EventCategoryDTO> dtos) {
@@ -64,7 +82,22 @@ public class EventCategoryServiceImpl implements EventCategoryService {
             return;
         }
 
-        logger.info("CACHE EVENTS HERE");
+        var categoriesToSave =
+                categoriesOrError.getValue().stream()
+                        .map(
+                                category -> {
+                                    com.eventer.user.data.model.document.EventCategory newCategory =
+                                            new com.eventer.user.data.model.document
+                                                    .EventCategory();
+                                    newCategory.setId(category.getId());
+                                    newCategory.setName(category.getName());
+                                    newCategory.setDescription(category.getDescription());
+                                    return newCategory;
+                                })
+                        .toList();
+
+        this.eventCategoryRepository.saveAll(categoriesToSave);
+
         logger.info(
                 String.join(
                         ",",

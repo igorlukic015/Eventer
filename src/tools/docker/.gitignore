@@ -1,5 +1,7 @@
-redis_data/appendonlydir
-redis_data/dump.rdb
+redis_user_data/appendonlydir
+redis_user_data/dump.rdb
+redis_forecast_data/appendonlydir
+redis_forecast_data/dump.rdb
 pgdata_admin/
 pgdata_user/
 rabbitmq_data/

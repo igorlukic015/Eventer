@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "user")
+@Table(name = "eventer_user")
 public class User extends AbstractAuditingEntity<Long> {
 
     @Id

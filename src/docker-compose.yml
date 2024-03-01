@@ -8,10 +8,6 @@ services:
       - "9003:5432"
     env_file:
       - .env
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
     volumes:
       - ./tools/docker/pgdata_admin:/var/lib/postgresql/data

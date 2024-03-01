@@ -24,36 +24,50 @@ public class JwtServiceImpl implements JwtService {
     @Value("${secret}")
     private String secret;
 
+    @Value("${service-secret}")
+    private String serviceSecret;
+
     @Override
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+    public String extractUsername(String token, boolean isService) {
+        SecretKey secretKey = isService ? getServiceSecretKey() : getSecretKey();
+
+        return extractClaim(token, Claims::getSubject, secretKey);
     }
 
     @Override
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+    public Date extractExpiration(String token, SecretKey secretKey) {
+        return extractClaim(token, Claims::getExpiration, secretKey);
     }
 
     @Override
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractClaims(token);
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver, SecretKey secretKey) {
+        final Claims claims = extractClaims(token, secretKey);
         return claimsResolver.apply(claims);
     }
 
     @Override
-    public Claims extractClaims(String token) {
-        return Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token).getPayload();
+    public Claims extractClaims(String token, SecretKey secretKey) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     @Override
-    public Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+    public Boolean isTokenExpired(String token, SecretKey secretKey) {
+        return extractExpiration(token, secretKey).before(new Date());
     }
 
     @Override
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        final String username = extractUsername(token, false);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token, getSecretKey()));
+    }
+
+    @Override
+    public boolean validateTokenFromService(String token) {
+        return !isTokenExpired(token, getServiceSecretKey());
     }
 
     @Override
@@ -73,7 +87,13 @@ public class JwtServiceImpl implements JwtService {
                 .compact();
     }
 
-    public SecretKey getSecretKey() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(this.secret));
+    private SecretKey getSecretKey() {
+        return Keys.hmacShaKeyFor(
+                Decoders.BASE64.decode(this.secret));
+    }
+
+    private SecretKey getServiceSecretKey() {
+        return Keys.hmacShaKeyFor(
+                Decoders.BASE64.decode(this.serviceSecret));
     }
 }

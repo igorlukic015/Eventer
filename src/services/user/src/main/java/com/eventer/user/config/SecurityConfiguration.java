@@ -45,6 +45,8 @@ public class SecurityConfiguration {
                         auth ->
                                 auth.requestMatchers("/api/v1/auth/**")
                                         .permitAll()
+                                        .requestMatchers("api/v1/test/**")
+                                        .permitAll()
                                         .requestMatchers("/api/v1/**")
                                         .authenticated())
                 // .cors(configurer -> corsConfigurationSource())

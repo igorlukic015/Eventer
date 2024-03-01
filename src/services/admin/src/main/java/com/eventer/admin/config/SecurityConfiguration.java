@@ -52,6 +52,8 @@ public class SecurityConfiguration {
                                         .permitAll()
                                         .requestMatchers("/api/v1/event")
                                         .hasAuthority(AuthorityConstants.EVENT_MANAGER)
+                                        .requestMatchers("/api/v1/event-category/get-all")
+                                        .hasAuthority(AuthorityConstants.USER_SERVICE)
                                         .requestMatchers("/api/v1/event-category")
                                         .hasAuthority(AuthorityConstants.EVENT_MANAGER)
                                         .requestMatchers("/api/v1/**")

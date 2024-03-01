@@ -1,5 +1,6 @@
 package com.eventer.admin.security.filter;
 
+import com.eventer.admin.security.contracts.AuthorityConstants;
 import com.eventer.admin.security.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -7,8 +8,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +23,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -25,6 +33,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+
+    @Value("${user-service-url}")
+    private String userServiceUrl;
 
     public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
@@ -37,7 +48,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        logger.info(String.format("Authentication attempt from %s", request.getRemoteAddr()));
+        String requestAddress = request.getRemoteAddr();
+
+        logger.info(String.format("Authentication attempt from %s", requestAddress));
 
         String authHeader = request.getHeader(this.authorizationHeader);
 
@@ -47,13 +60,38 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(this.jwtPrefix.length());
-        String username = this.jwtService.extractUsername(token);
+
+        boolean isService = requestAddress.equals(this.userServiceUrl);
+
+        String username = this.jwtService.extractUsername(token, isService);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (username.equals(AuthorityConstants.USER_SERVICE)) {
+                if (this.jwtService.validateTokenFromService(token)) {
+                    logger.info("Service token validated. Requested {}", request.getPathInfo());
+
+                    AbstractAuthenticationToken authToken =
+                            new AnonymousAuthenticationToken(
+                                    AuthorityConstants.USER_SERVICE,
+                                    AuthorityConstants.USER_SERVICE,
+                                    List.of(
+                                            new SimpleGrantedAuthority(
+                                                    AuthorityConstants.USER_SERVICE)));
+
+                    authToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             if (this.jwtService.validateToken(token, userDetails)) {
-                logger.info(String.format("User %s validated", username));
+                logger.info("User {} validated", username);
 
                 UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(

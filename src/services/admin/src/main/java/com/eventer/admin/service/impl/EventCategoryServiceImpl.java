@@ -133,6 +133,20 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         return EventCategoryMapper.toDomainSet(foundCategories);
     }
 
+    @Override
+    public Result<Set<EventCategory>> getAllCategories() {
+        logger.info("Attempting to get all categories");
+
+        List<com.eventer.admin.data.model.EventCategory> foundCategories = this.eventCategoryRepository.findAll();
+
+        if (foundCategories.size() == 0) {
+            logger.error(ResultErrorMessages.categoriesNotFound);
+            return Result.notFound(ResultErrorMessages.categoriesNotFound);
+        }
+
+        return EventCategoryMapper.toDomainSet(foundCategories);
+    }
+
     private Result sendMessage(String action, EventCategory category) {
         logger.info(
                 "Attempting to send message for action {} and {} id {}",

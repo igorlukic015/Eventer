@@ -14,4 +14,6 @@ public interface EventCategoryService {
     Result<Page<EventCategory>> getCategories(Pageable pageable);
 
     Result<Set<EventCategory>> getCategoriesByIds(Set<Long> ids);
+
+    Result<Set<EventCategory>> getAllCategories();
 }

@@ -8,6 +8,8 @@ import java.util.function.Function;
 
 import io.jsonwebtoken.Claims;
 
+import javax.crypto.SecretKey;
+
 public interface JwtService {
     String extractUsername(String token);
 
@@ -23,5 +25,7 @@ public interface JwtService {
 
     String generateToken(String username);
 
-    String createToken(Map<String, Object> claims, String username);
+    String generateServiceToken();
+
+    String createToken(Map<String, Object> claims, String username, SecretKey secretKey);
 }

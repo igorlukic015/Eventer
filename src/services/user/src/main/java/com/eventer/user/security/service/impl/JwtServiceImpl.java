@@ -1,5 +1,6 @@
 package com.eventer.user.security.service.impl;
 
+import com.eventer.user.security.contracts.AuthorityConstants;
 import com.eventer.user.security.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -23,6 +24,9 @@ public class JwtServiceImpl implements JwtService {
 
     @Value("${secret}")
     private String secret;
+
+    @Value("${service-secret}")
+    private String serviceSecret;
 
     @Override
     public String extractUsername(String token) {
@@ -59,21 +63,31 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
+        return createToken(claims, username, getSecretKey());
     }
 
     @Override
-    public String createToken(Map<String, Object> claims, String username) {
+    public String generateServiceToken() {
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, AuthorityConstants.USER_SERVICE, getServiceSecretKey());
+    }
+
+    @Override
+    public String createToken(Map<String, Object> claims, String username, SecretKey secretKey) {
         return Jwts.builder()
                 .claims(claims)
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + this.expiryInMillis))
-                .signWith(getSecretKey())
+                .signWith(secretKey)
                 .compact();
     }
 
-    public SecretKey getSecretKey() {
+    private SecretKey getSecretKey() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(this.secret));
+    }
+
+    private SecretKey getServiceSecretKey() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(this.serviceSecret));
     }
 }

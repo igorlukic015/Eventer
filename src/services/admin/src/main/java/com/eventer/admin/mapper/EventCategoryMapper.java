@@ -23,6 +23,10 @@ public class EventCategoryMapper {
         return new PageImpl<>(dtos, categories.getPageable(), categories.getTotalElements());
     }
 
+    public static List<EventCategoryDTO> toDTOs(Set<EventCategory> categories) {
+        return categories.stream().map(EventCategoryMapper::toDTO).toList();
+    }
+
     public static Result<EventCategory> toDomain(EventCategoryDTO dto) {
         return EventCategory.create(dto.id(), dto.name(), dto.description());
     }

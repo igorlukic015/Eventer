@@ -11,6 +11,8 @@ import com.eventer.admin.service.domain.Admin;
 import com.eventer.admin.service.domain.Role;
 import com.github.cigor99.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +30,7 @@ public class AdminServiceImpl implements AdminService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final AdminRepository adminRepository;
+    private static final Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
 
     public AdminServiceImpl(
             AuthenticationManager authenticationManager,
@@ -41,7 +44,10 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     @Override
     public Result<Admin> register(RegisterRequest request) {
+        logger.info("Attempting to create {}", Admin.class.getSimpleName());
+
         if (this.adminRepository.existsByUsername(request.username())) {
+            logger.error(ResultErrorMessages.adminUsernameConflicted);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.conflict(ResultErrorMessages.adminUsernameConflicted);
         }
@@ -53,6 +59,7 @@ public class AdminServiceImpl implements AdminService {
                 Admin.create(request.username(), encodedPassword, Role.EVENT_MANAGER);
 
         if (adminOrError.isFailure()) {
+            logger.error(adminOrError.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.fromError(adminOrError);
         }
@@ -61,17 +68,26 @@ public class AdminServiceImpl implements AdminService {
 
         admin = this.adminRepository.save(admin);
 
+        logger.info("Admin successfully saved");
+
         return AdminMapper.toDomain(admin);
     }
 
     @Transactional(readOnly = true)
     @Override
     public Result<Admin> getAdminByUsername(String username) {
-        Optional<com.eventer.admin.data.model.Admin> foundAdmin = this.adminRepository.findByUsername(username);
+        logger.info("Attempting to get {} by username {}", Admin.class.getSimpleName(), username);
+
+        Optional<com.eventer.admin.data.model.Admin> foundAdmin =
+                this.adminRepository.findByUsername(username);
 
         if (foundAdmin.isEmpty()) {
+            logger.error(ResultErrorMessages.adminNotFound);
             return Result.notFound(ResultErrorMessages.adminNotFound);
         }
+
+        logger.info(
+                "{} with username {} found successfully", Admin.class.getSimpleName(), username);
 
         return AdminMapper.toDomain(foundAdmin.get());
     }
@@ -85,9 +101,12 @@ public class AdminServiceImpl implements AdminService {
     @Transactional(readOnly = true)
     @Override
     public Result<AuthenticationResponse> authenticate(LoginRequest loginRequest) {
+        logger.info("Attempting to authenticate {}", loginRequest.username());
+
         Result<Admin> adminOrError = this.getAdminByUsername(loginRequest.username());
 
         if (adminOrError.isFailure()) {
+            logger.error(adminOrError.getMessage());
             return Result.unauthorized(adminOrError.getMessage());
         }
 
@@ -99,6 +118,8 @@ public class AdminServiceImpl implements AdminService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String accessToken = jwtService.generateToken(loginRequest.username());
+
+        logger.info("Authentication success for {}", loginRequest.username());
 
         return Result.success(new AuthenticationResponse(accessToken));
     }

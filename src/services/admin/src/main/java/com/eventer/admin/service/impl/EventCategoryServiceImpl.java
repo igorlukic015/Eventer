@@ -13,6 +13,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cigor99.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
     private final EventCategoryRepository eventCategoryRepository;
     private final MessageSenderService messageSenderService;
     private final ObjectMapper objectMapper;
+    private static final Logger logger = LoggerFactory.getLogger(EventCategoryServiceImpl.class);
 
     public EventCategoryServiceImpl(
             EventCategoryRepository eventCategoryRepository,
@@ -42,9 +45,15 @@ public class EventCategoryServiceImpl implements EventCategoryService {
     @Transactional
     @Override
     public Result<EventCategory> create(CreateEventCategoryRequest request) {
+        logger.info(
+                "Attempting to create a new {} with name: {}",
+                EventCategory.class.getSimpleName(),
+                request.name());
+
         boolean isDuplicate = this.eventCategoryRepository.existsByNameIgnoreCase(request.name());
 
         if (isDuplicate) {
+            logger.error(ResultErrorMessages.categoryAlreadyExists);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.conflict(ResultErrorMessages.categoryAlreadyExists);
         }
@@ -53,6 +62,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
                 EventCategory.create(request.name(), request.description());
 
         if (newCategoryOrError.isFailure()) {
+            logger.error(newCategoryOrError.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.fromError(newCategoryOrError);
         }
@@ -63,9 +73,13 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         com.eventer.admin.data.model.EventCategory result =
                 this.eventCategoryRepository.save(eventCategory);
 
+        logger.info(
+                "New {} saved with ID: {}", EventCategory.class.getSimpleName(), result.getId());
+
         Result<EventCategory> createdCategoryOrError = EventCategoryMapper.toDomain(result);
 
         if (createdCategoryOrError.isFailure()) {
+            logger.error(ResultErrorMessages.failedToSendMessage);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.internalError(ResultErrorMessages.failedToSendMessage);
         }
@@ -74,6 +88,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
                 this.sendMessage(MessageStatics.ACTION_CREATED, createdCategoryOrError.getValue());
 
         if (messageSentOrError.isFailure()) {
+            logger.error(messageSentOrError.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.fromError(messageSentOrError);
         }
@@ -84,6 +99,8 @@ public class EventCategoryServiceImpl implements EventCategoryService {
     @Transactional(readOnly = true)
     @Override
     public Result<Page<EventCategory>> getCategories(Pageable pageable) {
+        logger.info("Attempting to get categories");
+
         Page<com.eventer.admin.data.model.EventCategory> foundCategories =
                 this.eventCategoryRepository.findAll(pageable);
 
@@ -91,6 +108,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
                 EventCategoryMapper.toDomainPage(foundCategories);
 
         if (categoriesOrError.isFailure()) {
+            logger.error(categoriesOrError.getMessage());
             return Result.fromError(categoriesOrError);
         }
 
@@ -100,10 +118,15 @@ public class EventCategoryServiceImpl implements EventCategoryService {
     @Transactional(readOnly = true)
     @Override
     public Result<Set<EventCategory>> getCategoriesByIds(Set<Long> ids) {
+        logger.info(
+                "Attempting to get categories by ids {}",
+                String.join(",", ids.stream().map(Object::toString).toList()));
+
         List<com.eventer.admin.data.model.EventCategory> foundCategories =
                 this.eventCategoryRepository.findAllById(ids);
 
         if (foundCategories.size() == 0) {
+            logger.error(ResultErrorMessages.categoriesNotFound);
             return Result.notFound(ResultErrorMessages.categoriesNotFound);
         }
 
@@ -111,6 +134,12 @@ public class EventCategoryServiceImpl implements EventCategoryService {
     }
 
     private Result sendMessage(String action, EventCategory category) {
+        logger.info(
+                "Attempting to send message for action {} and {} id {}",
+                action,
+                EventCategory.class.getSimpleName(),
+                category.getId());
+
         Message categoryMessage =
                 new Message(
                         MessageStatics.NAME_ENTITY_UPDATED,
@@ -123,11 +152,14 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         try {
             messagePayload = this.objectMapper.writeValueAsString(categoryMessage);
         } catch (JsonProcessingException e) {
+            logger.error("{} with exception {}", ResultErrorMessages.failedToSendMessage, e.getMessage());
             return Result.internalError(ResultErrorMessages.failedToSendMessage);
         }
 
         this.messageSenderService.sendMessage(
                 ApplicationStatics.EVENTER_DATA_MESSAGE_QUEUE, messagePayload);
+
+        logger.info("Message sent successfully");
 
         return Result.success();
     }

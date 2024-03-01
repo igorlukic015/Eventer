@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cigor99.resulter.Result;
 
 import com.eventer.admin.utils.ResultErrorMessages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,7 @@ public class EventServiceImpl implements EventService {
     private final ImageRepository imageRepository;
     private final MessageSenderService messageSenderService;
     private final ObjectMapper objectMapper;
+    private final Logger logger = LoggerFactory.getLogger(EventServiceImpl.class);
 
     public EventServiceImpl(
             EventRepository eventRepository,
@@ -56,19 +59,24 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public Result<Event> create(CreateEventRequest createEventRequest) {
+        logger.info("Attempting to create event {}", createEventRequest.title());
+
         if (createEventRequest.weatherConditionsOrError().isFailure()) {
+            logger.error(createEventRequest.weatherConditionsOrError().getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(createEventRequest.weatherConditionsOrError());
         }
 
         if (createEventRequest.eventCategoriesOrError().isFailure()) {
+            logger.error(createEventRequest.eventCategoriesOrError().getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(createEventRequest.eventCategoriesOrError());
         }
 
         if (createEventRequest.dateOrError().isFailure()) {
+            logger.error(createEventRequest.dateOrError().getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(createEventRequest.dateOrError());
@@ -81,6 +89,7 @@ public class EventServiceImpl implements EventService {
                                 .collect(Collectors.toSet()));
 
         if (categoriesOrError.isFailure()) {
+            logger.error(categoriesOrError.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(categoriesOrError);
@@ -94,6 +103,7 @@ public class EventServiceImpl implements EventService {
             Result<Image> imageOrError = Image.create(imageName);
 
             if (imageOrError.isFailure()) {
+                logger.error(ResultErrorMessages.invalidImage);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
                 return Result.invalid(ResultErrorMessages.invalidImage);
@@ -107,9 +117,10 @@ public class EventServiceImpl implements EventService {
                                         imageOrError.getValue(), Event.class.getSimpleName()));
                 imageOrError.getValue().setId(savedimage.getId());
             } catch (Exception e) {
+                logger.error(e.getMessage());
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
-                throw e;
+                return Result.invalid(e.getMessage());
             }
 
             savedImages.add(imageOrError.getValue());
@@ -126,6 +137,7 @@ public class EventServiceImpl implements EventService {
                         savedImages);
 
         if (eventOrError.isFailure()) {
+            logger.error(eventOrError.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
             return Result.fromError(eventOrError);
@@ -137,14 +149,16 @@ public class EventServiceImpl implements EventService {
         try {
             event = this.eventRepository.save(event);
         } catch (Exception e) {
+            logger.error(e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
-            throw e;
+            return Result.invalid(e.getMessage());
         }
 
         Result<Event> createdEventOrError = EventMapper.toDomain(event);
 
         if (createdEventOrError.isFailure()) {
+            logger.error(ResultErrorMessages.failedToSendMessage);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.internalError(ResultErrorMessages.failedToSendMessage);
         }
@@ -153,9 +167,12 @@ public class EventServiceImpl implements EventService {
                 this.sendMessage(MessageStatics.ACTION_CREATED, createdEventOrError.getValue());
 
         if (messageSentOrError.isFailure()) {
+            logger.error(ResultErrorMessages.failedToSendMessage);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.internalError(ResultErrorMessages.failedToSendMessage);
         }
+
+        logger.info("{} created successfully", Event.class.getSimpleName());
 
         return createdEventOrError;
     }
@@ -163,19 +180,30 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     @Override
     public Result<Page<Event>> getEvents(Pageable pageable) {
+        logger.info("Attempting to get events");
+
         Page<com.eventer.admin.data.model.Event> foundEvents =
                 this.eventRepository.findAll(pageable);
 
         Result<Page<Event>> eventsOrError = EventMapper.toDomainPage(foundEvents);
 
         if (eventsOrError.isFailure()) {
+            logger.error(eventsOrError.getMessage());
             return Result.fromError(eventsOrError);
         }
+
+        logger.info("Events found successfully");
 
         return eventsOrError;
     }
 
     private Result sendMessage(String action, Event event) {
+        logger.info(
+                "Attempting to send message for {} {} with id {}",
+                action,
+                Event.class.getSimpleName(),
+                event.getId());
+
         Message eventMessage =
                 new Message(
                         MessageStatics.NAME_ENTITY_UPDATED,
@@ -188,11 +216,14 @@ public class EventServiceImpl implements EventService {
         try {
             messagePayload = this.objectMapper.writeValueAsString(eventMessage);
         } catch (JsonProcessingException e) {
+            logger.error(e.getMessage());
             return Result.internalError(ResultErrorMessages.failedToSendMessage);
         }
 
         this.messageSenderService.sendMessage(
                 ApplicationStatics.EVENTER_DATA_MESSAGE_QUEUE, messagePayload);
+
+        logger.info("Message sent successfully");
 
         return Result.success();
     }

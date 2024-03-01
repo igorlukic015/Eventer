@@ -1,6 +1,7 @@
 from logging import Formatter, FileHandler, getLogger, StreamHandler
 from statics import LOG_FILE_NAME, LOG_FILE_PATH
 from config import config
+from datetime import datetime
 
 logging_levels = {"critical": 50,
                   "error": 40,
@@ -11,7 +12,9 @@ logging_levels = {"critical": 50,
 
 log_formatter = Formatter("%(levelname)s: %(asctime)s %(message)s")
 
-file_handler = FileHandler("{0}/{1}.log".format(LOG_FILE_PATH, LOG_FILE_NAME), mode="a", encoding="utf-8")
+file_handler = FileHandler("{0}/{1}-{2}.log".format(LOG_FILE_PATH, LOG_FILE_NAME, str(datetime.utcnow().timestamp())),
+                           mode="w", encoding="utf-8")
+
 file_handler.setFormatter(log_formatter)
 
 console_handler = StreamHandler()

@@ -6,8 +6,13 @@ import com.github.cigor99.resulter.Result;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+import java.util.Set;
+
 public interface EventService {
     Result<Event> create(CreateEventRequest createEventRequest);
 
     Result<Page<Event>> getEvents(Pageable pageable);
+
+    Result<Set<Event>> getAllEvents();
 }

@@ -36,7 +36,11 @@ public class EventMapper {
                 domain.getImages().stream().map(ImageMapper::toDTO).collect(Collectors.toSet()));
     }
 
-    public static Page<EventDTO> toDTOs(Page<Event> domainPage) {
+    public static Set<EventDTO> toDTOs(Set<Event> domainSet) {
+        return domainSet.stream().map(EventMapper::toDTO).collect(Collectors.toSet());
+    }
+
+    public static Page<EventDTO> toDTOPage(Page<Event> domainPage) {
         List<EventDTO> dtos = domainPage.stream().map(EventMapper::toDTO).toList();
 
         return new PageImpl<>(dtos, domainPage.getPageable(), domainPage.getTotalElements());
@@ -89,6 +93,13 @@ public class EventMapper {
                 model.getWeatherConditionAvailability(),
                 categoriesOrError,
                 imagesOrError);
+    }
+
+    public static Result<Set<Event>> toDomainSet(
+            List<com.eventer.admin.data.model.Event> foundEvents) {
+
+        return Result.getResultValueSet(
+                foundEvents.stream().map(EventMapper::toDomain).toList(), Collectors.toSet());
     }
 
     public static Result<Page<Event>> toDomainPage(

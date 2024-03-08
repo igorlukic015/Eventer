@@ -60,6 +60,12 @@ public class EventController implements ResultUnwrapper {
     @GetMapping
     public ResponseEntity<?> getEvents(final Pageable pageable) {
         Result<Page<Event>> result = this.eventService.getEvents(pageable);
+        return this.okOrError(result, EventMapper::toDTOPage);
+    }
+
+    @GetMapping("/get-all")
+    public ResponseEntity<?> getAllEvents() {
+        Result<Set<Event>> result = this.eventService.getAllEvents();
         return this.okOrError(result, EventMapper::toDTOs);
     }
 }

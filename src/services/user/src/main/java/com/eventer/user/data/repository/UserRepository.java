@@ -1,6 +1,6 @@
 package com.eventer.user.data.repository;
 
-import com.eventer.user.data.model.sql.User;
+import com.eventer.user.data.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

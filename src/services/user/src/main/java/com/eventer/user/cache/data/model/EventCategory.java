@@ -1,4 +1,4 @@
-package com.eventer.user.data.model.document;
+package com.eventer.user.cache.data.model;
 
 import com.redis.om.spring.annotations.Indexed;
 import com.redis.om.spring.annotations.Searchable;
@@ -9,22 +9,31 @@ import java.util.Objects;
 
 @Document
 public class EventCategory {
-    @Id public String uid;
+    @Id private String uid;
 
-    @Indexed @Searchable public Long id;
+    @Indexed @Searchable private Long id;
 
-    @Indexed @Searchable public String name;
+    @Indexed @Searchable private String name;
 
-    public String description;
+    private String description;
 
     public EventCategory() {}
+
+    public EventCategory(Long id, String name, String description) {
+        this.uid = null;
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventCategory that = (EventCategory) o;
-        return Objects.equals(uid, that.uid) || Objects.equals(id, that.id) || Objects.equals(name, that.name);
+        return Objects.equals(uid, that.uid)
+                || Objects.equals(id, that.id)
+                || Objects.equals(name, that.name);
     }
 
     @Override

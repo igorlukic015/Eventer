@@ -1,4 +1,4 @@
-package com.eventer.user.data.model.sql;
+package com.eventer.user.data.model;
 
 import jakarta.persistence.*;
 

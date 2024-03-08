@@ -31,6 +31,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -191,6 +192,20 @@ public class EventServiceImpl implements EventService {
             logger.error(eventsOrError.getMessage());
             return Result.fromError(eventsOrError);
         }
+
+        logger.info("Events found successfully");
+
+        return eventsOrError;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Result<Set<Event>> getAllEvents() {
+        logger.info("Attempting to get all events");
+
+        List<com.eventer.admin.data.model.Event> foundEvents = this.eventRepository.findAll();
+
+        Result<Set<Event>> eventsOrError = EventMapper.toDomainSet(foundEvents);
 
         logger.info("Events found successfully");
 

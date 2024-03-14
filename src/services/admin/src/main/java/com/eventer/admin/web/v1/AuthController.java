@@ -28,9 +28,7 @@ public class AuthController implements ResultUnwrapper {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(
-            @RequestBody RegisterDTO registerDTO
-    ) {
+    public ResponseEntity<?> register(@RequestBody RegisterDTO registerDTO) {
         Result<Admin> result = this.adminService.register(AdminMapper.toRequest(registerDTO));
         return this.okOrError(result, AdminMapper::toDTO);
     }

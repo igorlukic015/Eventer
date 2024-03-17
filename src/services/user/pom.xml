@@ -18,9 +18,9 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>com.github.cigor99</groupId>
+			<groupId>com.github.igorlukic015</groupId>
 			<artifactId>resulter</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 		</dependency>
 
 		<dependency>

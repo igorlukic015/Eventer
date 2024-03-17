@@ -1,7 +1,7 @@
 package com.eventer.admin.service.domain;
 
 import com.eventer.admin.utils.Helpers;
-import com.github.cigor99.resulter.Result;
+import com.github.igorlukic015.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
 import org.springframework.util.StringUtils;
 

@@ -1,6 +1,6 @@
 package com.eventer.admin.service.domain;
 
-import com.github.cigor99.resulter.Result;
+import com.github.igorlukic015.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
 
 import java.util.Objects;

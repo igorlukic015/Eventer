@@ -2,7 +2,7 @@ package com.eventer.admin.mapper;
 
 import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
 import com.eventer.admin.web.dto.eventcategory.EventCategoryDTO;
-import com.github.cigor99.resulter.Result;
+import com.github.igorlukic015.resulter.Result;
 import com.eventer.admin.service.domain.EventCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

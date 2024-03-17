@@ -2,7 +2,7 @@ package com.eventer.admin.contracts.event;
 
 import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.service.domain.WeatherCondition;
-import com.github.cigor99.resulter.Result;
+import com.github.igorlukic015.resulter.Result;
 
 import java.nio.file.Path;
 import java.time.Instant;

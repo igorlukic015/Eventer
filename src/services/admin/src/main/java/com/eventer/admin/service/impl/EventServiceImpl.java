@@ -17,7 +17,7 @@ import com.eventer.admin.service.domain.Image;
 import com.eventer.admin.utils.Helpers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.cigor99.resulter.Result;
+import com.github.igorlukic015.resulter.Result;
 
 import com.eventer.admin.utils.ResultErrorMessages;
 import org.slf4j.Logger;

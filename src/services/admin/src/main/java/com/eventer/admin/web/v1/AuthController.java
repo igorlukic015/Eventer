@@ -4,10 +4,10 @@ import com.eventer.admin.contracts.auth.AuthenticationResponse;
 import com.eventer.admin.mapper.AdminMapper;
 import com.eventer.admin.service.AdminService;
 import com.eventer.admin.service.domain.Admin;
-import com.github.cigor99.resulter.Result;
+import com.github.igorlukic015.resulter.Result;
 import com.eventer.admin.web.dto.auth.LoginDTO;
 import com.eventer.admin.web.dto.auth.RegisterDTO;
-import com.github.cigor99.resulter.ResultUnwrapper;
+import com.github.igorlukic015.resulter.ResultUnwrapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

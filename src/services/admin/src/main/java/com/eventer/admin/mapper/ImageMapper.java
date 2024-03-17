@@ -3,7 +3,7 @@ package com.eventer.admin.mapper;
 import com.eventer.admin.config.ApplicationConfiguration;
 import com.eventer.admin.service.domain.Event;
 import com.eventer.admin.service.domain.Image;
-import com.github.cigor99.resulter.Result;
+import com.github.igorlukic015.resulter.Result;
 import com.eventer.admin.web.dto.event.ImageDTO;
 
 import java.util.List;

@@ -9,7 +9,7 @@ import com.eventer.admin.security.service.JwtService;
 import com.eventer.admin.service.AdminService;
 import com.eventer.admin.service.domain.Admin;
 import com.eventer.admin.service.domain.Role;
-import com.github.cigor99.resulter.Result;
+import com.github.igorlukic015.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

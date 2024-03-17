@@ -11,7 +11,7 @@ import com.eventer.admin.data.repository.EventCategoryRepository;
 import com.eventer.admin.service.EventCategoryService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.cigor99.resulter.Result;
+import com.github.igorlukic015.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

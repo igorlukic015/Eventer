@@ -8,7 +8,6 @@ services:
       - "9003:5432"
     env_file:
       - .env
-
     volumes:
       - ./tools/docker/pgdata_admin:/var/lib/postgresql/data
 
@@ -39,9 +38,10 @@ services:
     image: redis
     ports:
       - "9001:6379"
+    environment:
+      REDIS_ARGS: --save 5 1 --requirepass a123456! --appendonly yes --appendfsync everysec
     volumes:
       - ./tools/docker/redis_forecast_data:/data
-    command: "redis-server redis.conf"
 
   rabbitmq:
     image: rabbitmq:3.13.0-management
@@ -53,6 +53,7 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
       - rabbitmq_config:/etc/rabbitmq
+      
 volumes:
     redis_forecast_data:
     redis_user_data:

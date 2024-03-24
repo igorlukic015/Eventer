@@ -30,9 +30,6 @@ public class Image extends AbstractAuditingEntity<Long> {
         return Objects.hash(id);
     }
 
-    public Image() {
-    }
-
     @Override
     public Long getId() {
         return id;

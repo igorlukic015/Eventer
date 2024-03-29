@@ -5,10 +5,7 @@ import {FooterComponent} from "../footer/footer.component";
 @Component({
   selector: 'eventer-admin-layout-main',
   standalone: true,
-  imports: [
-    NavbarComponent,
-    FooterComponent
-  ],
+  imports: [],
   templateUrl: './layout-main.component.html',
   styleUrl: './layout-main.component.css'
 })

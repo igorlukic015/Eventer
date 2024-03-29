@@ -9,7 +9,7 @@
     </tr>
     </thead>
     <tbody>
-      @for (category of categories.slice(0, 10); track category.id) {
+      @for (category of categories(); track category.id) {
         <tr class="hover">
           <td>
             <label><input type="checkbox" class="checkbox"/></label>
@@ -21,9 +21,6 @@
       }
     </tbody>
   </table>
-  <div class="join flex my-3.5">
-    <button type="button" class="join-item btn btn-outline">«</button>
-    <button type="button" class="join-item btn btn-outline">Page 1</button>
-    <button type="button" class="join-item btn btn-outline">»</button>
-  </div>
+  <eventer-admin-table-paginator (pageChanged)="pageChanged($event)" [pageSize]="pageSize"
+                                 [totalPages]="totalPages"></eventer-admin-table-paginator>
 </div>

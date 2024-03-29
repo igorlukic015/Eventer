@@ -1,0 +1,20 @@
+<div class="overflow-x-auto">
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+      @for (category of categories.slice(0, 10); track category.id) {
+        <tr>
+          <td>{{ category.id }}</td>
+          <td>{{ category.name }}</td>
+          <td>{{ category.description }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

@@ -1,7 +1,8 @@
-<div class="overflow-x-auto">
+<div class="overflow-x-auto ml-3.5">
   <table class="table">
     <thead>
     <tr>
+      <th></th>
       <th>Id</th>
       <th>Name</th>
       <th>Description</th>
@@ -9,7 +10,10 @@
     </thead>
     <tbody>
       @for (category of categories.slice(0, 10); track category.id) {
-        <tr>
+        <tr class="hover">
+          <td>
+            <label><input type="checkbox" class="checkbox"/></label>
+          </td>
           <td>{{ category.id }}</td>
           <td>{{ category.name }}</td>
           <td>{{ category.description }}</td>
@@ -17,4 +21,9 @@
       }
     </tbody>
   </table>
+  <div class="join flex mt-3.5">
+    <button type="button" class="join-item btn btn-outline">«</button>
+    <button type="button" class="join-item btn btn-outline">Page 1</button>
+    <button type="button" class="join-item btn btn-outline">»</button>
+  </div>
 </div>

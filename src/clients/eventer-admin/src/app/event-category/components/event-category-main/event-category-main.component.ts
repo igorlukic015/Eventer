@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import {FooterComponent} from "../../../shared/footer/footer.component";
-import {NavbarComponent} from "../../../shared/navbar/navbar.component";
+import {FooterComponent} from "../../../shared/components/footer/footer.component";
+import {NavbarComponent} from "../../../shared/components/navbar/navbar.component";
 import {EventCategoryListComponent} from "../event-category-list/event-category-list.component";
-import {ActionBarComponent} from "../../../shared/action-bar/action-bar.component";
-import {LayoutMainComponent} from "../../../shared/layout-main/layout-main.component";
+import {ActionBarComponent} from "../../../shared/components/action-bar/action-bar.component";
+import {LayoutMainComponent} from "../../../shared/components/layout-main/layout-main.component";
 
 @Component({
   selector: 'eventer-admin-event-category-main',

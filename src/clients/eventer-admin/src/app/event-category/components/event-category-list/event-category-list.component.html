@@ -18,12 +18,16 @@
           <td>{{ category.name }}</td>
           <td>{{ category.description }}</td>
         </tr>
+      } @empty {
+        <h1>The table is empty</h1>
       }
     </tbody>
   </table>
-  <eventer-admin-table-paginator
-    (pageChanged)="pageChanged($event)"
-    [pageSize]="pageSize"
-    [totalPages]="totalPages">
-  </eventer-admin-table-paginator>
+  @if (totalPages() > 1){
+    <eventer-admin-table-paginator
+      (pageChanged)="pageChanged($event)"
+      [pageSize]="pageSize"
+      [totalPages]="totalPages()">
+    </eventer-admin-table-paginator>
+  }
 </div>

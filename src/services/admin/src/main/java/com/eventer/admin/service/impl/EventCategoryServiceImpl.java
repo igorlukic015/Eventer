@@ -125,7 +125,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         List<com.eventer.admin.data.model.EventCategory> foundCategories =
                 this.eventCategoryRepository.findAllById(ids);
 
-        if (foundCategories.size() == 0) {
+        if (foundCategories.isEmpty()) {
             logger.error(ResultErrorMessages.categoriesNotFound);
             return Result.notFound(ResultErrorMessages.categoriesNotFound);
         }
@@ -139,7 +139,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
 
         List<com.eventer.admin.data.model.EventCategory> foundCategories = this.eventCategoryRepository.findAll();
 
-        if (foundCategories.size() == 0) {
+        if (foundCategories.isEmpty()) {
             logger.error(ResultErrorMessages.categoriesNotFound);
             return Result.notFound(ResultErrorMessages.categoriesNotFound);
         }

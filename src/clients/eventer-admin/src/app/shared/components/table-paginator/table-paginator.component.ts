@@ -1,4 +1,14 @@
-import {Component, computed, EventEmitter, Input, Output, Signal, signal, WritableSignal} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  EventEmitter,
+  Input, OnInit,
+  Output,
+  Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
 
 @Component({
   selector: 'eventer-admin-table-paginator',
@@ -8,10 +18,10 @@ import {Component, computed, EventEmitter, Input, Output, Signal, signal, Writab
   styleUrl: './table-paginator.component.css'
 })
 export class TablePaginatorComponent {
-  @Input()
+  @Input({required: true})
   public totalPages: number = 1;
 
-  @Input()
+  @Input({required: true})
   public pageSize: number = 10;
 
   @Output()

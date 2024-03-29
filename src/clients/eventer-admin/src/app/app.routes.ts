@@ -1,5 +1,5 @@
 import {Routes} from '@angular/router';
-import {LayoutMainComponent} from "./shared/layout-main/layout-main.component";
+import {LayoutMainComponent} from "./shared/components/layout-main/layout-main.component";
 
 export const routes: Routes = [
   {path: 'event-category', loadChildren: () => import('./event-category/event-category.routes').then((m) => m.routes)},

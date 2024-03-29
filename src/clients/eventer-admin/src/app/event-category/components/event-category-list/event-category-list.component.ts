@@ -1,4 +1,4 @@
-import {Component, OnInit, signal, WritableSignal, Signal, computed} from '@angular/core';
+import {Component, OnInit, signal, WritableSignal} from '@angular/core';
 import {EventCategory} from "../../contracts/interfaces";
 import {allData} from "../../contracts/mock-data";
 import {TablePaginatorComponent} from "../../../shared/table-paginator/table-paginator.component";

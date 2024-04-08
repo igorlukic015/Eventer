@@ -3,8 +3,6 @@ import {EventCategory} from "../../contracts/interfaces";
 import {createFeature, createReducer, on} from "@ngrx/store";
 import {eventCategoryActions} from "../actions/event-category.actions";
 
-export const eventCategoryFeatureKey: 'eventCategory' = 'eventCategory';
-
 const adapter: EntityAdapter<EventCategory> = createEntityAdapter<EventCategory>();
 
 export interface EventCategoryState extends EntityState<EventCategory> {
@@ -22,7 +20,7 @@ const initialState: EventCategoryState = adapter.getInitialState({
 })
 
 const eventCategoryFeature = createFeature({
-  name: eventCategoryFeatureKey,
+  name: 'eventCategory',
   reducer: createReducer(
     initialState,
     on(eventCategoryActions.getEventCategories, (state) => ({
@@ -44,6 +42,7 @@ export const {
   selectTotal} = adapter.getSelectors(eventCategoryFeature.selectEventCategoryState);
 
 export const {
+  name: eventCategoryFeatureKey,
   reducer: eventCategoryReducer,
   selectIsLoading,
   selectError,

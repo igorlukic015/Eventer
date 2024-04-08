@@ -12,7 +12,7 @@
       @for (category of categories(); track category.id) {
         <tr class="hover">
           <td>
-            <label><input type="checkbox" class="checkbox"/></label>
+            <label><input type="checkbox" class="checkbox" (click)="handleCheckClick($event, category.id)" [checked]="checkedRow() === category.id" /></label>
           </td>
           <td>{{ category.id }}</td>
           <td>{{ category.name }}</td>

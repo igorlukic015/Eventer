@@ -42,4 +42,10 @@ public class EventCategoryController implements ResultUnwrapper {
         Result<Set<EventCategory>> result = this.eventCategoryService.getAllCategories();
         return this.okOrError(result, EventCategoryMapper::toDTOs);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCategories(@PathVariable("id") Long id) {
+        Result result = this.eventCategoryService.deleteCategory(id);
+        return this.okOrError(result);
+    }
 }

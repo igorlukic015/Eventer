@@ -8,6 +8,9 @@ export const eventCategoryActions = createActionGroup({
     'Get event categories success': props<{pagedResponse: PagedResponse}>(),
     'Get event categories fail' : props<{error: string}>(),
     'Update page number': props<{currentPage: number}>(),
-    'Update search term': props<{searchTerm: string}>()
+    'Update search term': props<{searchTerm: string}>(),
+    'Delete event category': props<{id: number}>(),
+    'Delete event category success': emptyProps(),
+    'Delete event category fail': props<{error: string}>()
   }
 })

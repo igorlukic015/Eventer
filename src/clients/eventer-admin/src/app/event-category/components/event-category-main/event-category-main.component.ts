@@ -25,6 +25,8 @@ import {eventCategoryActions} from "../../+state/actions/event-category.actions"
 })
 export class EventCategoryMainComponent extends DestroyableComponent implements OnInit {
 
+
+
   constructor(private readonly eventCategoryFacade: EventCategoryFacade) {
     super();
   }

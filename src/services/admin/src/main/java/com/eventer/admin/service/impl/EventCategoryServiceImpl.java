@@ -23,6 +23,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -133,6 +134,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         return EventCategoryMapper.toDomainSet(foundCategories);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Result<Set<EventCategory>> getAllCategories() {
         logger.info("Attempting to get all categories");
@@ -145,6 +147,23 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         }
 
         return EventCategoryMapper.toDomainSet(foundCategories);
+    }
+
+    @Transactional
+    @Override
+    public Result deleteCategory(Long id) {
+        logger.info("Attempting to delete category with id {}", id);
+
+        Optional<com.eventer.admin.data.model.EventCategory> foundCategory = this.eventCategoryRepository.findById(id);
+
+        if (foundCategory.isEmpty()) {
+            logger.error(ResultErrorMessages.categoryNotFound);
+            return Result.notFound(ResultErrorMessages.categoryNotFound);
+        }
+
+        this.eventCategoryRepository.delete(foundCategory.get());
+
+        return Result.success();
     }
 
     private Result sendMessage(String action, EventCategory category) {

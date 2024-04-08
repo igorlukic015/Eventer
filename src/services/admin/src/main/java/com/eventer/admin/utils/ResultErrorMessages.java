@@ -13,7 +13,9 @@ public class ResultErrorMessages {
     public static final String invalidEventCategoryName = "INVALID_EVENT_CATEGORY_NAME";
     public static final String invalidEventCategoryDescription =
             "INVALID_EVENT_CATEGORY_DESCRIPTION";
-    public static final String categoriesNotFound = "CATEGORY_NOT_FOUND";
+    public static final String categoriesNotFound = "CATEGORIES_NOT_FOUND";
+
+    public static final String categoryNotFound = "CATEGORY_NOT_FOUND";
 
     // WEATHER CONDITION
     public static final String invalidWeatherCondition = "INVALID_WEATHER_CONDITION";

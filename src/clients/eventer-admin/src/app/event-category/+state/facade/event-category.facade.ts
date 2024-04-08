@@ -28,4 +28,8 @@ export class EventCategoryFacade {
   updateSearchTerm(searchTerm: string) {
     this.store.dispatch(eventCategoryActions.updateSearchTerm({searchTerm}))
   }
+
+  deleteCategory(id: number) {
+    this.store.dispatch(eventCategoryActions.deleteEventCategory({id}));
+  }
 }

@@ -1,4 +1,4 @@
-import {Component, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, Input, OnInit, signal, WritableSignal} from '@angular/core';
 import {EventCategory} from "../../contracts/interfaces";
 import {TablePaginatorComponent} from "../../../shared/components/table-paginator/table-paginator.component";
 import {EventCategoryFacade} from "../../+state/facade/event-category.facade";
@@ -17,6 +17,13 @@ import {DestroyableComponent} from "../../../shared/components/destroyable/destr
 export class EventCategoryListComponent extends DestroyableComponent implements OnInit {
   public totalPages: WritableSignal<number> = signal(1);
   public categories: WritableSignal<EventCategory[]> = signal([]);
+  public checkedRow: WritableSignal<number> = signal(0);
+
+  onDeleteClicked($event: void) {
+    if (this.checkedRow() !== 0){
+      this.eventCategoryFacade.deleteCategory(this.checkedRow());
+    }
+  }
 
   constructor(private readonly eventCategoryFacade: EventCategoryFacade) {
     super();
@@ -24,6 +31,15 @@ export class EventCategoryListComponent extends DestroyableComponent implements 
 
   pageChanged(currentPage: number): void {
     this.eventCategoryFacade.updatePageNumber(currentPage);
+  }
+
+  handleCheckClick($event: any, categoryId: number) {
+    if (this.checkedRow() === categoryId) {
+      this.checkedRow.set(0);
+      return;
+    }
+
+    this.checkedRow.set(categoryId);
   }
 
   ngOnInit() {

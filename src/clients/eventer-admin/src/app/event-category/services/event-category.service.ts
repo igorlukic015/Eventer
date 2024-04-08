@@ -29,4 +29,8 @@ export class EventCategoryService {
 
     return this.httpClient.get<PagedResponse>(`${this.baseApiUrl}/${this.eventCategoryRoute}`, {params: params }, );
   }
+
+  public deleteEventCategory(id: number): Observable<void> {
+    return this.httpClient.delete<void>(`${this.baseApiUrl}/${this.eventCategoryRoute}/${id}`);
+  }
 }

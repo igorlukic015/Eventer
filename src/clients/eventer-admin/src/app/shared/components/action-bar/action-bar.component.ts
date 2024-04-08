@@ -13,6 +13,9 @@ export class ActionBarComponent {
   @Output()
   searchTermChanged: EventEmitter<string> = new EventEmitter<string>();
 
+  @Output()
+  deleteClicked: EventEmitter<void> = new EventEmitter<void>();
+
   private debouncer: Subject<string> = new Subject<string>();
 
   constructor() {
@@ -23,5 +26,9 @@ export class ActionBarComponent {
 
   handleInput($event: any) {
     this.debouncer.next($event.target.value);
+  }
+
+  handleDeleteClick($event: any) {
+    this.deleteClicked.emit();
   }
 }

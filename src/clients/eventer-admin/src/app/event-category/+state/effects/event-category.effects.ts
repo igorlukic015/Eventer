@@ -22,13 +22,27 @@ export class EventCategoryEffects {
     )
   );
 
+  deleteEventCategory$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(eventCategoryActions.deleteEventCategory),
+      switchMap(action => (
+        this.eventCategoryService.deleteEventCategory(action.id).pipe(
+          map(response => eventCategoryActions.deleteEventCategorySuccess),
+          catchError((error) => of(eventCategoryActions.deleteEventCategoryFail(error)))
+        )
+      ))
+    )
+  );
+
   showErrorToast$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(eventCategoryActions.getEventCategoriesFail),
+      ofType(
+        eventCategoryActions.getEventCategoriesFail,
+        eventCategoryActions.deleteEventCategoryFail),
       tap((action: any) => {
         if (action.error !== undefined) {
           // TODO: Show error notification
-          alert(action.error);
+          alert(action.statusText);
         }
       })
     ),

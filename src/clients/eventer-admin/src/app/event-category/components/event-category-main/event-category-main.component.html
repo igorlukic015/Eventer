@@ -1,4 +1,8 @@
 <eventer-admin-layout-main>
-  <eventer-admin-action-bar (searchTermChanged)="onSearchTermChanged($event)"></eventer-admin-action-bar>
-  <eventer-admin-event-category-list></eventer-admin-event-category-list>
+  <eventer-admin-action-bar
+    (searchTermChanged)="onSearchTermChanged($event)"
+    (deleteClicked)="list.onDeleteClicked($event)"
+  >
+  </eventer-admin-action-bar>
+  <eventer-admin-event-category-list #list></eventer-admin-event-category-list>
 </eventer-admin-layout-main>

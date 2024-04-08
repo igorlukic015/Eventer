@@ -1,48 +1,46 @@
 import {Component, OnInit, signal, WritableSignal} from '@angular/core';
 import {EventCategory} from "../../contracts/interfaces";
 import {TablePaginatorComponent} from "../../../shared/components/table-paginator/table-paginator.component";
-import {EventCategoryService} from "../../services/event-category.service";
-import {PagedResponse, PageRequest} from "../../../shared/contracts/interfaces";
-import {SortDirection} from "../../../shared/contracts/models";
-import {HttpClientModule} from "@angular/common/http";
+import {EventCategoryFacade} from "../../+state/facade/event-category.facade";
+import {takeUntil, withLatestFrom} from "rxjs";
+import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
 
 @Component({
   selector: 'eventer-admin-event-category-list',
   standalone: true,
   imports: [
     TablePaginatorComponent,
-    HttpClientModule
   ],
-  providers: [EventCategoryService, HttpClientModule],
   templateUrl: './event-category-list.component.html',
   styleUrl: './event-category-list.component.css'
 })
-export class EventCategoryListComponent implements OnInit {
+export class EventCategoryListComponent extends DestroyableComponent implements OnInit {
   public pageSize: number = 5;
 
   public totalPages: WritableSignal<number> = signal(1);
   public categories: WritableSignal<EventCategory[]> = signal([]);
 
-  constructor(public eventCategoryService: EventCategoryService) {
+  constructor(private readonly eventCategoryFacade: EventCategoryFacade) {
+    super();
   }
 
   pageChanged(currentPage: number): void {
-    this.getData(currentPage);
+    this.getData();
   }
 
-  getData(page: number) {
-    const pageRequest: PageRequest = {
-      page: page,
-      size: this.pageSize,
-      sort: {sortDirection: SortDirection.ascending, attributeNames: ['name']}
-    }
-    this.eventCategoryService.getEventCategories(pageRequest).subscribe((response:PagedResponse) => {
-      this.categories.set(response.content);
-      this.totalPages.set(response.totalPages);
-    });
+  getData() {
+    this.eventCategoryFacade.items$.pipe(
+      withLatestFrom(this.eventCategoryFacade.totalPages$),
+      takeUntil(this.destroyed)
+    ).subscribe(([items, total]) => {
+      if (items) {
+        this.categories.set(items);
+        this.totalPages.set(total);
+      }
+    })
   }
 
   ngOnInit() {
-    this.getData(0);
+    this.getData();
   }
 }

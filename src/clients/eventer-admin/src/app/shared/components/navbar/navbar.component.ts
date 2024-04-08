@@ -1,5 +1,5 @@
-import {AfterContentInit, Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ActivatedRoute, Router, RouterLink} from "@angular/router";
+import {Component} from '@angular/core';
+import {RouterLink, RouterOutlet} from "@angular/router";
 import {NgClass} from "@angular/common";
 
 @Component({
@@ -7,6 +7,7 @@ import {NgClass} from "@angular/common";
   standalone: true,
   imports: [
     RouterLink,
+    RouterOutlet,
     NgClass
   ],
   templateUrl: './navbar.component.html',

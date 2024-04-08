@@ -25,13 +25,13 @@ export interface PagedResponse {
   empty: boolean;
 }
 
-export interface PageableSortProperties {
+interface PageableSortProperties {
   empty: boolean;
   sorted: boolean;
   unsorted: boolean;
 }
 
-export interface Pageable {
+interface Pageable {
   pageNumber: number;
   pageSize: number;
   sort: PageableSortProperties;

@@ -1,10 +1,10 @@
 import {Injectable} from "@angular/core";
 import {PagedResponse, PageRequest} from "../../shared/contracts/interfaces";
 import {Observable} from "rxjs";
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class EventCategoryService {
   private baseApiUrl: string = 'http://localhost:9002';
   private eventCategoryRoute: string = 'api/v1/event-category';
@@ -17,8 +17,7 @@ export class EventCategoryService {
 
     const params: HttpParams = new HttpParams().set('size', size).set('page', page);
 
-    const token: string = '';
-
+    // const token: string = '';
 
     if (sort !== null) {
       params.set('sort', `${sort.attributeNames.join(',')},${sort.sortDirection}`);

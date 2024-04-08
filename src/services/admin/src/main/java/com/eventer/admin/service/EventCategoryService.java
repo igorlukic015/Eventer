@@ -11,7 +11,7 @@ import java.util.Set;
 public interface EventCategoryService {
     Result<EventCategory> create(CreateEventCategoryRequest request);
 
-    Result<Page<EventCategory>> getCategories(Pageable pageable);
+    Result<Page<EventCategory>> getCategories(Pageable pageable, String searchTerm);
 
     Result<Set<EventCategory>> getCategoriesByIds(Set<Long> ids);
 

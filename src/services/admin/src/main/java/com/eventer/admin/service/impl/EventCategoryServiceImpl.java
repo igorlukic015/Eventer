@@ -98,11 +98,11 @@ public class EventCategoryServiceImpl implements EventCategoryService {
 
     @Transactional(readOnly = true)
     @Override
-    public Result<Page<EventCategory>> getCategories(Pageable pageable) {
+    public Result<Page<EventCategory>> getCategories(Pageable pageable, String searchTerm) {
         logger.info("Attempting to get categories");
 
         Page<com.eventer.admin.data.model.EventCategory> foundCategories =
-                this.eventCategoryRepository.findAll(pageable);
+                this.eventCategoryRepository.findByNameContaining(searchTerm, pageable);
 
         Result<Page<EventCategory>> categoriesOrError =
                 EventCategoryMapper.toDomainPage(foundCategories);

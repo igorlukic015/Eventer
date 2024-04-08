@@ -21,9 +21,6 @@ export class TablePaginatorComponent {
   @Input({required: true})
   public totalPages: number = 1;
 
-  @Input({required: true})
-  public pageSize: number = 10;
-
   @Output()
   pageChanged: EventEmitter<number> = new EventEmitter<number>();
 

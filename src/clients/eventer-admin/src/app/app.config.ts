@@ -14,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode(),
-      autoPause: true,
+      autoPause: false,
       trace: false,
       traceLimit: 75
     })

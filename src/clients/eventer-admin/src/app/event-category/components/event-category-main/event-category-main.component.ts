@@ -6,6 +6,8 @@ import {ActionBarComponent} from "../../../shared/components/action-bar/action-b
 import {LayoutMainComponent} from "../../../shared/components/layout-main/layout-main.component";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
 import {EventCategoryFacade} from "../../+state/facade/event-category.facade";
+import {of, switchMap, takeUntil, withLatestFrom} from "rxjs";
+import {eventCategoryActions} from "../../+state/actions/event-category.actions";
 
 @Component({
   selector: 'eventer-admin-event-category-main',
@@ -27,7 +29,15 @@ export class EventCategoryMainComponent extends DestroyableComponent implements 
     super();
   }
 
+  onSearchTermChanged(searchTerm: string) {
+    this.eventCategoryFacade.updateSearchTerm(searchTerm);
+  }
+
   ngOnInit(): void {
-    this.eventCategoryFacade.loadEventCategories();
+    this.eventCategoryFacade.pageRequest$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(_ => {
+        this.eventCategoryFacade.loadEventCategories();
+    });
   }
 }

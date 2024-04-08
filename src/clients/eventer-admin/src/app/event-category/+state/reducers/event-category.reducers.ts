@@ -2,6 +2,9 @@ import {createEntityAdapter, EntityAdapter, EntityState} from "@ngrx/entity";
 import {EventCategory} from "../../contracts/interfaces";
 import {createFeature, createReducer, on} from "@ngrx/store";
 import {eventCategoryActions} from "../actions/event-category.actions";
+import {PageRequest} from "../../../shared/contracts/interfaces";
+import {SortDirection} from "../../../shared/contracts/models";
+import {defaultPageSize} from "../../../shared/contracts/statics";
 
 const adapter: EntityAdapter<EventCategory> = createEntityAdapter<EventCategory>();
 
@@ -10,13 +13,23 @@ export interface EventCategoryState extends EntityState<EventCategory> {
   error: string | null;
   totalPages: number;
   totalElements: number;
+  pageRequest: PageRequest;
 }
 
 const initialState: EventCategoryState = adapter.getInitialState({
   isLoading: false,
   error: null,
   totalPages: 0,
-  totalElements: 0
+  totalElements: 0,
+  pageRequest: {
+    page: 0,
+    size: defaultPageSize,
+    searchTerm: '',
+    sort: {
+      attributeNames: ['id'],
+      sortDirection: SortDirection.ascending
+    }
+  },
 })
 
 const eventCategoryFeature = createFeature({
@@ -24,13 +37,19 @@ const eventCategoryFeature = createFeature({
   reducer: createReducer(
     initialState,
     on(eventCategoryActions.getEventCategories, (state) => ({
-        ...state, isLoading: true
+      ...state, isLoading: true
     })),
     on(eventCategoryActions.getEventCategoriesSuccess, (state, {pagedResponse}) => (
-      adapter.setMany(pagedResponse.content, {...state, isLoading: false})
+      adapter.setAll(pagedResponse.content, {...state, isLoading: false, totalPages: pagedResponse.totalPages})
     )),
     on(eventCategoryActions.getEventCategoriesFail, (state, {error}) => ({
       ...state, isLoading: false, error: error
+    })),
+    on(eventCategoryActions.updatePageNumber, (state, {currentPage}) => ({
+      ...state, pageRequest: {...state.pageRequest, page: currentPage}
+    })),
+    on(eventCategoryActions.updateSearchTerm, (state, {searchTerm}) => ({
+      ...state, pageRequest: {...state.pageRequest, searchTerm: searchTerm}
     }))
   )
 });
@@ -39,7 +58,8 @@ export const {
   selectAll,
   selectEntities,
   selectIds,
-  selectTotal} = adapter.getSelectors(eventCategoryFeature.selectEventCategoryState);
+  selectTotal
+} = adapter.getSelectors(eventCategoryFeature.selectEventCategoryState);
 
 export const {
   name: eventCategoryFeatureKey,
@@ -47,5 +67,6 @@ export const {
   selectIsLoading,
   selectError,
   selectTotalPages,
-  selectTotalElements
+  selectTotalElements,
+  selectPageRequest,
 } = eventCategoryFeature;

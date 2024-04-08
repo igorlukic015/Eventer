@@ -3,6 +3,7 @@ import {SortDirection} from "./models";
 export interface PageRequest {
   page: number;
   size: number;
+  searchTerm: string;
   sort: PageRequestSortProperties;
 }
 

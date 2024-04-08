@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -31,8 +32,8 @@ public class EventCategoryController implements ResultUnwrapper {
     }
 
     @GetMapping
-    public ResponseEntity<?> getCategories(final Pageable pageable) {
-        Result<Page<EventCategory>> result = this.eventCategoryService.getCategories(pageable);
+    public ResponseEntity<?> getCategories(final Pageable pageable, @RequestParam("searchTerm") Optional<String> searchTerm) {
+        Result<Page<EventCategory>> result = this.eventCategoryService.getCategories(pageable, searchTerm.orElse(""));
         return this.okOrError(result, EventCategoryMapper::toDTOs);
     }
 

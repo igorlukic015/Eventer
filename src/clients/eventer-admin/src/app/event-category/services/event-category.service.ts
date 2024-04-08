@@ -13,14 +13,18 @@ export class EventCategoryService {
   }
 
   public getEventCategories(pageable: PageRequest): Observable<PagedResponse> {
-    let {size, page, sort} = pageable
+    let {size, page, searchTerm, sort} = pageable
 
-    const params: HttpParams = new HttpParams().set('size', size).set('page', page);
+    let params: HttpParams = new HttpParams().set('size', size).set('page', page);
 
     // const token: string = '';
 
-    if (sort !== null) {
-      params.set('sort', `${sort.attributeNames.join(',')},${sort.sortDirection}`);
+    if (sort) {
+      params = params.append('sort', `${sort.attributeNames.join(',')},${sort.sortDirection}`);
+    }
+
+    if (searchTerm) {
+      params = params.append('searchTerm', searchTerm);
     }
 
     return this.httpClient.get<PagedResponse>(`${this.baseApiUrl}/${this.eventCategoryRoute}`, {params: params }, );

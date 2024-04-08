@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface EventCategoryRepository extends JpaRepository<EventCategory, Long> {
     boolean existsByNameIgnoreCase(String name);
 
-    Page<EventCategory> findByNameContaining(String name, Pageable pageable);
+    Page<EventCategory> findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String term1, String term2, Pageable pageable);
 }

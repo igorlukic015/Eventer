@@ -102,7 +102,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         logger.info("Attempting to get categories");
 
         Page<com.eventer.admin.data.model.EventCategory> foundCategories =
-                this.eventCategoryRepository.findByNameContaining(searchTerm, pageable);
+                this.eventCategoryRepository.findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(searchTerm, searchTerm, pageable);
 
         Result<Page<EventCategory>> categoriesOrError =
                 EventCategoryMapper.toDomainPage(foundCategories);

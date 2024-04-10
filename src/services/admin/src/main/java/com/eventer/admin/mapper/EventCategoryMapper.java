@@ -1,6 +1,7 @@
 package com.eventer.admin.mapper;
 
 import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
+import com.eventer.admin.contracts.eventcategory.UpdateEventCategoryRequest;
 import com.eventer.admin.web.dto.eventcategory.EventCategoryDTO;
 import com.github.igorlukic015.resulter.Result;
 import com.eventer.admin.service.domain.EventCategory;
@@ -83,7 +84,11 @@ public class EventCategoryMapper {
         return model;
     }
 
-    public static CreateEventCategoryRequest toRequest(EventCategoryDTO dto) {
+    public static CreateEventCategoryRequest toCreateRequest(EventCategoryDTO dto) {
         return new CreateEventCategoryRequest(dto.name(), dto.description());
+    }
+
+    public static UpdateEventCategoryRequest toUpdateRequest(EventCategoryDTO dto) {
+        return new UpdateEventCategoryRequest(dto.id(), dto.name(), dto.description());
     }
 }

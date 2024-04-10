@@ -27,7 +27,7 @@ public class EventCategoryController implements ResultUnwrapper {
     @PostMapping
     public ResponseEntity<?> create(@RequestBody EventCategoryDTO dto) {
         Result<EventCategory> result =
-                this.eventCategoryService.create(EventCategoryMapper.toRequest(dto));
+                this.eventCategoryService.create(EventCategoryMapper.toCreateRequest(dto));
         return this.okOrError(result, EventCategoryMapper::toDTO);
     }
 
@@ -44,8 +44,14 @@ public class EventCategoryController implements ResultUnwrapper {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCategories(@PathVariable("id") Long id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         Result result = this.eventCategoryService.deleteCategory(id);
         return this.okOrError(result);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> update(@RequestBody EventCategoryDTO dto) {
+        Result<EventCategory> result = this.eventCategoryService.update(EventCategoryMapper.toUpdateRequest(dto));
+        return this.okOrError(result, EventCategoryMapper::toDTO);
     }
 }

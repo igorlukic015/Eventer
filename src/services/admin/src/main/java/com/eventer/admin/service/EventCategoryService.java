@@ -1,6 +1,7 @@
 package com.eventer.admin.service;
 
 import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
+import com.eventer.admin.contracts.eventcategory.UpdateEventCategoryRequest;
 import com.github.igorlukic015.resulter.Result;
 import com.eventer.admin.service.domain.EventCategory;
 import org.springframework.data.domain.Page;
@@ -18,4 +19,6 @@ public interface EventCategoryService {
     Result<Set<EventCategory>> getAllCategories();
 
     Result deleteCategory(Long id);
+
+    Result<EventCategory> update(UpdateEventCategoryRequest request);
 }

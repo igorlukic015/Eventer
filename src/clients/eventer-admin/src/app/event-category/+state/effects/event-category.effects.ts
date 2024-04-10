@@ -9,6 +9,7 @@ import {selectPageRequest} from "../reducers/event-category.reducers";
 import {ToastrService} from "ngx-toastr";
 import {fromPromise} from "rxjs/internal/observable/innerFrom";
 import {Router} from "@angular/router";
+import {error} from "@angular/compiler-cli/src/transformers/util";
 
 @Injectable()
 export class EventCategoryEffects {
@@ -30,7 +31,10 @@ export class EventCategoryEffects {
       ofType(eventCategoryActions.deleteEventCategory),
       switchMap(action => (
         this.eventCategoryService.deleteEventCategory(action.id).pipe(
-          map(_ => eventCategoryActions.deleteEventCategorySuccess({id: action.id})),
+          map(_ => {
+            this.toastrService.success('Successfully deleted');
+            return eventCategoryActions.deleteEventCategorySuccess({id: action.id})
+          }),
           catchError((error) => of(eventCategoryActions.deleteEventCategoryFail(error)))
         )
       ))
@@ -42,10 +46,28 @@ export class EventCategoryEffects {
       ofType(eventCategoryActions.createEventCategory),
       switchMap((action) => (
         this.eventCategoryService.createEventCategory(action.newCategory).pipe(
-          map(createdCategory =>
-              eventCategoryActions.createEventCategorySuccess({createdCategory}),
-          ),
+          map(createdCategory => {
+            this.toastrService.success('Successfully created');
+            this.router.navigate(['/', 'event-category']);
+            return eventCategoryActions.createEventCategorySuccess({createdCategory})
+          }),
           catchError(error => of(eventCategoryActions.createEventCategoryFail(error)))
+        )
+      ))
+    )
+  )
+
+  updateEventCategory$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(eventCategoryActions.updateEventCategory),
+      switchMap((action) => (
+        this.eventCategoryService.updateEventCategory(action.updatedCategory).pipe(
+          map(updatedCategory => {
+            this.toastrService.success('Successfully created');
+            this.router.navigate(['/', 'event-category']);
+            return eventCategoryActions.updateEventCategorySuccess({updatedCategory})
+          }),
+          catchError(error => of(eventCategoryActions.updateEventCategoryFail(error)))
         )
       ))
     )
@@ -56,7 +78,8 @@ export class EventCategoryEffects {
         ofType(
           eventCategoryActions.getEventCategoriesFail,
           eventCategoryActions.deleteEventCategoryFail,
-          eventCategoryActions.createEventCategoryFail
+          eventCategoryActions.createEventCategoryFail,
+          eventCategoryActions.updateEventCategoryFail
         ),
         tap((action: any) => {
           if (action?.error?.detail !== undefined) {
@@ -70,8 +93,9 @@ export class EventCategoryEffects {
   );
 
   constructor(
-    private actions$: Actions,
     private store: Store,
+    private readonly actions$: Actions,
+    private readonly router: Router,
     private readonly eventCategoryService: EventCategoryService,
     private readonly toastrService: ToastrService
   ) {

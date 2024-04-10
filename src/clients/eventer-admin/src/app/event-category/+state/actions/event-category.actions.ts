@@ -15,6 +15,10 @@ export const eventCategoryActions = createActionGroup({
     'Delete event category fail': props<{error: string}>(),
     'Create event category': props<{ newCategory: EventCategoryCreate }>(),
     'Create event category success': props<{createdCategory: EventCategory}>(),
-    'Create event category fail': props<{error: string}>()
+    'Create event category fail': props<{error: string}>(),
+    'Update event category': props<{updatedCategory: EventCategory}>(),
+    'Update event category success': props<{updatedCategory: EventCategory}>(),
+    'Update event category fail': props<{error: string}>(),
+    'Update selected category id': props<{id: number}>()
   }
 })

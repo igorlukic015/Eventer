@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import {LayoutMainComponent} from "../../../shared/components/layout-main/layout-main.component";
-import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {EventCategoryCreate} from "../../contracts/interfaces";
 import {EventCategoryFacade} from "../../+state/facade/event-category.facade";
-import {Router} from "@angular/router";
 
 @Component({
   selector: 'eventer-admin-event-category-create',
@@ -23,7 +22,6 @@ export class EventCategoryCreateComponent {
   });
 
   constructor(private formBuilder: FormBuilder,
-              private readonly router: Router,
               private readonly eventCategoryFacade: EventCategoryFacade) {
   }
 
@@ -38,6 +36,5 @@ export class EventCategoryCreateComponent {
     }
 
     this.eventCategoryFacade.createCategory(newCategory);
-    this.router.navigate(['/', 'event-category'])
   }
 }

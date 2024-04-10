@@ -1,0 +1,24 @@
+<eventer-admin-layout-main class="w-full">
+  <div class="card w-1/2 bg-neutral shadow-xl">
+    <div class="card-body items-center text-center">
+      <h1 class="card-title text-2xl mb-10">Create New Event Category</h1>
+      <form class="flex flex-col w-1/2" [formGroup]="updateForm">
+        <label class="input input-bordered flex items-center gap-2 mb-7">
+          Id
+          <input type="text" class="grow" readonly formControlName="id">
+        </label>
+        <label class="input input-bordered flex items-center gap-2 mb-7">
+          Name
+          <input type="text" class="grow" formControlName="name" />
+        </label>
+        <label class="textarea textarea-bordered flex flex-col items-center gap-2">
+          Description
+          <textarea class="textarea w-full h-full" formControlName="description"></textarea>
+        </label>
+      </form>
+      <div class="card-actions justify-end mt-10">
+        <button class="btn btn-primary" (click)="onSubmit()" [disabled]="!updateForm.valid">Confirm</button>
+      </div>
+    </div>
+  </div>
+</eventer-admin-layout-main>

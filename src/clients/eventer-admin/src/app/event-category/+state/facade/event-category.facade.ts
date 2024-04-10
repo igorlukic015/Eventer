@@ -13,6 +13,7 @@ export class EventCategoryFacade {
   totalElements$: Observable<number> = this.store.pipe(select(eventCategoryFeature.selectTotalElements));
   loading$: Observable<boolean> = this.store.pipe(select(eventCategoryFeature.selectIsLoading));
   pageRequest$: Observable<PageRequest> = this.store.pipe(select(eventCategoryFeature.selectPageRequest));
+  selectedCategoryId$: Observable<number> = this.store.pipe(select(eventCategoryFeature.selectSelectedCategoryId));
 
   constructor(private readonly store: Store) {
   }
@@ -35,5 +36,13 @@ export class EventCategoryFacade {
 
   createCategory(newCategory: EventCategoryCreate) {
     this.store.dispatch(eventCategoryActions.createEventCategory({newCategory}));
+  }
+
+  updateCategory(updatedCategory: EventCategory) {
+    this.store.dispatch(eventCategoryActions.updateEventCategory({updatedCategory}));
+  }
+
+  updateSelectedCategoryId(id: number) {
+    this.store.dispatch(eventCategoryActions.updateSelectedCategoryId({id}));
   }
 }

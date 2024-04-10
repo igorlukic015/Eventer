@@ -10,15 +10,14 @@ const adapter: EntityAdapter<EventCategory> = createEntityAdapter<EventCategory>
 
 export interface EventCategoryState extends EntityState<EventCategory> {
   isLoading: boolean;
-  // error: string | null;
   totalPages: number;
   totalElements: number;
   pageRequest: PageRequest;
+  selectedCategoryId: number;
 }
 
 const initialState: EventCategoryState = adapter.getInitialState({
   isLoading: false,
-  // error: null,
   totalPages: 0,
   totalElements: 0,
   pageRequest: {
@@ -30,6 +29,7 @@ const initialState: EventCategoryState = adapter.getInitialState({
       sortDirection: SortDirection.ascending
     }
   },
+  selectedCategoryId: 0
 })
 
 const eventCategoryFeature = createFeature({
@@ -56,7 +56,13 @@ const eventCategoryFeature = createFeature({
     )),
     on(eventCategoryActions.createEventCategorySuccess, (state, {createdCategory}) => (
       adapter.addOne(createdCategory, state)
-    ))
+    )),
+    on(eventCategoryActions.updateEventCategorySuccess, (state, {updatedCategory}) => (
+      adapter.setOne(updatedCategory, state)
+    )),
+    on(eventCategoryActions.updateSelectedCategoryId, (state, {id}) => ({
+      ...state, selectedCategoryId: id
+    }))
   )
 });
 
@@ -75,4 +81,5 @@ export const {
   selectTotalPages,
   selectTotalElements,
   selectPageRequest,
+  selectSelectedCategoryId
 } = eventCategoryFeature;

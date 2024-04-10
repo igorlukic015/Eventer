@@ -1,6 +1,7 @@
 package com.eventer.admin.service.impl;
 
 import com.eventer.admin.contracts.ApplicationStatics;
+import com.eventer.admin.contracts.eventcategory.UpdateEventCategoryRequest;
 import com.eventer.admin.contracts.message.Message;
 import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
 import com.eventer.admin.contracts.message.MessageStatics;
@@ -24,6 +25,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -90,7 +92,10 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         }
 
         Result messageSentOrError =
-                this.sendMessage(MessageStatics.ACTION_CREATED, createdCategoryOrError.getValue());
+                this.sendMessage(
+                        MessageStatics.ACTION_CREATED,
+                        createdCategoryOrError.getValue().getId(),
+                        createdCategoryOrError.getValue());
 
         if (messageSentOrError.isFailure()) {
             logger.error(messageSentOrError.getMessage());
@@ -107,7 +112,9 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         logger.info("Attempting to get categories");
 
         Page<com.eventer.admin.data.model.EventCategory> foundCategories =
-                this.eventCategoryRepository.findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(searchTerm, searchTerm, pageable);
+                this.eventCategoryRepository
+                        .findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                                searchTerm, searchTerm, pageable);
 
         Result<Page<EventCategory>> categoriesOrError =
                 EventCategoryMapper.toDomainPage(foundCategories);
@@ -143,7 +150,8 @@ public class EventCategoryServiceImpl implements EventCategoryService {
     public Result<Set<EventCategory>> getAllCategories() {
         logger.info("Attempting to get all categories");
 
-        List<com.eventer.admin.data.model.EventCategory> foundCategories = this.eventCategoryRepository.findAll();
+        List<com.eventer.admin.data.model.EventCategory> foundCategories =
+                this.eventCategoryRepository.findAll();
 
         if (foundCategories.isEmpty()) {
             logger.error(ResultErrorMessages.categoriesNotFound);
@@ -158,7 +166,8 @@ public class EventCategoryServiceImpl implements EventCategoryService {
     public Result deleteCategory(Long id) {
         logger.info("Attempting to delete category with id {}", id);
 
-        Optional<com.eventer.admin.data.model.EventCategory> foundCategory = this.eventCategoryRepository.findById(id);
+        Optional<com.eventer.admin.data.model.EventCategory> foundCategory =
+                this.eventCategoryRepository.findById(id);
 
         if (foundCategory.isEmpty()) {
             logger.error(ResultErrorMessages.categoryNotFound);
@@ -173,21 +182,86 @@ public class EventCategoryServiceImpl implements EventCategoryService {
             return Result.invalid(ResultErrorMessages.categoryIsUsedInEvents);
         }
 
-        try{
+        try {
             this.eventCategoryRepository.delete(foundCategory.get());
         } catch (Exception e) {
             return Result.invalid(e.getMessage());
         }
 
+        Result messageSentOrError = this.sendMessage(MessageStatics.ACTION_DELETED, id, null);
+
+        if (messageSentOrError.isFailure()) {
+            logger.error(messageSentOrError.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.fromError(messageSentOrError);
+        }
+
         return Result.success();
     }
 
-    private Result sendMessage(String action, EventCategory category) {
+    @Transactional
+    @Override
+    public Result<EventCategory> update(UpdateEventCategoryRequest request) {
+        logger.info("Attempting to update event category");
+
+        Optional<com.eventer.admin.data.model.EventCategory> foundCategory =
+                this.eventCategoryRepository.findById(request.id());
+
+        if (foundCategory.isEmpty()) {
+            logger.error(ResultErrorMessages.categoryNotFound);
+            return Result.notFound(ResultErrorMessages.categoryNotFound);
+        }
+
+        boolean isDuplicate = this.eventCategoryRepository.existsByNameIgnoreCaseAndIdIsNot(request.name(), request.id());
+
+        if (isDuplicate) {
+            logger.error(ResultErrorMessages.categoryAlreadyExists);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.conflict(ResultErrorMessages.categoryAlreadyExists);
+        }
+
+        foundCategory.get().setName(request.name());
+        foundCategory.get().setDescription(request.description());
+
+        var result = this.eventCategoryRepository.save(foundCategory.get());
+
+        logger.info(
+                "New {} updated with ID: {}", EventCategory.class.getSimpleName(), result.getId());
+
+        Result<EventCategory> updatedEventCategoryOrError = EventCategoryMapper.toDomain(result);
+
+        if (updatedEventCategoryOrError.isFailure()) {
+            logger.error(ResultErrorMessages.failedToSendMessage);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.internalError(ResultErrorMessages.failedToSendMessage);
+        }
+
+        Result messageSentOrError =
+                this.sendMessage(
+                        MessageStatics.ACTION_UPDATED,
+                        updatedEventCategoryOrError.getValue().getId(),
+                        updatedEventCategoryOrError.getValue());
+
+        if (messageSentOrError.isFailure()) {
+            logger.error(messageSentOrError.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.fromError(messageSentOrError);
+        }
+
+        return updatedEventCategoryOrError;
+    }
+
+    private Result sendMessage(String action, Long id, EventCategory category) {
         logger.info(
                 "Attempting to send message for action {} and {} id {}",
                 action,
                 EventCategory.class.getSimpleName(),
-                category.getId());
+                id);
+
+        if (!Objects.equals(action, MessageStatics.ACTION_DELETED) && category == null) {
+            logger.error("Object is null when not delete");
+            return Result.internalError(ResultErrorMessages.failedToSendMessage);
+        }
 
         Message categoryMessage =
                 new Message(
@@ -201,7 +275,10 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         try {
             messagePayload = this.objectMapper.writeValueAsString(categoryMessage);
         } catch (JsonProcessingException e) {
-            logger.error("{} with exception {}", ResultErrorMessages.failedToSendMessage, e.getMessage());
+            logger.error(
+                    "{} with exception {}",
+                    ResultErrorMessages.failedToSendMessage,
+                    e.getMessage());
             return Result.internalError(ResultErrorMessages.failedToSendMessage);
         }
 

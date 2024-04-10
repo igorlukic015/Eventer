@@ -4,7 +4,6 @@ import {Observable} from "rxjs";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {EventCategory, EventCategoryCreate} from "../contracts/interfaces";
 
-
 @Injectable({providedIn: 'root'})
 export class EventCategoryService {
   private baseApiUrl: string = 'http://localhost:9002';
@@ -35,5 +34,9 @@ export class EventCategoryService {
 
   public createEventCategory(newCategory: EventCategoryCreate) {
     return this.httpClient.post<EventCategory>(`${this.baseApiUrl}/${this.eventCategoryRoute}`, newCategory);
+  }
+
+  updateEventCategory(updatedCategory: EventCategory) {
+    return this.httpClient.put<EventCategory>(`${this.baseApiUrl}/${this.eventCategoryRoute}`, updatedCategory);
   }
 }

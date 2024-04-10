@@ -4,6 +4,7 @@ import {TablePaginatorComponent} from "../../../shared/components/table-paginato
 import {EventCategoryFacade} from "../../+state/facade/event-category.facade";
 import {take, takeUntil, withLatestFrom} from "rxjs";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'eventer-admin-event-category-list',
@@ -19,14 +20,20 @@ export class EventCategoryListComponent extends DestroyableComponent implements 
   public categories: WritableSignal<EventCategory[]> = signal([]);
   public checkedRow: WritableSignal<number> = signal(0);
 
+  constructor(private readonly eventCategoryFacade: EventCategoryFacade,
+              private readonly router: Router) {
+    super();
+  }
+
   onDeleteClicked($event: void) {
     if (this.checkedRow() !== 0) {
       this.eventCategoryFacade.deleteCategory(this.checkedRow());
     }
   }
 
-  constructor(private readonly eventCategoryFacade: EventCategoryFacade) {
-    super();
+  openUpdate($event: any, categoryId: number) {
+    this.eventCategoryFacade.updateSelectedCategoryId(categoryId);
+    this.router.navigate(['event-category',  'update'])
   }
 
   pageChanged(currentPage: number): void {

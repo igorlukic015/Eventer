@@ -4,6 +4,7 @@ import com.eventer.admin.contracts.ApplicationStatics;
 import com.eventer.admin.contracts.message.Message;
 import com.eventer.admin.contracts.eventcategory.CreateEventCategoryRequest;
 import com.eventer.admin.contracts.message.MessageStatics;
+import com.eventer.admin.data.repository.EventRepository;
 import com.eventer.admin.service.MessageSenderService;
 import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.mapper.EventCategoryMapper;
@@ -31,15 +32,18 @@ public class EventCategoryServiceImpl implements EventCategoryService {
 
     private final EventCategoryRepository eventCategoryRepository;
     private final MessageSenderService messageSenderService;
+    private final EventRepository eventRepository;
     private final ObjectMapper objectMapper;
     private static final Logger logger = LoggerFactory.getLogger(EventCategoryServiceImpl.class);
 
     public EventCategoryServiceImpl(
             EventCategoryRepository eventCategoryRepository,
             MessageSenderService messageSenderService,
+            EventRepository eventRepository,
             ObjectMapper objectMapper) {
         this.eventCategoryRepository = eventCategoryRepository;
         this.messageSenderService = messageSenderService;
+        this.eventRepository = eventRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -159,6 +163,14 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         if (foundCategory.isEmpty()) {
             logger.error(ResultErrorMessages.categoryNotFound);
             return Result.notFound(ResultErrorMessages.categoryNotFound);
+        }
+
+        Optional<Integer> foundEvent =
+                this.eventRepository.checkIfCategoryIsConnectedToEvent(foundCategory.get().getId());
+
+        if (foundEvent.isPresent()) {
+            logger.error(ResultErrorMessages.categoryIsUsedInEvents);
+            return Result.invalid(ResultErrorMessages.categoryIsUsedInEvents);
         }
 
         try{

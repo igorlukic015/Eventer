@@ -6,6 +6,7 @@ import {PagedResponse} from "../../../shared/contracts/interfaces";
 import {eventCategoryActions} from "../actions/event-category.actions";
 import {Store} from "@ngrx/store";
 import {selectPageRequest} from "../reducers/event-category.reducers";
+import {ToastrService} from "ngx-toastr";
 
 @Injectable()
 export class EventCategoryEffects {
@@ -41,8 +42,7 @@ export class EventCategoryEffects {
         eventCategoryActions.deleteEventCategoryFail),
       tap((action: any) => {
         if (action.error !== undefined) {
-          // TODO: Show error notification
-          alert(action.statusText);
+          this.toastrService.error(action.error.detail);
         }
       })
     ),
@@ -52,7 +52,8 @@ export class EventCategoryEffects {
   constructor(
     private actions$: Actions,
     private store: Store,
-    private readonly eventCategoryService: EventCategoryService
+    private readonly eventCategoryService: EventCategoryService,
+    private readonly toastrService: ToastrService
   ) {
   }
 }

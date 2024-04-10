@@ -1,9 +1,17 @@
 <div class="navbar bg-base-100">
   <div class="navbar-start">
-    <a class="btn btn-ghost text-xl" [ngClass]="activeLink === 0 ? 'text-accent' : ''" routerLink="/event-category"
-       (click)="onLinkClicked($event, 0)">Event Categories</a>
-    <a class="btn btn-ghost text-xl" [ngClass]="activeLink === 1 ? 'text-accent' : ''" routerLink="/event"
-       (click)="onLinkClicked($event, 1)">Events</a>
+    <a class="btn btn-ghost text-xl"
+       [ngClass]="activeLink === 0 ? 'text-accent' : ''"
+       routerLink="/event-category"
+    >
+      Event Categories
+    </a>
+    <a class="btn btn-ghost text-xl"
+       [ngClass]="activeLink === 1 ? 'text-accent' : ''"
+       routerLink="/event"
+    >
+      Events
+    </a>
   </div>
 
   <div class="navbar-center">

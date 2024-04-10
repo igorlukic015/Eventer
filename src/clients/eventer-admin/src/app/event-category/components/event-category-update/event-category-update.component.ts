@@ -5,13 +5,15 @@ import {EventCategoryFacade} from "../../+state/facade/event-category.facade";
 import {EventCategory} from "../../contracts/interfaces";
 import {take, takeUntil, withLatestFrom} from "rxjs";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
+import {NavbarComponent} from "../../../shared/components/navbar/navbar.component";
 
 @Component({
   selector: 'eventer-admin-event-category-update',
   standalone: true,
   imports: [
-      LayoutMainComponent,
-      ReactiveFormsModule
+    LayoutMainComponent,
+    ReactiveFormsModule,
+    NavbarComponent
   ],
   providers: [EventCategoryFacade],
   templateUrl: './event-category-update.component.html',

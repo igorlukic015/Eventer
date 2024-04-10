@@ -3,13 +3,15 @@ import {LayoutMainComponent} from "../../../shared/components/layout-main/layout
 import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {EventCategoryCreate} from "../../contracts/interfaces";
 import {EventCategoryFacade} from "../../+state/facade/event-category.facade";
+import {NavbarComponent} from "../../../shared/components/navbar/navbar.component";
 
 @Component({
   selector: 'eventer-admin-event-category-create',
   standalone: true,
   imports: [
     LayoutMainComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NavbarComponent
   ],
   providers:[EventCategoryFacade],
   templateUrl: './event-category-create.component.html',

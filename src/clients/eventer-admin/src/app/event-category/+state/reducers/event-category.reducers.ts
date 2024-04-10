@@ -77,7 +77,6 @@ export const {
   name: eventCategoryFeatureKey,
   reducer: eventCategoryReducer,
   selectIsLoading,
-  // selectError,
   selectTotalPages,
   selectTotalElements,
   selectPageRequest,

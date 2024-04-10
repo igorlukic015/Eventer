@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {FooterComponent} from "../../../shared/components/footer/footer.component";
 import {EventCategoryListComponent} from "../event-category-list/event-category-list.component";
 import {ActionBarComponent} from "../../../shared/components/action-bar/action-bar.component";
 import {LayoutMainComponent} from "../../../shared/components/layout-main/layout-main.component";
@@ -12,7 +11,6 @@ import {NavBarComponent} from "../../../shared/components/nav-bar/nav-bar.compon
   selector: 'eventer-admin-event-category-main',
   standalone: true,
   imports: [
-    FooterComponent,
     NavBarComponent,
     EventCategoryListComponent,
     ActionBarComponent,
@@ -35,7 +33,7 @@ export class EventCategoryMainComponent extends DestroyableComponent implements 
   ngOnInit(): void {
     this.eventCategoryFacade.pageRequest$
       .pipe(takeUntil(this.destroyed$))
-      .subscribe(_ => {
+      .subscribe(() => {
         this.eventCategoryFacade.loadEventCategories();
     });
   }

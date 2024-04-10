@@ -33,7 +33,7 @@ export class EventCategoryListComponent extends DestroyableComponent implements 
 
   openUpdate($event: any, categoryId: number) {
     this.eventCategoryFacade.updateSelectedCategoryId(categoryId);
-    this.router.navigate(['event-category',  'update'])
+    this.router.navigate(['event-category',  'update']);
   }
 
   pageChanged(currentPage: number): void {

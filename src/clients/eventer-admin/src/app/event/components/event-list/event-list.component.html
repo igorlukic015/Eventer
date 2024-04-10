@@ -1,0 +1,34 @@
+<div class="overflow-x-auto ml-3.5">
+  <table class="table">
+    <thead>
+    <tr>
+      <th></th>
+      <th>Id</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Location</th>
+    </tr>
+    </thead>
+    <tbody>
+      @for (event of events(); track event.id) {
+        <tr class="hover" (dblclick)="openUpdate($event, event.id)">
+          <td>
+            <label><input type="checkbox" class="checkbox" (click)="handleCheckClick($event, event.id)" [checked]="checkedRow() === event.id" /></label>
+          </td>
+          <td>{{ event.id }}</td>
+          <td>{{ event.title }}</td>
+          <td>{{ event.description }}</td>
+          <td>{{ event.location }}</td>
+        </tr>
+      } @empty {
+        <h1>The table is empty</h1>
+      }
+    </tbody>
+  </table>
+  @if (totalPages() > 1){
+    <eventer-admin-table-paginator
+      (pageChanged)="pageChanged($event)"
+      [totalPages]="totalPages()">
+    </eventer-admin-table-paginator>
+  }
+</div>

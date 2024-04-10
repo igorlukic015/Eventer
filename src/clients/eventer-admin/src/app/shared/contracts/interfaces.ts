@@ -1,5 +1,10 @@
 import {SortDirection} from "./models";
 
+export interface Image {
+  id: number,
+  url: string;
+}
+
 export interface PageRequest {
   page: number;
   size: number;

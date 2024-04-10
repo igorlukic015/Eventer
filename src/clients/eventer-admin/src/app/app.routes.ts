@@ -10,6 +10,8 @@ import {authGuard} from "./shared/guards/auth.guard";
 import {LayoutMainComponent} from "./shared/components/layout-main/layout-main.component";
 import {roleGuard} from "./shared/guards/role.guard";
 import {loginGuard} from "./shared/guards/login.guard";
+import {eventFeatureKey, eventReducer} from "./event/+state/reducers/event.reducers";
+import {EventEffects} from "./event/+state/effects/event.effects";
 
 export const routes: Routes = [
   {
@@ -21,7 +23,14 @@ export const routes: Routes = [
     ],
     canActivate: [authGuard]
   },
-  {path: eventUrlKey, component: EventMainComponent, canActivate: [authGuard]},
+  {
+    path: eventUrlKey,
+    loadChildren: () => import('./event/event.routes').then((m) => m.routes),
+    providers: [
+      provideState(eventFeatureKey, eventReducer),
+      provideEffects(EventEffects)
+    ],
+    canActivate: [authGuard]},
   {path: adminUrlKey, component: LayoutMainComponent,
     canActivate: [authGuard, roleGuard],
     data:{expectedRoles: ["superadmin"]}},

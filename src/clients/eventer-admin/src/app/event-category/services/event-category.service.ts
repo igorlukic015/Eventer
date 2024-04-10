@@ -17,8 +17,6 @@ export class EventCategoryService {
 
     let params: HttpParams = new HttpParams().set('size', size).set('page', page);
 
-    // const token: string = '';
-
     if (sort) {
       params = params.append('sort', `${sort.attributeNames.join(',')},${sort.sortDirection}`);
     }

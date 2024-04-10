@@ -6,8 +6,7 @@ import {ActionBarComponent} from "../../../shared/components/action-bar/action-b
 import {LayoutMainComponent} from "../../../shared/components/layout-main/layout-main.component";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
 import {EventCategoryFacade} from "../../+state/facade/event-category.facade";
-import {of, switchMap, takeUntil, withLatestFrom} from "rxjs";
-import {eventCategoryActions} from "../../+state/actions/event-category.actions";
+import {takeUntil} from "rxjs";
 
 @Component({
   selector: 'eventer-admin-event-category-main',
@@ -17,15 +16,13 @@ import {eventCategoryActions} from "../../+state/actions/event-category.actions"
     NavbarComponent,
     EventCategoryListComponent,
     ActionBarComponent,
-    LayoutMainComponent
+    LayoutMainComponent,
   ],
   providers: [EventCategoryFacade],
   templateUrl: './event-category-main.component.html',
   styleUrl: './event-category-main.component.css'
 })
 export class EventCategoryMainComponent extends DestroyableComponent implements OnInit {
-
-
 
   constructor(private readonly eventCategoryFacade: EventCategoryFacade) {
     super();

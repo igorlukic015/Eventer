@@ -50,7 +50,10 @@ const eventCategoryFeature = createFeature({
     })),
     on(eventCategoryActions.updateSearchTerm, (state, {searchTerm}) => ({
       ...state, pageRequest: {...state.pageRequest, searchTerm: searchTerm}
-    }))
+    })),
+    on(eventCategoryActions.deleteEventCategorySuccess, (state, {id}) => (
+      adapter.removeOne(id, state)
+    ))
   )
 });
 

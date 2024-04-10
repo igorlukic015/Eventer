@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Actions, createEffect, ofType} from "@ngrx/effects";
+import {act, Actions, createEffect, ofType} from "@ngrx/effects";
 import {EventCategoryService} from "../../services/event-category.service";
 import {catchError, map, mergeMap, of, switchMap, tap, withLatestFrom} from "rxjs";
 import {PagedResponse} from "../../../shared/contracts/interfaces";
@@ -27,7 +27,7 @@ export class EventCategoryEffects {
       ofType(eventCategoryActions.deleteEventCategory),
       switchMap(action => (
         this.eventCategoryService.deleteEventCategory(action.id).pipe(
-          map(response => eventCategoryActions.deleteEventCategorySuccess),
+          map(_ => eventCategoryActions.deleteEventCategorySuccess({id: action.id})),
           catchError((error) => of(eventCategoryActions.deleteEventCategoryFail(error)))
         )
       ))

@@ -20,7 +20,7 @@ export class EventCategoryListComponent extends DestroyableComponent implements 
   public checkedRow: WritableSignal<number> = signal(0);
 
   onDeleteClicked($event: void) {
-    if (this.checkedRow() !== 0){
+    if (this.checkedRow() !== 0) {
       this.eventCategoryFacade.deleteCategory(this.checkedRow());
     }
   }

@@ -1,5 +1,5 @@
 import {createActionGroup, emptyProps, props} from "@ngrx/store";
-import {PagedResponse, PageRequest} from "../../../shared/contracts/interfaces";
+import {PagedResponse} from "../../../shared/contracts/interfaces";
 
 export const eventCategoryActions = createActionGroup({
   source: 'eventCategory',
@@ -10,7 +10,7 @@ export const eventCategoryActions = createActionGroup({
     'Update page number': props<{currentPage: number}>(),
     'Update search term': props<{searchTerm: string}>(),
     'Delete event category': props<{id: number}>(),
-    'Delete event category success': emptyProps(),
+    'Delete event category success': props<{id: number}>(),
     'Delete event category fail': props<{error: string}>()
   }
 })

@@ -3,12 +3,13 @@ import {provideRouter} from '@angular/router';
 
 import {routes} from './app.routes';
 import {provideStoreDevtools} from '@ngrx/store-devtools';
-import {provideHttpClient} from "@angular/common/http";
+import {provideHttpClient, withInterceptors} from "@angular/common/http";
 import {provideStore} from "@ngrx/store";
+import {authInterceptor} from "./shared/interceptor/interceptors";
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes),
     provideStore(),
     provideStoreDevtools({

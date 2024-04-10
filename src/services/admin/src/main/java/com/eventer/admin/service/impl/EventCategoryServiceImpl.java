@@ -161,7 +161,11 @@ public class EventCategoryServiceImpl implements EventCategoryService {
             return Result.notFound(ResultErrorMessages.categoryNotFound);
         }
 
-        this.eventCategoryRepository.delete(foundCategory.get());
+        try{
+            this.eventCategoryRepository.delete(foundCategory.get());
+        } catch (Exception e) {
+            return Result.invalid(e.getMessage());
+        }
 
         return Result.success();
     }

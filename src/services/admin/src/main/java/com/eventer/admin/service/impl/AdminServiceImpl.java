@@ -121,6 +121,6 @@ public class AdminServiceImpl implements AdminService {
 
         logger.info("Authentication success for {}", loginRequest.username());
 
-        return Result.success(new AuthenticationResponse(accessToken));
+        return Result.success(new AuthenticationResponse(accessToken, adminOrError.getValue().getRole().getName()));
     }
 }

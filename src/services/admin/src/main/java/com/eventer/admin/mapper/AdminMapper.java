@@ -17,7 +17,7 @@ public class AdminMapper {
     }
 
     public static AuthenticationResponseDTO toDTO(AuthenticationResponse response) {
-        return new AuthenticationResponseDTO(response.accessToken());
+        return new AuthenticationResponseDTO(response.accessToken(), response.role());
     }
 
     public static RegisterRequest toRequest(RegisterDTO dto) {

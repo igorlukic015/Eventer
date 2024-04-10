@@ -3,11 +3,11 @@ import {PagedResponse, PageRequest} from "../../shared/contracts/interfaces";
 import {Observable} from "rxjs";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {EventCategory, EventCategoryCreate} from "../contracts/interfaces";
+import {baseApiUrl} from "../../shared/contracts/statics";
 
 @Injectable({providedIn: 'root'})
 export class EventCategoryService {
-  private baseApiUrl: string = 'http://localhost:9002';
-  private eventCategoryRoute: string = 'api/v1/event-category';
+  private readonly eventCategoryRoute = 'api/v1/event-category';
 
   constructor(private httpClient: HttpClient) {
   }
@@ -25,18 +25,18 @@ export class EventCategoryService {
       params = params.append('searchTerm', searchTerm);
     }
 
-    return this.httpClient.get<PagedResponse>(`${this.baseApiUrl}/${this.eventCategoryRoute}`, {params: params }, );
+    return this.httpClient.get<PagedResponse>(`${baseApiUrl}/${this.eventCategoryRoute}`, {params: params }, );
   }
 
   public deleteEventCategory(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`${this.baseApiUrl}/${this.eventCategoryRoute}/${id}`);
+    return this.httpClient.delete<void>(`${baseApiUrl}/${this.eventCategoryRoute}/${id}`);
   }
 
   public createEventCategory(newCategory: EventCategoryCreate) {
-    return this.httpClient.post<EventCategory>(`${this.baseApiUrl}/${this.eventCategoryRoute}`, newCategory);
+    return this.httpClient.post<EventCategory>(`${baseApiUrl}/${this.eventCategoryRoute}`, newCategory);
   }
 
   updateEventCategory(updatedCategory: EventCategory) {
-    return this.httpClient.put<EventCategory>(`${this.baseApiUrl}/${this.eventCategoryRoute}`, updatedCategory);
+    return this.httpClient.put<EventCategory>(`${baseApiUrl}/${this.eventCategoryRoute}`, updatedCategory);
   }
 }

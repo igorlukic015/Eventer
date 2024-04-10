@@ -22,4 +22,11 @@ export class NavBarComponent {
     this.activeLink =
       key === eventCategoryUrlKey ? 0 : key === eventUrlKey ? 1 : -1;
   }
+
+
+  handleLogoutClick($event: any){
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    this.router.navigate(['login'])
+  }
 }

@@ -25,7 +25,7 @@ public class EventCategory {
   }
 
   public static Result<EventCategory> create(String name, String description) {
-    if (StringUtils.hasText(name) || name.length() > 255) {
+    if (!StringUtils.hasText(name) || name.length() > 255) {
       return Result.invalid(ResultErrorMessages.invalidEventCategoryName);
     }
     

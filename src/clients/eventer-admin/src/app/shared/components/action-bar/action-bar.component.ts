@@ -1,10 +1,13 @@
 import {Component, EventEmitter, Output} from '@angular/core';
 import {debounceTime, Subject} from "rxjs";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'eventer-admin-action-bar',
   standalone: true,
-  imports: [],
+  imports: [
+    RouterLink
+  ],
   templateUrl: './action-bar.component.html',
   styleUrl: './action-bar.component.css'
 })

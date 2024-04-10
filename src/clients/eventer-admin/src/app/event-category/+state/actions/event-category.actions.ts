@@ -1,5 +1,6 @@
 import {createActionGroup, emptyProps, props} from "@ngrx/store";
 import {PagedResponse} from "../../../shared/contracts/interfaces";
+import {EventCategory, EventCategoryCreate} from "../../contracts/interfaces";
 
 export const eventCategoryActions = createActionGroup({
   source: 'eventCategory',
@@ -11,6 +12,9 @@ export const eventCategoryActions = createActionGroup({
     'Update search term': props<{searchTerm: string}>(),
     'Delete event category': props<{id: number}>(),
     'Delete event category success': props<{id: number}>(),
-    'Delete event category fail': props<{error: string}>()
+    'Delete event category fail': props<{error: string}>(),
+    'Create event category': props<{ newCategory: EventCategoryCreate }>(),
+    'Create event category success': props<{createdCategory: EventCategory}>(),
+    'Create event category fail': props<{error: string}>()
   }
 })

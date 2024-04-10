@@ -1,7 +1,7 @@
 import {Observable} from "rxjs";
 import {select, Store} from "@ngrx/store";
 import {Injectable} from "@angular/core";
-import {EventCategory} from "../../contracts/interfaces";
+import {EventCategory, EventCategoryCreate} from "../../contracts/interfaces";
 import * as eventCategoryFeature from "../reducers/event-category.reducers";
 import {eventCategoryActions} from "../actions/event-category.actions";
 import {PageRequest} from "../../../shared/contracts/interfaces";
@@ -31,5 +31,9 @@ export class EventCategoryFacade {
 
   deleteCategory(id: number) {
     this.store.dispatch(eventCategoryActions.deleteEventCategory({id}));
+  }
+
+  createCategory(newCategory: EventCategoryCreate) {
+    this.store.dispatch(eventCategoryActions.createEventCategory({newCategory}));
   }
 }

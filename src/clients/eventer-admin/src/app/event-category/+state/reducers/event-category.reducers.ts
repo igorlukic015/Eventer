@@ -10,7 +10,7 @@ const adapter: EntityAdapter<EventCategory> = createEntityAdapter<EventCategory>
 
 export interface EventCategoryState extends EntityState<EventCategory> {
   isLoading: boolean;
-  error: string | null;
+  // error: string | null;
   totalPages: number;
   totalElements: number;
   pageRequest: PageRequest;
@@ -18,7 +18,7 @@ export interface EventCategoryState extends EntityState<EventCategory> {
 
 const initialState: EventCategoryState = adapter.getInitialState({
   isLoading: false,
-  error: null,
+  // error: null,
   totalPages: 0,
   totalElements: 0,
   pageRequest: {
@@ -43,7 +43,7 @@ const eventCategoryFeature = createFeature({
       adapter.setAll(pagedResponse.content, {...state, isLoading: false, totalPages: pagedResponse.totalPages})
     )),
     on(eventCategoryActions.getEventCategoriesFail, (state, {error}) => ({
-      ...state, isLoading: false, error: error
+      ...state, isLoading: false
     })),
     on(eventCategoryActions.updatePageNumber, (state, {currentPage}) => ({
       ...state, pageRequest: {...state.pageRequest, page: currentPage}
@@ -53,6 +53,9 @@ const eventCategoryFeature = createFeature({
     })),
     on(eventCategoryActions.deleteEventCategorySuccess, (state, {id}) => (
       adapter.removeOne(id, state)
+    )),
+    on(eventCategoryActions.createEventCategorySuccess, (state, {createdCategory}) => (
+      adapter.addOne(createdCategory, state)
     ))
   )
 });
@@ -68,7 +71,7 @@ export const {
   name: eventCategoryFeatureKey,
   reducer: eventCategoryReducer,
   selectIsLoading,
-  selectError,
+  // selectError,
   selectTotalPages,
   selectTotalElements,
   selectPageRequest,

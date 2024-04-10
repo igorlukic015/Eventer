@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {PagedResponse, PageRequest} from "../../shared/contracts/interfaces";
 import {Observable} from "rxjs";
 import {HttpClient, HttpParams} from "@angular/common/http";
+import {EventCategory, EventCategoryCreate} from "../contracts/interfaces";
 
 
 @Injectable({providedIn: 'root'})
@@ -30,5 +31,9 @@ export class EventCategoryService {
 
   public deleteEventCategory(id: number): Observable<void> {
     return this.httpClient.delete<void>(`${this.baseApiUrl}/${this.eventCategoryRoute}/${id}`);
+  }
+
+  public createEventCategory(newCategory: EventCategoryCreate) {
+    return this.httpClient.post<EventCategory>(`${this.baseApiUrl}/${this.eventCategoryRoute}`, newCategory);
   }
 }

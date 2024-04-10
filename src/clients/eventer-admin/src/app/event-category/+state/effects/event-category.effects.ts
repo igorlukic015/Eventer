@@ -1,12 +1,14 @@
 import {Injectable} from "@angular/core";
 import {act, Actions, createEffect, ofType} from "@ngrx/effects";
 import {EventCategoryService} from "../../services/event-category.service";
-import {catchError, map, mergeMap, of, switchMap, tap, withLatestFrom} from "rxjs";
+import {catchError, map, mergeMap, Observable, of, switchMap, tap, withLatestFrom} from "rxjs";
 import {PagedResponse} from "../../../shared/contracts/interfaces";
 import {eventCategoryActions} from "../actions/event-category.actions";
 import {Store} from "@ngrx/store";
 import {selectPageRequest} from "../reducers/event-category.reducers";
 import {ToastrService} from "ngx-toastr";
+import {fromPromise} from "rxjs/internal/observable/innerFrom";
+import {Router} from "@angular/router";
 
 @Injectable()
 export class EventCategoryEffects {
@@ -35,18 +37,36 @@ export class EventCategoryEffects {
     )
   );
 
-  showErrorToast$ = createEffect(() =>
+  createEventCategory$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(
-        eventCategoryActions.getEventCategoriesFail,
-        eventCategoryActions.deleteEventCategoryFail),
-      tap((action: any) => {
-        if (action.error !== undefined) {
-          this.toastrService.error(action.error.detail);
-        }
-      })
-    ),
-  {dispatch: false} // TODO: See what happens without this
+      ofType(eventCategoryActions.createEventCategory),
+      switchMap((action) => (
+        this.eventCategoryService.createEventCategory(action.newCategory).pipe(
+          map(createdCategory =>
+              eventCategoryActions.createEventCategorySuccess({createdCategory}),
+          ),
+          catchError(error => of(eventCategoryActions.createEventCategoryFail(error)))
+        )
+      ))
+    )
+  )
+
+  showErrorToast$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(
+          eventCategoryActions.getEventCategoriesFail,
+          eventCategoryActions.deleteEventCategoryFail,
+          eventCategoryActions.createEventCategoryFail
+        ),
+        tap((action: any) => {
+          if (action?.error?.detail !== undefined) {
+            this.toastrService.error(action.error.detail);
+            return;
+          }
+          this.toastrService.error(action.statusText);
+        })
+      ),
+    {dispatch: false}
   );
 
   constructor(

@@ -1,20 +1,19 @@
-import {Component} from '@angular/core';
-import {Router, RouterLink, RouterOutlet} from "@angular/router";
-import {NgClass} from "@angular/common";
+import { Component } from '@angular/core';
+import {Router, RouterLink} from "@angular/router";
 import {eventCategoryUrlKey, eventUrlKey} from "../../contracts/statics";
+import {NgClass} from "@angular/common";
 
 @Component({
-  selector: 'eventer-admin-navbar',
+  selector: 'eventer-admin-nav-bar',
   standalone: true,
   imports: [
-    RouterLink,
-    RouterOutlet,
-    NgClass
+    NgClass,
+    RouterLink
   ],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  templateUrl: './nav-bar.component.html',
+  styleUrl: './nav-bar.component.css'
 })
-export class NavbarComponent {
+export class NavBarComponent {
   public activeLink: number;
 
   constructor(private readonly router: Router) {

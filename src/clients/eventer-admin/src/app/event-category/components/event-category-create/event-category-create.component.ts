@@ -3,7 +3,7 @@ import {LayoutMainComponent} from "../../../shared/components/layout-main/layout
 import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {EventCategoryCreate} from "../../contracts/interfaces";
 import {EventCategoryFacade} from "../../+state/facade/event-category.facade";
-import {NavbarComponent} from "../../../shared/components/navbar/navbar.component";
+import {NavBarComponent} from "../../../shared/components/nav-bar/nav-bar.component";
 
 @Component({
   selector: 'eventer-admin-event-category-create',
@@ -11,7 +11,7 @@ import {NavbarComponent} from "../../../shared/components/navbar/navbar.componen
   imports: [
     LayoutMainComponent,
     ReactiveFormsModule,
-    NavbarComponent
+    NavBarComponent
   ],
   providers:[EventCategoryFacade],
   templateUrl: './event-category-create.component.html',

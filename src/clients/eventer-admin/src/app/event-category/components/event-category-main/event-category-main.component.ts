@@ -1,19 +1,19 @@
 import {Component, OnInit} from '@angular/core';
 import {FooterComponent} from "../../../shared/components/footer/footer.component";
-import {NavbarComponent} from "../../../shared/components/navbar/navbar.component";
 import {EventCategoryListComponent} from "../event-category-list/event-category-list.component";
 import {ActionBarComponent} from "../../../shared/components/action-bar/action-bar.component";
 import {LayoutMainComponent} from "../../../shared/components/layout-main/layout-main.component";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
 import {EventCategoryFacade} from "../../+state/facade/event-category.facade";
 import {takeUntil} from "rxjs";
+import {NavBarComponent} from "../../../shared/components/nav-bar/nav-bar.component";
 
 @Component({
   selector: 'eventer-admin-event-category-main',
   standalone: true,
   imports: [
     FooterComponent,
-    NavbarComponent,
+    NavBarComponent,
     EventCategoryListComponent,
     ActionBarComponent,
     LayoutMainComponent,

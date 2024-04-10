@@ -5,7 +5,7 @@ import {EventCategoryFacade} from "../../+state/facade/event-category.facade";
 import {EventCategory} from "../../contracts/interfaces";
 import {take, takeUntil, withLatestFrom} from "rxjs";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
-import {NavbarComponent} from "../../../shared/components/navbar/navbar.component";
+import {NavBarComponent} from "../../../shared/components/nav-bar/nav-bar.component";
 
 @Component({
   selector: 'eventer-admin-event-category-update',
@@ -13,7 +13,7 @@ import {NavbarComponent} from "../../../shared/components/navbar/navbar.componen
   imports: [
     LayoutMainComponent,
     ReactiveFormsModule,
-    NavbarComponent
+    NavBarComponent
   ],
   providers: [EventCategoryFacade],
   templateUrl: './event-category-update.component.html',

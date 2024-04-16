@@ -8,6 +8,8 @@ import {Store} from "@ngrx/store";
 import {selectPageRequest} from "../reducers/event-category.reducers";
 import {ToastrService} from "ngx-toastr";
 import {Router} from "@angular/router";
+import {updateEntity} from "../../../shared/+state/actions/real-time.actions";
+import {ActionType, ListenedEntity} from "../../../shared/contracts/models";
 
 @Injectable()
 export class EventCategoryEffects {
@@ -68,6 +70,25 @@ export class EventCategoryEffects {
           catchError(error => of(eventCategoryActions.updateEventCategoryFail(error)))
         )
       ))
+    )
+  )
+
+  updateListenedEventCategory$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateEntity),
+      filter((action) => action.payload.entityType === ListenedEntity.eventCategory),
+      map((action) => {
+        if (action.payload.actionType === ActionType.created) {
+          return eventCategoryActions.createEventCategorySuccess({createdCategory: action.payload.data});
+        }
+        else if (action.payload.actionType === ActionType.updated) {
+          return eventCategoryActions.updateEventCategorySuccess({updatedCategory: action.payload.data})
+        }
+        else if (action.payload.actionType === ActionType.deleted) {
+          return eventCategoryActions.deleteEventCategorySuccess({id: action.payload.data});
+        }
+        return of();
+      })
     )
   )
 

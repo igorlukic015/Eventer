@@ -20,10 +20,10 @@ export class RealTimeService {
   constructor() {}
 
   public subscribeToChanges() {
-    return this.connection$.pipe(takeUntil(this.shouldClose$), skipWhile(() => {
-      const token = localStorage.getItem('token')
-      return token === null;
-    }));
+    return this.connection$.pipe(
+      takeUntil(this.shouldClose$),
+      skipWhile(() => localStorage.getItem('token') === null)
+    );
   }
 
   public closeConnection() {

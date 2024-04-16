@@ -53,19 +53,19 @@ const eventFeature = createFeature({
     on(eventActions.updateSearchTerm, (state, {searchTerm}) => ({
       ...state, pageRequest: {...state.pageRequest, searchTerm: searchTerm}
     })),
-    on(rtsActions.updateEntity, (state, {payload}) => {
-      if (payload.actionType === ActionType.created && payload.entityType === ListenedEntity.event) {
-        return adapter.addOne(payload.data, state);
-      }
-      else if (payload.actionType === ActionType.updated && payload.entityType === ListenedEntity.event) {
-        return adapter.setOne(payload.data, state);
-      }
-      else if (payload.actionType === ActionType.deleted && payload.entityType === ListenedEntity.event) {
-        return adapter.removeOne(payload.data, state);
-      }
-
-      return ({...state});
-    })
+    // on(rtsActions.updateEntity, (state, {payload}) => {
+    //   if (payload.actionType === ActionType.created && payload.entityType === ListenedEntity.event) {
+    //     return adapter.addOne(payload.data, state);
+    //   }
+    //   else if (payload.actionType === ActionType.updated && payload.entityType === ListenedEntity.event) {
+    //     return adapter.setOne(payload.data, state);
+    //   }
+    //   else if (payload.actionType === ActionType.deleted && payload.entityType === ListenedEntity.event) {
+    //     return adapter.removeOne(payload.data, state);
+    //   }
+    //
+    //   return ({...state});
+    // })
   )
 })
 

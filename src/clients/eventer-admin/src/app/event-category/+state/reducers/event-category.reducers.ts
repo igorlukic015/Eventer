@@ -3,9 +3,9 @@ import {EventCategory} from "../../contracts/interfaces";
 import {createFeature, createReducer, on} from "@ngrx/store";
 import {eventCategoryActions} from "../actions/event-category.actions";
 import {PageRequest} from "../../../shared/contracts/interfaces";
-import {SortDirection} from "../../../shared/contracts/models";
+import {ActionType, ListenedEntity, SortDirection} from "../../../shared/contracts/models";
 import {defaultPageSize} from "../../../shared/contracts/statics";
-
+import * as rtsActions from "../../../shared/+state/actions/real-time.actions";
 const adapter: EntityAdapter<EventCategory> = createEntityAdapter<EventCategory>();
 
 export interface EventCategoryState extends EntityState<EventCategory> {
@@ -51,15 +51,19 @@ const eventCategoryFeature = createFeature({
     on(eventCategoryActions.updateSearchTerm, (state, {searchTerm}) => ({
       ...state, pageRequest: {...state.pageRequest, searchTerm: searchTerm}
     })),
-    on(eventCategoryActions.deleteEventCategorySuccess, (state, {id}) => (
-      adapter.removeOne(id, state)
-    )),
-    on(eventCategoryActions.createEventCategorySuccess, (state, {createdCategory}) => (
-      adapter.addOne(createdCategory, state)
-    )),
-    on(eventCategoryActions.updateEventCategorySuccess, (state, {updatedCategory}) => (
-      adapter.setOne(updatedCategory, state)
-    )),
+    on(rtsActions.updateEntity, (state, {payload}) => {
+      if (payload.actionType === ActionType.created && payload.entityType === ListenedEntity.eventCategory) {
+        return adapter.addOne(payload.data, state);
+      }
+      else if (payload.actionType === ActionType.updated && payload.entityType === ListenedEntity.eventCategory) {
+        return adapter.setOne(payload.data, state);
+      }
+      else if (payload.actionType === ActionType.deleted && payload.entityType === ListenedEntity.eventCategory) {
+        return adapter.removeOne(payload.data, state);
+      }
+
+      return ({...state});
+    }),
     on(eventCategoryActions.updateSelectedCategoryId, (state, {id}) => ({
       ...state, selectedCategoryId: id
     }))

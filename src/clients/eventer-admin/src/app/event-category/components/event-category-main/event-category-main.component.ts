@@ -36,7 +36,5 @@ export class EventCategoryMainComponent extends DestroyableComponent implements 
       .subscribe(() => {
         this.eventCategoryFacade.loadEventCategories();
     });
-
-    this.eventCategoryFacade.subscribeToChanges();
   }
 }

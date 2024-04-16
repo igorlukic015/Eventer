@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
-import {Observable, Subject, takeUntil} from "rxjs";
+import {Observable, skipWhile, Subject, takeUntil} from "rxjs";
+import {Message} from "../contracts/interfaces";
 
 @Injectable({providedIn: 'root'})
 export class RealTimeService {
@@ -7,11 +8,11 @@ export class RealTimeService {
   private readonly realTimeServiceRoute = 'api/v1/rts';
   private shouldClose$: Subject<void> = new Subject<void>();
 
-  private connection$ = new Observable(observer => {
+  private connection$ = new Observable<Message>(observer => {
     const eventSource = new EventSource(`${this.baseUrl}/${this.realTimeServiceRoute}/stream`);
 
     eventSource.onmessage = event => {
-      const messageData: any = JSON.parse(event.data);
+      const messageData: Message = JSON.parse(event.data);
       observer.next(messageData);
     };
   });
@@ -19,7 +20,10 @@ export class RealTimeService {
   constructor() {}
 
   public subscribeToChanges() {
-    return this.connection$.pipe(takeUntil(this.shouldClose$));
+    return this.connection$.pipe(takeUntil(this.shouldClose$), skipWhile(() => {
+      const token = localStorage.getItem('token')
+      return token === null;
+    }));
   }
 
   public closeConnection() {

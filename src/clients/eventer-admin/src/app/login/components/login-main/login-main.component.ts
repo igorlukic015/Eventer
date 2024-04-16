@@ -7,7 +7,7 @@ import {DestroyableComponent} from "../../../shared/components/destroyable/destr
 import {catchError, of, switchMap, take, takeUntil} from "rxjs";
 import {Router} from "@angular/router";
 import {ToastrService} from "ngx-toastr";
-import {subscribeToChanges} from "../../../shared/+state/actions/rts.actions";
+import {RealTimeService} from "../../../shared/services/real-time.service";
 
 @Component({
   selector: 'eventer-admin-login-main',
@@ -30,7 +30,8 @@ export class LoginMainComponent extends DestroyableComponent {
   constructor(private formBuilder: FormBuilder,
               private readonly loginService: LoginService,
               private readonly router: Router,
-              private readonly toastrService: ToastrService) {
+              private readonly toastrService: ToastrService,
+              private readonly realTimeService: RealTimeService) {
     super();
   }
 
@@ -55,10 +56,9 @@ export class LoginMainComponent extends DestroyableComponent {
           localStorage.setItem('role', response.role.toLowerCase());
           this.toastrService.success('Login successful');
           this.router.navigate(['event'])
-          return of(subscribeToChanges());
+          return of();
         }),
         catchError((error) => {
-          console.log(error);
           this.toastrService.error('Login failed')
           return of();
         })

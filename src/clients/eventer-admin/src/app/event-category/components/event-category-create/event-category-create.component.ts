@@ -17,7 +17,7 @@ import {NavBarComponent} from "../../../shared/components/nav-bar/nav-bar.compon
   templateUrl: './event-category-create.component.html',
   styleUrl: './event-category-create.component.css'
 })
-export class EventCategoryCreateComponent implements OnInit {
+export class EventCategoryCreateComponent {
   newCategoryForm = this.formBuilder.group({
     name: ['', Validators.required],
     description: ['', Validators.required]
@@ -38,9 +38,5 @@ export class EventCategoryCreateComponent implements OnInit {
     }
 
     this.eventCategoryFacade.createCategory(newCategory);
-  }
-
-  ngOnInit(): void {
-    this.eventCategoryFacade.subscribeToChanges();
   }
 }

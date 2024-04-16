@@ -1,7 +1,7 @@
-// export const defaultPageSize: number = 12;
+export const defaultPageSize: number = 12;
 
 // For testing
-export const defaultPageSize: number = 1;
+// export const defaultPageSize: number = 1;
 
 export const baseApiUrl: string = 'http://localhost:9002';
 

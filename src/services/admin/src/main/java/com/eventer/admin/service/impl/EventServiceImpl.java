@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -165,7 +166,10 @@ public class EventServiceImpl implements EventService {
         }
 
         Result messageSentOrError =
-                this.sendMessage(MessageStatics.ACTION_CREATED, createdEventOrError.getValue());
+                this.sendMessage(
+                        MessageStatics.ACTION_CREATED,
+                        createdEventOrError.getValue().getId(),
+                        createdEventOrError.getValue());
 
         if (messageSentOrError.isFailure()) {
             logger.error(ResultErrorMessages.failedToSendMessage);
@@ -212,12 +216,17 @@ public class EventServiceImpl implements EventService {
         return eventsOrError;
     }
 
-    private Result sendMessage(String action, Event event) {
+    private Result sendMessage(String action, Long id, Event event) {
         logger.info(
                 "Attempting to send message for {} {} with id {}",
                 action,
                 Event.class.getSimpleName(),
-                event.getId());
+                id);
+
+        if (!Objects.equals(action, MessageStatics.ACTION_DELETED) && event == null) {
+            logger.error("Object is null when not delete");
+            return Result.internalError(ResultErrorMessages.failedToSendMessage);
+        }
 
         Message eventMessage =
                 new Message(
@@ -225,13 +234,16 @@ public class EventServiceImpl implements EventService {
                         Instant.now(),
                         Event.class.getSimpleName(),
                         action,
-                        event);
+                        Objects.equals(action, MessageStatics.ACTION_DELETED) ? id : event);
 
         String messagePayload;
         try {
             messagePayload = this.objectMapper.writeValueAsString(eventMessage);
         } catch (JsonProcessingException e) {
-            logger.error(e.getMessage());
+            logger.error(
+                    "{} with exception {}",
+                    ResultErrorMessages.failedToSendMessage,
+                    e.getMessage());
             return Result.internalError(ResultErrorMessages.failedToSendMessage);
         }
 

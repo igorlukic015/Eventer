@@ -5,7 +5,6 @@ import {select, Store} from "@ngrx/store";
 import * as eventFeature from "../reducers/event.reducers";
 import {PageRequest} from "../../../shared/contracts/interfaces";
 import {eventActions} from "../actions/event.actions";
-import {subscribeToChanges} from "../../../shared/+state/actions/rts.actions";
 
 @Injectable()
 export class EventFacade {
@@ -17,10 +16,6 @@ export class EventFacade {
   selectedCategoryId$: Observable<number> = this.store.pipe(select(eventFeature.selectSelectedEventId));
 
   constructor(private readonly store: Store) {
-  }
-
-  subscribeToChanges() {
-    this.store.dispatch(subscribeToChanges());
   }
 
   loadEvents() {

@@ -1,8 +1,9 @@
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {inject} from "@angular/core";
-import {subscribeToChanges, updateEntity} from "../actions/rts.actions";
+import {subscribeToChanges, updateEntity} from "../actions/real-time.actions";
 import {mergeMap, of, switchMap} from "rxjs";
 import {RealTimeService} from "../../services/real-time.service";
+import {Message} from "../../contracts/interfaces";
 
 export const subscribeToChanges$ = createEffect(
   (actions$ = inject(Actions), realTimeService = inject(RealTimeService)) => {
@@ -10,10 +11,16 @@ export const subscribeToChanges$ = createEffect(
       ofType(subscribeToChanges),
       switchMap((action) =>
         realTimeService.subscribeToChanges().pipe(
-          mergeMap((message) => {
-            console.log(message);
-            return of(updateEntity('EventCategory', 'delete', null))
-          })
+          mergeMap((message: Message) => (
+            of(
+              updateEntity({
+                  actionType: message.action,
+                  entityType: message.entityType,
+                  data: message.data
+                }
+              )
+            )
+          ))
         )
       )
     )

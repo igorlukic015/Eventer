@@ -269,7 +269,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
                         Instant.now(),
                         EventCategory.class.getSimpleName(),
                         action,
-                        category);
+                        Objects.equals(action, MessageStatics.ACTION_DELETED) ? id : category);
 
         String messagePayload;
         try {

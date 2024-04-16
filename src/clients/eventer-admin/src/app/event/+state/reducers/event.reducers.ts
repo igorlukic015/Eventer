@@ -2,9 +2,10 @@ import {createEntityAdapter, EntityAdapter, EntityState} from "@ngrx/entity";
 import {Event} from "../../contracts/interfaces";
 import {PageRequest} from "../../../shared/contracts/interfaces";
 import {defaultPageSize} from "../../../shared/contracts/statics";
-import {SortDirection} from "../../../shared/contracts/models";
+import {ActionType, ListenedEntity, SortDirection} from "../../../shared/contracts/models";
 import {createFeature, createReducer, on} from "@ngrx/store";
 import {eventActions} from "../actions/event.actions";
+import * as rtsActions from "../../../shared/+state/actions/real-time.actions";
 
 const adapter: EntityAdapter<Event> = createEntityAdapter<Event>();
 
@@ -51,7 +52,20 @@ const eventFeature = createFeature({
     })),
     on(eventActions.updateSearchTerm, (state, {searchTerm}) => ({
       ...state, pageRequest: {...state.pageRequest, searchTerm: searchTerm}
-    }))
+    })),
+    on(rtsActions.updateEntity, (state, {payload}) => {
+      if (payload.actionType === ActionType.created && payload.entityType === ListenedEntity.event) {
+        return adapter.addOne(payload.data, state);
+      }
+      else if (payload.actionType === ActionType.updated && payload.entityType === ListenedEntity.event) {
+        return adapter.setOne(payload.data, state);
+      }
+      else if (payload.actionType === ActionType.deleted && payload.entityType === ListenedEntity.event) {
+        return adapter.removeOne(payload.data, state);
+      }
+
+      return ({...state});
+    })
   )
 })
 

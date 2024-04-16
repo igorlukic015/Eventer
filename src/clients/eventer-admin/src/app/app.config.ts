@@ -9,7 +9,7 @@ import {authInterceptor} from "./shared/interceptor/interceptors";
 import { provideToastr } from 'ngx-toastr';
 import {provideAnimations} from "@angular/platform-browser/animations";
 import {provideEffects} from "@ngrx/effects";
-import * as rtsEffects from "./shared/+state/effects/rts.effects";
+import * as rtsEffects from "./shared/+state/effects/real-time.effects";
 
 export const appConfig: ApplicationConfig = {
   providers: [

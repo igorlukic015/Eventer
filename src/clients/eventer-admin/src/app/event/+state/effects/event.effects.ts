@@ -8,7 +8,6 @@ import {eventActions} from "../actions/event.actions";
 import {PagedResponse} from "../../../shared/contracts/interfaces";
 import {EventService} from "../../services/event.service";
 import {selectPageRequest} from "../reducers/event.reducers";
-import {updateEntity} from "../../../shared/+state/actions/rts.actions";
 
 @Injectable()
 export class EventEffects {
@@ -24,18 +23,6 @@ export class EventEffects {
       )
     )
   );
-
-  lala = createEffect(() =>
-    this.actions$.pipe(
-      ofType(updateEntity),
-      filter((action) => action.entity === 'Event'),
-      tap((action: any) => {
-        console.log('update entity in effects');
-        console.log(action);
-      }),
-    ),
-    {dispatch: false}
-  )
 
   showErrorToast$ = createEffect(() =>
       this.actions$.pipe(

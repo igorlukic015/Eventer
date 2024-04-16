@@ -1,4 +1,4 @@
-import {SortDirection} from "./models";
+import {ActionType, ListenedEntity, SortDirection} from "./models";
 
 export interface Image {
   id: number,
@@ -29,6 +29,20 @@ export interface PagedResponse {
   last: boolean;
   first: boolean;
   empty: boolean;
+}
+
+export interface Message {
+  name: string;
+  dispatchedAt: Date;
+  entityType: ListenedEntity;
+  action: ActionType;
+  data: any;
+}
+
+export interface UpdateEntityData {
+  actionType: ActionType,
+  entityType: ListenedEntity;
+  data: any,
 }
 
 interface PageableSortProperties {

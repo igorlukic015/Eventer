@@ -1,15 +1,14 @@
 import {createEntityAdapter, EntityAdapter, EntityState} from "@ngrx/entity";
-import {IEvent} from "../../contracts/interfaces";
+import {Event} from "../../contracts/interfaces";
 import {PageRequest} from "../../../shared/contracts/interfaces";
 import {defaultPageSize} from "../../../shared/contracts/statics";
 import {SortDirection} from "../../../shared/contracts/models";
 import {createFeature, createReducer, on} from "@ngrx/store";
 import {eventActions} from "../actions/event.actions";
 
+const adapter: EntityAdapter<Event> = createEntityAdapter<Event>();
 
-const adapter: EntityAdapter<IEvent> = createEntityAdapter<IEvent>();
-
-export interface EventState extends EntityState<IEvent> {
+export interface EventState extends EntityState<Event> {
   isLoading: boolean;
   totalPages: number;
   totalElements: number;

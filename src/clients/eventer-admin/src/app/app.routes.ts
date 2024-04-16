@@ -30,10 +30,14 @@ export const routes: Routes = [
       provideState(eventFeatureKey, eventReducer),
       provideEffects(EventEffects)
     ],
-    canActivate: [authGuard]},
-  {path: adminUrlKey, component: LayoutMainComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: adminUrlKey,
+    component: LayoutMainComponent,
     canActivate: [authGuard, roleGuard],
-    data:{expectedRoles: ["superadmin"]}},
+    data: {expectedRoles: ["superadmin"]}
+  },
   {
     path: loginUrlKey,
     component: LoginMainComponent,

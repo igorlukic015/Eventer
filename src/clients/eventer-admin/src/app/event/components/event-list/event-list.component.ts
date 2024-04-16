@@ -4,7 +4,7 @@ import {DestroyableComponent} from "../../../shared/components/destroyable/destr
 import {Router} from "@angular/router";
 import {EventFacade} from "../../+state/facade/event.facade";
 import {takeUntil, withLatestFrom} from "rxjs";
-import {IEvent} from "../../contracts/interfaces";
+import {Event} from "../../contracts/interfaces";
 
 @Component({
   selector: 'eventer-admin-event-list',
@@ -17,7 +17,7 @@ import {IEvent} from "../../contracts/interfaces";
 })
 export class EventListComponent extends DestroyableComponent implements OnInit {
   public totalPages: WritableSignal<number> = signal(1);
-  public events: WritableSignal<IEvent[]> = signal([]);
+  public events: WritableSignal<Event[]> = signal([]);
   public checkedRow: WritableSignal<number> = signal(0);
 
   constructor(private readonly router: Router,

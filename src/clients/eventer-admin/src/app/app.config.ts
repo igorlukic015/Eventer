@@ -8,12 +8,15 @@ import {provideStore} from "@ngrx/store";
 import {authInterceptor} from "./shared/interceptor/interceptors";
 import { provideToastr } from 'ngx-toastr';
 import {provideAnimations} from "@angular/platform-browser/animations";
+import {provideEffects} from "@ngrx/effects";
+import * as rtsEffects from "./shared/+state/effects/rts.effects";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes),
     provideStore(),
+    provideEffects(rtsEffects),
     provideAnimations(),
     provideToastr(),
     provideStoreDevtools({

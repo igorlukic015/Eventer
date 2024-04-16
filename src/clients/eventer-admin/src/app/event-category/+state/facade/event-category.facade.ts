@@ -5,6 +5,7 @@ import {EventCategory, EventCategoryCreate} from "../../contracts/interfaces";
 import * as eventCategoryFeature from "../reducers/event-category.reducers";
 import {eventCategoryActions} from "../actions/event-category.actions";
 import {PageRequest} from "../../../shared/contracts/interfaces";
+import { subscribeToChanges } from "../../../shared/+state/actions/rts.actions";
 
 @Injectable()
 export class EventCategoryFacade {
@@ -16,6 +17,10 @@ export class EventCategoryFacade {
   selectedCategoryId$: Observable<number> = this.store.pipe(select(eventCategoryFeature.selectSelectedCategoryId));
 
   constructor(private readonly store: Store) {
+  }
+
+  subscribeToChanges() {
+    this.store.dispatch(subscribeToChanges());
   }
 
   loadEventCategories() {

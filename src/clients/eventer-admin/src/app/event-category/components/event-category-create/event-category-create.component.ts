@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {LayoutMainComponent} from "../../../shared/components/layout-main/layout-main.component";
 import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {EventCategoryCreate} from "../../contracts/interfaces";
@@ -17,7 +17,7 @@ import {NavBarComponent} from "../../../shared/components/nav-bar/nav-bar.compon
   templateUrl: './event-category-create.component.html',
   styleUrl: './event-category-create.component.css'
 })
-export class EventCategoryCreateComponent {
+export class EventCategoryCreateComponent implements OnInit {
   newCategoryForm = this.formBuilder.group({
     name: ['', Validators.required],
     description: ['', Validators.required]
@@ -38,5 +38,9 @@ export class EventCategoryCreateComponent {
     }
 
     this.eventCategoryFacade.createCategory(newCategory);
+  }
+
+  ngOnInit(): void {
+    this.eventCategoryFacade.subscribeToChanges();
   }
 }

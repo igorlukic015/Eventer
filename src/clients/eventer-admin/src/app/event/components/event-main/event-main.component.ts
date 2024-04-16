@@ -34,6 +34,8 @@ export class EventMainComponent extends DestroyableComponent implements OnInit {
       .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
         this.eventFacade.loadEvents();
-      })
+      });
+
+    this.eventFacade.subscribeToChanges();
   }
 }

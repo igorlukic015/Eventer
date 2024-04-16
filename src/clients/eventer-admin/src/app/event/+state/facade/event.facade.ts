@@ -1,14 +1,15 @@
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {IEvent} from "../../contracts/interfaces";
+import {Event} from "../../contracts/interfaces";
 import {select, Store} from "@ngrx/store";
 import * as eventFeature from "../reducers/event.reducers";
 import {PageRequest} from "../../../shared/contracts/interfaces";
 import {eventActions} from "../actions/event.actions";
+import {subscribeToChanges} from "../../../shared/+state/actions/rts.actions";
 
 @Injectable()
 export class EventFacade {
-  items$: Observable<IEvent[]> = this.store.pipe(select(eventFeature.selectAll));
+  items$: Observable<Event[]> = this.store.pipe(select(eventFeature.selectAll));
   totalPages$: Observable<number> = this.store.pipe(select(eventFeature.selectTotalPages));
   totalElements$: Observable<number> = this.store.pipe(select(eventFeature.selectTotalElements));
   loading$: Observable<boolean> = this.store.pipe(select(eventFeature.selectIsLoading));
@@ -16,6 +17,10 @@ export class EventFacade {
   selectedCategoryId$: Observable<number> = this.store.pipe(select(eventFeature.selectSelectedEventId));
 
   constructor(private readonly store: Store) {
+  }
+
+  subscribeToChanges() {
+    this.store.dispatch(subscribeToChanges());
   }
 
   loadEvents() {

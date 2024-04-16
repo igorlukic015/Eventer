@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {act, Actions, createEffect, ofType} from "@ngrx/effects";
 import {EventCategoryService} from "../../services/event-category.service";
-import {catchError, map, mergeMap, Observable, of, switchMap, tap, withLatestFrom} from "rxjs";
+import {catchError, filter, map, mergeMap, Observable, of, switchMap, tap, withLatestFrom} from "rxjs";
 import {PagedResponse} from "../../../shared/contracts/interfaces";
 import {eventCategoryActions} from "../actions/event-category.actions";
 import {Store} from "@ngrx/store";
@@ -10,6 +10,7 @@ import {ToastrService} from "ngx-toastr";
 import {fromPromise} from "rxjs/internal/observable/innerFrom";
 import {Router} from "@angular/router";
 import {error} from "@angular/compiler-cli/src/transformers/util";
+import {updateEntity} from "../../../shared/+state/actions/rts.actions";
 
 @Injectable()
 export class EventCategoryEffects {
@@ -71,6 +72,18 @@ export class EventCategoryEffects {
         )
       ))
     )
+  )
+
+  lala = createEffect(() =>
+      this.actions$.pipe(
+        ofType(updateEntity),
+        filter((action) => action.entity === 'EventCategory'),
+        tap((action: any) => {
+          console.log('update entity in effects');
+          console.log(action);
+        }),
+      ),
+    {dispatch: false}
   )
 
   showErrorToast$ = createEffect(() =>

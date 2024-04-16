@@ -1,7 +1,7 @@
 import {EventCategory} from "../../event-category/contracts/interfaces";
 import {Image} from "../../shared/contracts/interfaces";
 
-export interface IEvent {
+export interface Event {
   id: number;
   title: string;
   description: string;

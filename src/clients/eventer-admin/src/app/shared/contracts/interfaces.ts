@@ -45,6 +45,11 @@ export interface UpdateEntityData {
   data: any,
 }
 
+export interface SelectListElement {
+  id: number,
+  value: string,
+}
+
 interface PageableSortProperties {
   empty: boolean;
   sorted: boolean;

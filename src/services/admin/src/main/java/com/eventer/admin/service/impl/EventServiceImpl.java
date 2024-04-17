@@ -70,13 +70,6 @@ public class EventServiceImpl implements EventService {
             return Result.fromError(createEventRequest.weatherConditionsOrError());
         }
 
-        if (createEventRequest.eventCategoriesOrError().isFailure()) {
-            logger.error(createEventRequest.eventCategoriesOrError().getMessage());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
-            return Result.fromError(createEventRequest.eventCategoriesOrError());
-        }
-
         if (createEventRequest.dateOrError().isFailure()) {
             logger.error(createEventRequest.dateOrError().getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -86,9 +79,7 @@ public class EventServiceImpl implements EventService {
 
         Result<Set<EventCategory>> categoriesOrError =
                 this.eventCategoryService.getCategoriesByIds(
-                        createEventRequest.eventCategoriesOrError().getValue().stream()
-                                .map(EventCategory::getId)
-                                .collect(Collectors.toSet()));
+                        createEventRequest.eventCategoryIds());
 
         if (categoriesOrError.isFailure()) {
             logger.error(categoriesOrError.getMessage());

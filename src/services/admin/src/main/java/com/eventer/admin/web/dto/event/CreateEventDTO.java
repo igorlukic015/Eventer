@@ -10,7 +10,7 @@ public class CreateEventDTO {
     private String location;
     private String date;
     private Set<String> weatherConditions;
-    private Set<EventCategoryDTO> eventCategories;
+    private Set<Long> eventCategories;
 
     public CreateEventDTO() {}
 
@@ -20,7 +20,7 @@ public class CreateEventDTO {
             String location,
             String date,
             Set<String> weatherConditions,
-            Set<EventCategoryDTO> eventCategories) {
+            Set<Long> eventCategories) {
         this.title = title;
         this.description = description;
         this.location = location;
@@ -68,11 +68,11 @@ public class CreateEventDTO {
         this.weatherConditions = weatherConditions;
     }
 
-    public Set<EventCategoryDTO> getEventCategories() {
+    public Set<Long> getEventCategories() {
         return eventCategories;
     }
 
-    public void setEventCategories(Set<EventCategoryDTO> eventCategories) {
+    public void setEventCategories(Set<Long> eventCategories) {
         this.eventCategories = eventCategories;
     }
 }

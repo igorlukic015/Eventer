@@ -98,7 +98,7 @@ public class Event {
             Set<EventCategory> categories,
             Set<Image> images) {
 
-        if (StringUtils.hasText(title) || title.length() > 255) {
+        if (!StringUtils.hasText(title) || title.length() > 255) {
             return Result.invalid(ResultErrorMessages.invalidEventTitle);
         }
 
@@ -106,7 +106,7 @@ public class Event {
             return Result.invalid(ResultErrorMessages.invalidEventDescription);
         }
 
-        if (StringUtils.hasText(location) || location.length() > 255) {
+        if (!StringUtils.hasText(location) || location.length() > 255) {
             return Result.invalid(ResultErrorMessages.invalidEventLocation);
         }
 

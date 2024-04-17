@@ -1,6 +1,5 @@
 package com.eventer.admin.contracts.event;
 
-import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.service.domain.WeatherCondition;
 import com.github.igorlukic015.resulter.Result;
 
@@ -14,5 +13,5 @@ public record CreateEventRequest(
         String location,
         Result<Instant> dateOrError,
         Result<Set<WeatherCondition>> weatherConditionsOrError,
-        Result<Set<EventCategory>> eventCategoriesOrError,
+        Set<Long> eventCategoryIds,
         Set<Path> savedImages) {}

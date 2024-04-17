@@ -6,6 +6,7 @@ import {ActionType, ListenedEntity, SortDirection} from "../../../shared/contrac
 import {createFeature, createReducer, on} from "@ngrx/store";
 import {eventActions} from "../actions/event.actions";
 import * as rtsActions from "../../../shared/+state/actions/real-time.actions";
+import {EventCategory} from "../../../event-category/contracts/interfaces";
 
 const adapter: EntityAdapter<Event> = createEntityAdapter<Event>();
 
@@ -15,6 +16,7 @@ export interface EventState extends EntityState<Event> {
   totalElements: number;
   pageRequest: PageRequest;
   selectedEventId: number;
+  categories: EventCategory[];
 }
 
 const initialState: EventState = adapter.getInitialState({
@@ -30,7 +32,8 @@ const initialState: EventState = adapter.getInitialState({
       sortDirection: SortDirection.ascending
     }
   },
-  selectedEventId: 0
+  selectedEventId: 0,
+  categories: []
 });
 
 
@@ -53,6 +56,9 @@ const eventFeature = createFeature({
     on(eventActions.updateSearchTerm, (state, {searchTerm}) => ({
       ...state, pageRequest: {...state.pageRequest, searchTerm: searchTerm}
     })),
+    on(eventActions.getCategoriesSuccess, (state, {pagedResponse}) => ({
+      ...state, categories: pagedResponse.content
+    }))
     // on(rtsActions.updateEntity, (state, {payload}) => {
     //   if (payload.actionType === ActionType.created && payload.entityType === ListenedEntity.event) {
     //     return adapter.addOne(payload.data, state);
@@ -83,5 +89,6 @@ export const {
   selectTotalPages,
   selectTotalElements,
   selectPageRequest,
-  selectSelectedEventId
+  selectSelectedEventId,
+  selectCategories
 } = eventFeature;

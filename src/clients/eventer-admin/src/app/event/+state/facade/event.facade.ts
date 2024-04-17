@@ -5,6 +5,7 @@ import {select, Store} from "@ngrx/store";
 import * as eventFeature from "../reducers/event.reducers";
 import {PageRequest} from "../../../shared/contracts/interfaces";
 import {eventActions} from "../actions/event.actions";
+import {EventCategory} from "../../../event-category/contracts/interfaces";
 
 @Injectable()
 export class EventFacade {
@@ -14,12 +15,17 @@ export class EventFacade {
   loading$: Observable<boolean> = this.store.pipe(select(eventFeature.selectIsLoading));
   pageRequest$: Observable<PageRequest> = this.store.pipe(select(eventFeature.selectPageRequest));
   selectedCategoryId$: Observable<number> = this.store.pipe(select(eventFeature.selectSelectedEventId));
+  categories$: Observable<EventCategory[]> = this.store.pipe(select(eventFeature.selectCategories));
 
   constructor(private readonly store: Store) {
   }
 
   loadEvents() {
     this.store.dispatch(eventActions.getEvents());
+  }
+
+  loadCategories() {
+    this.store.dispatch(eventActions.getCategories());
   }
 
   updatePageNumber(currentPage: number) {
@@ -34,9 +40,9 @@ export class EventFacade {
     // this.store.dispatch(eventActions.deleteEvent({id}));
   }
 
-  // createEvent(newEvent: IEventCreate) {
-  //   this.store.dispatch(eventActions.createEvent({newEvent}));
-  // }
+  createEvent(formData: FormData) {
+    this.store.dispatch(eventActions.createEvent({formData}));
+  }
   //
   // updateEvent(updatedEvent: IEvent) {
   //   this.store.dispatch(eventActions.updateEvent({updatedEvent}));

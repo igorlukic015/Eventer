@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -53,14 +55,11 @@ public class EventMapper {
                                 .map(WeatherCondition::create)
                                 .collect(Collectors.toSet()));
 
-        Result<Set<EventCategory>> categoriesOrError =
-                EventCategoryMapper.toDomainSet(dto.getEventCategories());
-
         Result<Instant> dateOrError;
 
         try {
-            dateOrError = Result.success(Instant.parse(dto.getDate()));
-        } catch (DateTimeParseException e) {
+            dateOrError = Result.success(new SimpleDateFormat("yyyy-MM-dd").parse("2016-12-31").toInstant());
+        } catch (ParseException e) {
             dateOrError = Result.invalid(e.getMessage());
         }
 
@@ -70,7 +69,7 @@ public class EventMapper {
                 dto.getLocation(),
                 dateOrError,
                 conditionsOrError,
-                categoriesOrError,
+                dto.getEventCategories(),
                 savedImages);
     }
 

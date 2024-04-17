@@ -1,0 +1,75 @@
+<eventer-admin-nav-bar></eventer-admin-nav-bar>
+<eventer-admin-layout-main class="w-full">
+  <div class="card w-1/2 bg-neutral shadow-xl">
+    <div class="card-body items-center text-center">
+      <h1 class="card-title text-2xl mb-10">Create New Event</h1>
+      <form class="flex flex-col w-1/2" [formGroup]="newEventForm">
+        <label class="input input-bordered flex items-center gap-2 mb-4">
+          Title
+          <input type="text" class="grow" formControlName="title"/>
+        </label>
+
+        <label class="input input-bordered flex items-center gap-2 mb-4">
+          Location
+          <input type="text" class="grow" formControlName="location"/>
+        </label>
+
+        <label class="input input-bordered flex items-center gap-2 mb-4">
+          Date
+          <input id="date" formControlName="date" />
+        </label>
+
+        <eventer-admin-select-list
+          title="Click to select categories"
+          placeholder="Select category"
+          [data]="categoriesElements()"
+          (changeElement)="onCategoriesChanged($event)"
+        >
+        </eventer-admin-select-list>
+
+        <eventer-admin-select-list
+          title="Click to select weather conditions"
+          placeholder="Select condition"
+          [data]="weatherConditionsElements()"
+          (changeElement)="onWeatherConditionsChanged($event)"
+        >
+        </eventer-admin-select-list>
+
+        <label class="textarea textarea-bordered flex flex-col items-center gap-2 mb-4">
+          Description
+          <textarea class="textarea w-full h-full" formControlName="description"></textarea>
+        </label>
+
+        <div class="collapse collapse-arrow bg-base-200 mb-4">
+          <input type="radio" (click)="onViewChange($event)" [checked]="isViewChecked()"/>
+          <div class="collapse-title text-l font-medium">
+            Click to add images
+          </div>
+          <div class="collapse-content">
+            <input type="file"  multiple="multiple" class="file-input w-full max-w-xs mb-4" (change)="onFileUpload($event)" />
+            <div class="flex flex-wrap">
+              @for (file of readFiles(); track file){
+                <div class="card card-compact w-1/2 bg-base-100 shadow-xl my-3">
+                  <figure><img class="rounded-xl w-11/12" [src]="file" /></figure>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+      </form>
+
+      <div class="card-actions justify-end mt-10">
+        <button
+          class="btn btn-primary"
+          (click)="onSubmit()"
+          [disabled]="!newEventForm.valid ||
+          selectedCategories().length === 0 ||
+          selectedWeatherConditions().length === 0"
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</eventer-admin-layout-main>

@@ -2,10 +2,9 @@ import {createEntityAdapter, EntityAdapter, EntityState} from "@ngrx/entity";
 import {Event} from "../../contracts/interfaces";
 import {PageRequest} from "../../../shared/contracts/interfaces";
 import {defaultPageSize} from "../../../shared/contracts/statics";
-import {ActionType, ListenedEntity, SortDirection} from "../../../shared/contracts/models";
+import {SortDirection} from "../../../shared/contracts/models";
 import {createFeature, createReducer, on} from "@ngrx/store";
 import {eventActions} from "../actions/event.actions";
-import * as rtsActions from "../../../shared/+state/actions/real-time.actions";
 import {EventCategory} from "../../../event-category/contracts/interfaces";
 
 const adapter: EntityAdapter<Event> = createEntityAdapter<Event>();
@@ -45,7 +44,8 @@ const eventFeature = createFeature({
       ...state, isLoading: true
     })),
     on(eventActions.getEventsSuccess, (state, {pagedResponse}) => (
-      adapter.setAll(pagedResponse.content, {...state, isLoading:false, totalPages: pagedResponse.totalPages})
+      adapter.setAll(pagedResponse.content.map((e: any) => ({...e, date: new Date(Date.parse(e.date))})),
+        {...state, isLoading:false, totalPages: pagedResponse.totalPages})
     )),
     on(eventActions.getEventsFail, (state, {error}) => ({
       ...state, isLoading: false
@@ -58,6 +58,9 @@ const eventFeature = createFeature({
     })),
     on(eventActions.getCategoriesSuccess, (state, {pagedResponse}) => ({
       ...state, categories: pagedResponse.content
+    })),
+    on(eventActions.updateSelectedEventId, (state, {id}) => ({
+      ...state, selectedEventId: id
     }))
     // on(rtsActions.updateEntity, (state, {payload}) => {
     //   if (payload.actionType === ActionType.created && payload.entityType === ListenedEntity.event) {

@@ -33,7 +33,7 @@ export class EventCategoryEffects {
         this.eventCategoryService.deleteEventCategory(action.id).pipe(
           map(_ => {
             this.toastrService.success('Successfully deleted');
-            return eventCategoryActions.deleteEventCategorySuccess({id: action.id})
+            return eventCategoryActions.defaultAction();
           }),
           catchError((error) => of(eventCategoryActions.deleteEventCategoryFail(error)))
         )
@@ -49,7 +49,7 @@ export class EventCategoryEffects {
           map(createdCategory => {
             this.toastrService.success('Successfully created');
             this.router.navigate(['/', 'event-category']);
-            return eventCategoryActions.createEventCategorySuccess({createdCategory})
+            return eventCategoryActions.defaultAction();
           }),
           catchError(error => of(eventCategoryActions.createEventCategoryFail(error)))
         )
@@ -65,7 +65,7 @@ export class EventCategoryEffects {
           map(updatedCategory => {
             this.toastrService.success('Successfully created');
             this.router.navigate(['/', 'event-category']);
-            return eventCategoryActions.updateEventCategorySuccess({updatedCategory})
+            return eventCategoryActions.defaultAction();
           }),
           catchError(error => of(eventCategoryActions.updateEventCategoryFail(error)))
         )
@@ -87,7 +87,7 @@ export class EventCategoryEffects {
         else if (action.payload.actionType === ActionType.deleted) {
           return eventCategoryActions.deleteEventCategorySuccess({id: action.payload.data});
         }
-        return of();
+        return eventCategoryActions.defaultAction();
       })
     )
   )

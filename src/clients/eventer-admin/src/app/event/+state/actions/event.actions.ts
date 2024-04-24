@@ -16,5 +16,10 @@ export const eventActions = createActionGroup({
     'Create event': props<{formData: FormData}>(),
     'Create event success': props<{createdEvent: Event}>(),
     'Create event fail': props<{error: string}>(),
+    'Update event': props<{formData: FormData}>(),
+    'Update event success': props<{updatedEvent: Event}>(),
+    'Update event fail': props<{error: string}>(),
+    'Update selected event id': props<{id: number}>(),
+    'Default action': emptyProps(),
   }
 })

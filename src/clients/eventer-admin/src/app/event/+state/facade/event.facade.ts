@@ -14,7 +14,7 @@ export class EventFacade {
   totalElements$: Observable<number> = this.store.pipe(select(eventFeature.selectTotalElements));
   loading$: Observable<boolean> = this.store.pipe(select(eventFeature.selectIsLoading));
   pageRequest$: Observable<PageRequest> = this.store.pipe(select(eventFeature.selectPageRequest));
-  selectedCategoryId$: Observable<number> = this.store.pipe(select(eventFeature.selectSelectedEventId));
+  selectedEventId$: Observable<number> = this.store.pipe(select(eventFeature.selectSelectedEventId));
   categories$: Observable<EventCategory[]> = this.store.pipe(select(eventFeature.selectCategories));
 
   constructor(private readonly store: Store) {
@@ -44,11 +44,11 @@ export class EventFacade {
     this.store.dispatch(eventActions.createEvent({formData}));
   }
   //
-  // updateEvent(updatedEvent: IEvent) {
-  //   this.store.dispatch(eventActions.updateEvent({updatedEvent}));
-  // }
+  updateEvent(formData: FormData) {
+    this.store.dispatch(eventActions.updateEvent({formData}));
+  }
   //
   updateSelectedEventId(id: number) {
-    // this.store.dispatch(eventActions.updateSelectedEventId({id}));
+    this.store.dispatch(eventActions.updateSelectedEventId({id}));
   }
 }

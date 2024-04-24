@@ -29,6 +29,7 @@ public class EventMapper {
                 domain.getTitle(),
                 domain.getDescription(),
                 domain.getLocation(),
+                domain.getDate(),
                 domain.getWeatherConditionAvailability().stream()
                         .map(WeatherCondition::getName)
                         .collect(Collectors.toSet()),

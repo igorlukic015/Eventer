@@ -31,8 +31,8 @@ export class EventListComponent extends DestroyableComponent implements OnInit {
     }
   }
 
-  openUpdate($event: any, categoryId: number) {
-    this.eventFacade.updateSelectedEventId(categoryId);
+  openUpdate($event: any, eventId: number) {
+    this.eventFacade.updateSelectedEventId(eventId);
     this.router.navigate(['event',  'update']);
   }
 

@@ -34,7 +34,8 @@ export class EventCategoryUpdateComponent extends DestroyableComponent implement
   ngOnInit(): void {
     this.eventCategoryFacade.items$.pipe(
       withLatestFrom(this.eventCategoryFacade.selectedCategoryId$),
-      take(1), takeUntil(this.destroyed$)
+      take(1),
+      takeUntil(this.destroyed$)
     ).subscribe(([categories, id]) => {
       const selectedCategory = categories.find(c => c.id === id);
       if (selectedCategory) {

@@ -1,32 +1,33 @@
-import {Component, computed, OnChanges, OnInit, Signal, signal, SimpleChanges, WritableSignal} from '@angular/core';
+import {Component, computed, OnInit, Signal, signal, WritableSignal} from '@angular/core';
 import {LayoutMainComponent} from "../../../shared/components/layout-main/layout-main.component";
 import {NavBarComponent} from "../../../shared/components/nav-bar/nav-bar.component";
 import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
-import {EventCategory} from "../../../event-category/contracts/interfaces";
+import {SelectListComponent} from "../../../shared/components/select-list/select-list.component";
 import {EventFacade} from "../../+state/facade/event.facade";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
-import {takeUntil} from "rxjs";
-import {SelectListComponent} from "../../../shared/components/select-list/select-list.component";
+import {EventCategory} from "../../../event-category/contracts/interfaces";
 import {SelectListElement} from "../../../shared/contracts/interfaces";
 import {WeatherCondition} from "../../contracts/models";
+import {take, takeUntil, withLatestFrom} from "rxjs";
 import flatpickr from "flatpickr";
-import {EventCreate} from "../../contracts/interfaces";
+import {EventUpdate} from "../../contracts/interfaces";
 
 @Component({
-  selector: 'eventer-admin-event-create',
+  selector: 'eventer-admin-event-update',
   standalone: true,
   imports: [
-    LayoutMainComponent,
-    NavBarComponent,
-    ReactiveFormsModule,
-    SelectListComponent,
+      LayoutMainComponent,
+      NavBarComponent,
+      ReactiveFormsModule,
+      SelectListComponent
   ],
   providers: [EventFacade],
-  templateUrl: './event-create.component.html',
-  styleUrl: './event-create.component.css'
+  templateUrl: './event-update.component.html',
+  styleUrl: './event-update.component.css'
 })
-export class EventCreateComponent extends DestroyableComponent implements OnInit {
-  newEventForm = this.formBuilder.group({
+export class EventUpdateComponent extends DestroyableComponent implements OnInit {
+  updateEventForm = this.formBuilder.group({
+    id: [0, Validators.required],
     title: ['', Validators.required],
     description: ['', Validators.required],
     date: ['', Validators.required],
@@ -48,37 +49,12 @@ export class EventCreateComponent extends DestroyableComponent implements OnInit
 
   isViewChecked: WritableSignal<boolean> = signal(false);
 
+  oldWeatherConditions: WritableSignal<SelectListElement[]> = signal([]);
+
   constructor(private formBuilder: FormBuilder,
               private readonly eventFacade: EventFacade) {
     super();
   }
-
-  onSubmit() {
-    const formData = new FormData();
-
-    if (!this.newEventForm.value.title ||
-      !this.newEventForm.value.date ||
-      !this.newEventForm.value.description ||
-      !this.newEventForm.value.location) {
-      return;
-    }
-
-    const data : EventCreate = {
-      title: this.newEventForm.value.title,
-      date: this.newEventForm.value.date,
-      description: this.newEventForm.value.description,
-      location: this.newEventForm.value.location,
-      eventCategories: this.selectedCategories(),
-      weatherConditions: this.selectedWeatherConditions().map(w => w.name)
-    }
-
-    formData.append('data', JSON.stringify(data));
-
-    this.uploadedFiles().forEach(file => {formData.append('images', file)});
-
-    this.eventFacade.createEvent(formData);
-  }
-
 
   onViewChange($event: any) {
     this.isViewChecked.set(!this.isViewChecked());
@@ -122,6 +98,36 @@ export class EventCreateComponent extends DestroyableComponent implements OnInit
     this.readFiles.set(fileData);
   }
 
+  onSubmit() {
+    const formData = new FormData();
+
+    if (
+      !this.updateEventForm.value.id ||
+      !this.updateEventForm.value.title ||
+      !this.updateEventForm.value.date ||
+      !this.updateEventForm.value.description ||
+      !this.updateEventForm.value.location) {
+      return;
+    }
+
+    const data : EventUpdate = {
+      id: this.updateEventForm.value.id,
+      title: this.updateEventForm.value.title,
+      date: this.updateEventForm.value.date,
+      description: this.updateEventForm.value.description,
+      location: this.updateEventForm.value.location,
+      eventCategories: this.selectedCategories(),
+      weatherConditions: this.selectedWeatherConditions().map(w => w.name)
+    }
+
+    formData.append('data', JSON.stringify(data));
+
+    // this.uploadedFiles().forEach(file => {formData.append('images', file)});
+
+    this.eventFacade.updateEvent(formData);
+  }
+
+
   ngOnInit(): void {
     this.eventFacade.loadCategories();
 
@@ -129,6 +135,36 @@ export class EventCreateComponent extends DestroyableComponent implements OnInit
       takeUntil(this.destroyed$)
     ).subscribe((categories) => {
       this.categories.set(categories);
+    })
+
+    this.eventFacade.items$.pipe(
+      withLatestFrom(this.eventFacade.selectedEventId$),
+      take(1),
+      takeUntil(this.destroyed$)
+    ).subscribe(([events, id]) => {
+      const selectedEvent = events.find(e => e.id === id);
+      if(selectedEvent) {
+        this.updateEventForm.patchValue({
+          id: selectedEvent.id,
+          title: selectedEvent.title,
+          date: `${selectedEvent.date.getFullYear()}-${selectedEvent.date.getMonth() +1}-${selectedEvent.date.getDate()}`,
+          description: selectedEvent.description,
+          location: selectedEvent.location
+        },
+          {emitEvent: false}
+        );
+
+        console.log(selectedEvent.weatherConditions)
+
+        const conditions = selectedEvent.weatherConditions.map(e => WeatherCondition.get(e));
+
+        this.selectedWeatherConditions.set(conditions);
+        this.oldWeatherConditions.set(conditions.map(c => ({id: c.id, value: c.name})));
+
+        this.selectedCategories.set(selectedEvent.categories.map(c => c.id));
+
+        // this.uploadedFiles.set(selectedEvent.images)
+      }
     })
 
     flatpickr("#date", {})

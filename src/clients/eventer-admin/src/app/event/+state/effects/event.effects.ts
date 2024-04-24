@@ -38,7 +38,7 @@ export class EventEffects {
     )
   );
 
-  createEventCategory$ = createEffect(() =>
+  createEvent$ = createEffect(() =>
     this.actions$.pipe(
       ofType(eventActions.createEvent),
       switchMap((action) => (
@@ -46,9 +46,25 @@ export class EventEffects {
           map(createdEvent => {
             this.toastrService.success('Successfully created');
             this.router.navigate(['/', 'event']);
-            return eventActions.createEventSuccess({createdEvent});
+            return eventActions.defaultAction();
           }),
           catchError(error => of(eventActions.createEventFail(error)))
+        )
+      ))
+    )
+  )
+
+  updateEvent$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(eventActions.updateEvent),
+      switchMap((action) => (
+        this.eventService.createEvent(action.formData).pipe(
+          map(updatedEvent => {
+            this.toastrService.success('Successfully updated');
+            this.router.navigate(['/', 'event']);
+            return eventActions.defaultAction();
+          }),
+          catchError(error => of(eventActions.updateEventFail(error)))
         )
       ))
     )
@@ -62,13 +78,13 @@ export class EventEffects {
         if (action.payload.actionType === ActionType.created) {
           return eventActions.createEventSuccess({createdEvent: action.payload.data});
         }
-        // else if (action.payload.actionType === ActionType.updated) {
-        //   return eventActions.updateEventCategorySuccess({updatedCategory: action.payload.data})
-        // }
+        else if (action.payload.actionType === ActionType.updated) {
+          return eventActions.updateEventSuccess({updatedEvent: action.payload.data})
+        }
         // else if (action.payload.actionType === ActionType.deleted) {
         //   return eventActions.deleteEventCategorySuccess({id: action.payload.data});
         // }
-        return of();
+        return eventActions.defaultAction();
       })
     )
   )
@@ -76,7 +92,10 @@ export class EventEffects {
   showErrorToast$ = createEffect(() =>
       this.actions$.pipe(
         ofType(
-          eventActions.getEventsFail
+          eventActions.getEventsFail,
+          eventActions.getCategoriesFail,
+          eventActions.createEventFail,
+          eventActions.updateEventFail,
         ),
         tap((action: any) => {
           if (action?.error?.detail !== undefined) {

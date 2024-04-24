@@ -16,4 +16,8 @@ export class WeatherCondition {
   public static all(): WeatherCondition[] {
     return [this.clear, this.rain, this.drizzle, this.snow, this.atmosphericDisturbance];
   }
+
+  public static get(name: string): WeatherCondition {
+    return this.all().find(c => c.name === name) ?? new WeatherCondition();
+  }
 }

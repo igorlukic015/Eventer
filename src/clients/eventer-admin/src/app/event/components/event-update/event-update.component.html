@@ -2,8 +2,13 @@
 <eventer-admin-layout-main class="w-full">
   <div class="card w-1/2 bg-neutral shadow-xl">
     <div class="card-body items-center text-center">
-      <h1 class="card-title text-2xl mb-10">Create New Event</h1>
-      <form class="flex flex-col w-1/2" [formGroup]="newEventForm">
+      <h1 class="card-title text-2xl mb-10">Update Event</h1>
+      <form class="flex flex-col w-1/2" [formGroup]="updateEventForm">
+        <label class="input input-bordered flex items-center gap-2 mb-4">
+          Id
+          <input type="text" class="grow" readonly formControlName="id"/>
+        </label>
+
         <label class="input input-bordered flex items-center gap-2 mb-4">
           Title
           <input type="text" class="grow" formControlName="title"/>
@@ -32,6 +37,7 @@
           placeholder="Select condition"
           [allData]="weatherConditionsElements()"
           (changeElement)="onWeatherConditionsChanged($event)"
+          [initialData]="oldWeatherConditions()"
         >
         </eventer-admin-select-list>
 
@@ -63,7 +69,7 @@
         <button
           class="btn btn-primary"
           (click)="onSubmit()"
-          [disabled]="!newEventForm.valid ||
+          [disabled]="!updateEventForm.valid ||
           selectedCategories().length === 0 ||
           selectedWeatherConditions().length === 0"
         >

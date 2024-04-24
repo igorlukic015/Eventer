@@ -20,3 +20,13 @@ export interface EventCreate {
   weatherConditions: string[];
   eventCategories: number[];
 }
+
+export interface EventUpdate {
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+  location: string;
+  weatherConditions: string[];
+  eventCategories: number[];
+}

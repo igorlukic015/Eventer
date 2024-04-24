@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output, signal, WritableSignal} from '@angular/core';
+import {Component, computed, EventEmitter, Input, OnInit, Output, Signal, signal, WritableSignal} from '@angular/core';
 import {ReactiveFormsModule} from "@angular/forms";
 import {SelectListElement} from "../../contracts/interfaces";
 
@@ -11,7 +11,7 @@ import {SelectListElement} from "../../contracts/interfaces";
   templateUrl: './select-list.component.html',
   styleUrl: './select-list.component.css'
 })
-export class SelectListComponent {
+export class SelectListComponent implements OnInit {
   @Input({required: true})
   title: string = 'Click to select';
 
@@ -19,12 +19,18 @@ export class SelectListComponent {
   placeholder: string = 'Select';
 
   @Input({required: true})
-  data: SelectListElement[] = [];
+  allData: SelectListElement[] = [];
+
+  @Input()
+  initialData: SelectListElement[] = [];
 
   @Output()
   changeElement: EventEmitter<SelectListElement[]> = new EventEmitter();
 
   isViewChecked: WritableSignal<boolean> = signal(false);
+  optionData: Signal<SelectListElement[]> = computed(() => {
+    return this.allData.filter(e => !this.selectedData().map(s => s.id).includes(e.id));
+  });
   selectedData: WritableSignal<SelectListElement[]> = signal([]);
 
   onViewChange($event: any) {
@@ -33,7 +39,7 @@ export class SelectListComponent {
 
   onSelectChange($event: any) {
     const foundElement =
-      this.data.find((e) => e.id == $event.target.value);
+      this.allData.find((e) => e.id == $event.target.value);
 
     if(!foundElement) {
       return;
@@ -49,5 +55,9 @@ export class SelectListComponent {
     const updatedList = this.selectedData().filter((e) => e.id !== selectedElementId);
     this.selectedData.set(updatedList);
     this.changeElement.emit(updatedList);
+  }
+
+  ngOnInit(): void {
+    this.selectedData.set(this.initialData);
   }
 }

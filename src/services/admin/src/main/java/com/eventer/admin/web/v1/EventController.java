@@ -1,13 +1,11 @@
 package com.eventer.admin.web.v1;
 
 import com.eventer.admin.service.EventService;
+import com.eventer.admin.service.ImageHostService;
 import com.eventer.admin.service.domain.Event;
-import com.eventer.admin.utils.Helpers;
 import com.github.igorlukic015.resulter.Result;
-import com.eventer.admin.utils.ResultErrorMessages;
 import com.eventer.admin.web.dto.event.CreateEventDTO;
 import com.eventer.admin.mapper.EventMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.igorlukic015.resulter.ResultUnwrapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -24,36 +21,24 @@ import java.util.Set;
 @RequestMapping("/api/v1/event")
 public class EventController implements ResultUnwrapper {
     private final EventService eventService;
-    private final ObjectMapper objectMapper;
+    private final ImageHostService imageHostService;
 
     public EventController(
-            EventService eventService, ObjectMapper objectMapper) {
+            EventService eventService,
+            ImageHostService imageHostService) {
         this.eventService = eventService;
-        this.objectMapper = objectMapper;
+        this.imageHostService = imageHostService;
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> create(
-            @RequestParam("data") String data, @RequestParam("images") List<MultipartFile> images) {
-        Set<Path> savedImages =
-                Helpers.saveImages(images, Event.class.getSimpleName());
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> upload(@RequestParam("images") List<MultipartFile> images) {
+        Set<String> response = this.imageHostService.saveAllImages(images, Event.class.getSimpleName());
+        return ResponseEntity.ok(response);
+    }
 
-        CreateEventDTO dto;
-        try {
-            dto = this.objectMapper.readValue(data, CreateEventDTO.class);
-        } catch (Exception e) {
-            Helpers.deleteFilesFromPathSet(savedImages);
-            return this.okOrError(Result.invalid(ResultErrorMessages.invalidCreateEventFormData), null);
-        }
-
-        Result<Event> result;
-        try{
-            result = this.eventService.create(EventMapper.toRequest(dto, savedImages));
-        } catch (Exception e) {
-            Helpers.deleteFilesFromPathSet(savedImages);
-            return this.okOrError(Result.internalError(e.getMessage()), null);
-        }
-
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody CreateEventDTO dto) {
+        Result<Event> result = this.eventService.create(EventMapper.toRequest(dto));
         return this.okOrError(result, EventMapper::toDTO);
     }
 

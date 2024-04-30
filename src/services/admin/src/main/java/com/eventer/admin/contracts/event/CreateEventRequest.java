@@ -14,4 +14,4 @@ public record CreateEventRequest(
         Result<Instant> dateOrError,
         Result<Set<WeatherCondition>> weatherConditionsOrError,
         Set<Long> eventCategoryIds,
-        Set<Path> savedImages) {}
+        Set<String> savedImages) {}

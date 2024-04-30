@@ -51,8 +51,22 @@ services:
       - "5672:5672"
       - "15672:15672"
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-      - rabbitmq_config:/etc/rabbitmq
+      - ./tools/docker/rabbitmq_data:/var/lib/rabbitmq
+      - ./tools/docker/rabbitmq_config:/etc/rabbitmq
+
+  localstack:
+    container_name: "localstack"
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      - DEBUG=1
+      - PERSISTENCE=1
+      - SERVICES=s3
+    volumes:
+      - "./tools/docker/localstack_data:/var/lib/localstack"
+      - "./tools/docker/localstack_data/docker.sock:/var/run/docker.sock"
       
 volumes:
     redis_forecast_data:
@@ -60,3 +74,4 @@ volumes:
     pgdata:
     rabbitmq_data:
     rabbitmq_config:
+    localstack_data:

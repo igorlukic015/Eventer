@@ -7,6 +7,7 @@ import com.eventer.admin.contracts.message.MessageStatics;
 import com.eventer.admin.data.repository.ImageRepository;
 import com.eventer.admin.mapper.ImageMapper;
 import com.eventer.admin.service.EventCategoryService;
+import com.eventer.admin.service.ImageHostService;
 import com.eventer.admin.service.MessageSenderService;
 import com.eventer.admin.service.domain.Event;
 import com.eventer.admin.mapper.EventMapper;
@@ -14,7 +15,6 @@ import com.eventer.admin.data.repository.EventRepository;
 import com.eventer.admin.service.EventService;
 import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.service.domain.Image;
-import com.eventer.admin.utils.Helpers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.igorlukic015.resulter.Result;
@@ -28,19 +28,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final EventCategoryService eventCategoryService;
     private final ImageRepository imageRepository;
+    private final ImageHostService imageHostService;
     private final MessageSenderService messageSenderService;
     private final ObjectMapper objectMapper;
     private final Logger logger = LoggerFactory.getLogger(EventServiceImpl.class);
@@ -49,11 +48,13 @@ public class EventServiceImpl implements EventService {
             EventRepository eventRepository,
             EventCategoryService eventCategoryService,
             ImageRepository imageRepository,
+            ImageHostService imageHostService,
             MessageSenderService messageSenderService,
             ObjectMapper objectMapper) {
         this.eventRepository = eventRepository;
         this.eventCategoryService = eventCategoryService;
         this.imageRepository = imageRepository;
+        this.imageHostService = imageHostService;
         this.messageSenderService = messageSenderService;
         this.objectMapper = objectMapper;
     }
@@ -66,53 +67,48 @@ public class EventServiceImpl implements EventService {
         if (createEventRequest.weatherConditionsOrError().isFailure()) {
             logger.error(createEventRequest.weatherConditionsOrError().getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
+            this.imageHostService.deleteAll(createEventRequest.savedImages());
             return Result.fromError(createEventRequest.weatherConditionsOrError());
         }
 
         if (createEventRequest.dateOrError().isFailure()) {
             logger.error(createEventRequest.dateOrError().getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
+            this.imageHostService.deleteAll(createEventRequest.savedImages());
             return Result.fromError(createEventRequest.dateOrError());
         }
 
         Result<Set<EventCategory>> categoriesOrError =
-                this.eventCategoryService.getCategoriesByIds(
-                        createEventRequest.eventCategoryIds());
+                this.eventCategoryService.getCategoriesByIds(createEventRequest.eventCategoryIds());
 
         if (categoriesOrError.isFailure()) {
             logger.error(categoriesOrError.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
+            this.imageHostService.deleteAll(createEventRequest.savedImages());
             return Result.fromError(categoriesOrError);
         }
 
         Set<Image> savedImages = new HashSet<>();
 
-        for (Path savedImagePath : createEventRequest.savedImages()) {
-            String imageName = savedImagePath.toString().replace("\\", "/");
-
+        for (String imageName : createEventRequest.savedImages()) {
             Result<Image> imageOrError = Image.create(imageName);
 
             if (imageOrError.isFailure()) {
                 logger.error(ResultErrorMessages.invalidImage);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
+                this.imageHostService.deleteAll(createEventRequest.savedImages());
                 return Result.invalid(ResultErrorMessages.invalidImage);
             }
 
             com.eventer.admin.data.model.Image savedimage;
             try {
                 savedimage =
-                        this.imageRepository.save(
-                                ImageMapper.toModel(
-                                        imageOrError.getValue(), Event.class.getSimpleName()));
+                        this.imageRepository.save(ImageMapper.toModel(imageOrError.getValue()));
                 imageOrError.getValue().setId(savedimage.getId());
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
+                this.imageHostService.deleteAll(createEventRequest.savedImages());
                 return Result.invalid(e.getMessage());
             }
 
@@ -132,7 +128,7 @@ public class EventServiceImpl implements EventService {
         if (eventOrError.isFailure()) {
             logger.error(eventOrError.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
+            this.imageHostService.deleteAll(createEventRequest.savedImages());
             return Result.fromError(eventOrError);
         }
 
@@ -144,7 +140,7 @@ public class EventServiceImpl implements EventService {
         } catch (Exception e) {
             logger.error(e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            Helpers.deleteFilesFromPathSet(createEventRequest.savedImages());
+            this.imageHostService.deleteAll(createEventRequest.savedImages());
             return Result.invalid(e.getMessage());
         }
 

@@ -1,6 +1,6 @@
 import {createActionGroup, emptyProps, props} from "@ngrx/store";
 import {PagedResponse} from "../../../shared/contracts/interfaces";
-import {Event} from '../../contracts/interfaces';
+import {Event, EventCreate} from '../../contracts/interfaces';
 
 export const eventActions = createActionGroup({
   source: 'event',
@@ -13,7 +13,7 @@ export const eventActions = createActionGroup({
     'Get categories': emptyProps(),
     'Get categories success': props<{pagedResponse: PagedResponse}>(),
     'Get categories fail': props<{error: string}>(),
-    'Create event': props<{formData: FormData}>(),
+    'Create event': props<{formData: FormData, data: EventCreate}>(),
     'Create event success': props<{createdEvent: Event}>(),
     'Create event fail': props<{error: string}>(),
     'Update event': props<{formData: FormData}>(),

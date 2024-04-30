@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {Event} from "../../contracts/interfaces";
+import {Event, EventCreate} from "../../contracts/interfaces";
 import {select, Store} from "@ngrx/store";
 import * as eventFeature from "../reducers/event.reducers";
 import {PageRequest} from "../../../shared/contracts/interfaces";
@@ -40,8 +40,8 @@ export class EventFacade {
     // this.store.dispatch(eventActions.deleteEvent({id}));
   }
 
-  createEvent(formData: FormData) {
-    this.store.dispatch(eventActions.createEvent({formData}));
+  createEvent(formData: FormData, data: EventCreate) {
+    this.store.dispatch(eventActions.createEvent({formData, data}));
   }
   //
   updateEvent(formData: FormData) {

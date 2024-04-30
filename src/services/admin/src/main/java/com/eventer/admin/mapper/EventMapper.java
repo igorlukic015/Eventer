@@ -49,10 +49,10 @@ public class EventMapper {
         return new PageImpl<>(dtos, domainPage.getPageable(), domainPage.getTotalElements());
     }
 
-    public static CreateEventRequest toRequest(CreateEventDTO dto, Set<Path> savedImages) {
+    public static CreateEventRequest toRequest(CreateEventDTO dto) {
         Result<Set<WeatherCondition>> conditionsOrError =
                 Result.getResultValueSet(
-                        dto.getWeatherConditions().stream()
+                        dto.weatherConditions().stream()
                                 .map(WeatherCondition::create)
                                 .collect(Collectors.toSet()));
 
@@ -65,13 +65,13 @@ public class EventMapper {
         }
 
         return new CreateEventRequest(
-                dto.getTitle(),
-                dto.getDescription(),
-                dto.getLocation(),
+                dto.title(),
+                dto.description(),
+                dto.location(),
                 dateOrError,
                 conditionsOrError,
-                dto.getEventCategories(),
-                savedImages);
+                dto.eventCategories(),
+                dto.savedImages());
     }
 
     public static Result<Event> toDomain(com.eventer.admin.data.model.Event model) {
@@ -145,7 +145,7 @@ public class EventMapper {
 
         model.setImages(
                 images.stream()
-                        .map(image -> ImageMapper.toModel(image, Event.class.getSimpleName()))
+                        .map(ImageMapper::toModel)
                         .collect(Collectors.toSet()));
 
         return model;

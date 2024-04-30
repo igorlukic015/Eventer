@@ -72,11 +72,11 @@ export class EventCreateComponent extends DestroyableComponent implements OnInit
       weatherConditions: this.selectedWeatherConditions().map(w => w.name)
     }
 
-    formData.append('data', JSON.stringify(data));
+    for(let file of this.uploadedFiles()) {
+      formData.append('images', file);
+    }
 
-    this.uploadedFiles().forEach(file => {formData.append('images', file)});
-
-    this.eventFacade.createEvent(formData);
+    this.eventFacade.createEvent(formData, data);
   }
 
 
@@ -128,6 +128,7 @@ export class EventCreateComponent extends DestroyableComponent implements OnInit
     this.eventFacade.categories$.pipe(
       takeUntil(this.destroyed$)
     ).subscribe((categories) => {
+      console.log(categories)
       this.categories.set(categories);
     })
 

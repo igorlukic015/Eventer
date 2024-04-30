@@ -6,6 +6,7 @@ import com.eventer.admin.service.domain.Image;
 import com.github.igorlukic015.resulter.Result;
 import com.eventer.admin.web.dto.event.ImageDTO;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,12 +28,11 @@ public class ImageMapper {
     public static Result<Image> toDomain(com.eventer.admin.data.model.Image model) {
         String url =
                 String.format(
-                        "%s%s%s%s%s",
+                        "%s/%s/%s/%s",
                         ApplicationConfiguration.getImageBaseUrl(),
-                        ApplicationConfiguration.getImageUrlSeparator(),
+                        ApplicationConfiguration.getImageBucketName(),
                         Event.class.getSimpleName(),
-                        ApplicationConfiguration.getImageUrlSeparator(),
-                        model.getName()).replace(ApplicationConfiguration.getImageUrlSeparator(), "/");
+                        model.getName());
 
         return Image.create(model.getId(), url);
     }
@@ -42,15 +42,8 @@ public class ImageMapper {
                 models.stream().map(ImageMapper::toDomain).collect(Collectors.toSet()));
     }
 
-    public static com.eventer.admin.data.model.Image toModel(Image domain, String entityName) {
-        String whatToReplace =
-                String.format(
-                        "%s%s%s/",
-                        ApplicationConfiguration.getImageBaseUrl(),
-                        ApplicationConfiguration.getImageUrlSeparator(),
-                        entityName).replace(ApplicationConfiguration.getImageUrlSeparator(), "/");
-
-        String name = domain.getUrl().replace(whatToReplace, "");
+    public static com.eventer.admin.data.model.Image toModel(Image domain) {
+        String name = Arrays.stream(domain.getUrl().split("/")).toList().getLast();
 
         com.eventer.admin.data.model.Image model = new com.eventer.admin.data.model.Image();
         model.setId(domain.getId());

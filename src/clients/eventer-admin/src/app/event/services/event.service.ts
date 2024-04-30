@@ -3,7 +3,7 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {PagedResponse, PageRequest} from "../../shared/contracts/interfaces";
 import {Observable} from "rxjs";
 import {baseApiUrl} from "../../shared/contracts/statics";
-import {Event} from "../contracts/interfaces";
+import {Event, EventCreate} from "../contracts/interfaces";
 
 @Injectable({providedIn: 'root'})
 export class EventService {
@@ -47,7 +47,11 @@ export class EventService {
     return this.httpClient.get<PagedResponse>(`${baseApiUrl}/${this.categoriesRoute}`, {params: params }, );
   }
 
-  createEvent(formData: FormData) {
-    return this.httpClient.post<Event>(`${baseApiUrl}/${this.eventRoute}`, formData);
+  createEvent(data: EventCreate, savedImages: string[]): Observable<Event> {
+    return this.httpClient.post<Event>(`${baseApiUrl}/${this.eventRoute}`, {...data, savedImages});
+  }
+
+  uploadImages(formData: FormData): Observable<string[]> {
+    return this.httpClient.post<string[]>(`${baseApiUrl}/${this.eventRoute}/upload`, formData);
   }
 }

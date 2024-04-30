@@ -19,8 +19,8 @@ export class EventEffects {
       withLatestFrom(this.store.select(selectPageRequest)),
       mergeMap(([action, pageRequest]) =>
         this.eventService.getEvents(pageRequest).pipe(
-            map((pagedResponse: PagedResponse) => eventActions.getEventsSuccess({pagedResponse})),
-            catchError((error) => of(eventActions.getEventsFail(error)))
+          map((pagedResponse: PagedResponse) => eventActions.getEventsSuccess({pagedResponse})),
+          catchError((error) => of(eventActions.getEventsFail(error)))
         )
       )
     )
@@ -42,11 +42,16 @@ export class EventEffects {
     this.actions$.pipe(
       ofType(eventActions.createEvent),
       switchMap((action) => (
-        this.eventService.createEvent(action.formData).pipe(
-          map(createdEvent => {
-            this.toastrService.success('Successfully created');
-            this.router.navigate(['/', 'event']);
-            return eventActions.defaultAction();
+        this.eventService.uploadImages(action.formData).pipe(
+          mergeMap((savedImages) => {
+            return this.eventService.createEvent(action.data, savedImages).pipe(
+              map(createdEvent => {
+                this.toastrService.success('Successfully created');
+                this.router.navigate(['/', 'event']);
+                return eventActions.defaultAction();
+              }),
+              catchError(error => of(eventActions.createEventFail(error)))
+            )
           }),
           catchError(error => of(eventActions.createEventFail(error)))
         )
@@ -54,21 +59,21 @@ export class EventEffects {
     )
   )
 
-  updateEvent$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(eventActions.updateEvent),
-      switchMap((action) => (
-        this.eventService.createEvent(action.formData).pipe(
-          map(updatedEvent => {
-            this.toastrService.success('Successfully updated');
-            this.router.navigate(['/', 'event']);
-            return eventActions.defaultAction();
-          }),
-          catchError(error => of(eventActions.updateEventFail(error)))
-        )
-      ))
-    )
-  )
+  // updateEvent$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(eventActions.updateEvent),
+  //     switchMap((action) => (
+  //       this.eventService.createEvent(action.formData).pipe(
+  //         map(updatedEvent => {
+  //           this.toastrService.success('Successfully updated');
+  //           this.router.navigate(['/', 'event']);
+  //           return eventActions.defaultAction();
+  //         }),
+  //         catchError(error => of(eventActions.updateEventFail(error)))
+  //       )
+  //     ))
+  //   )
+  // )
 
   updateListenedEvent$ = createEffect(() =>
     this.actions$.pipe(
@@ -77,8 +82,7 @@ export class EventEffects {
       map((action) => {
         if (action.payload.actionType === ActionType.created) {
           return eventActions.createEventSuccess({createdEvent: action.payload.data});
-        }
-        else if (action.payload.actionType === ActionType.updated) {
+        } else if (action.payload.actionType === ActionType.updated) {
           return eventActions.updateEventSuccess({updatedEvent: action.payload.data})
         }
         // else if (action.payload.actionType === ActionType.deleted) {

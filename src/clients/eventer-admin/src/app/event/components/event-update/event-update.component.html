@@ -54,9 +54,10 @@
           <div class="collapse-content">
             <input type="file"  multiple="multiple" class="file-input w-full max-w-xs mb-4" (change)="onFileUpload($event)" />
             <div class="flex flex-wrap">
+              <span class="text-sm">Click to remove</span>
               @for (file of readFiles(); track file){
                 <div class="card card-compact w-1/2 bg-base-100 shadow-xl my-3">
-                  <figure><img class="rounded-xl w-11/12" [src]="file" /></figure>
+                  <figure><img class="rounded-xl w-11/12" [src]="file.data" (click)="removeImage(file.imageId)" /></figure>
                 </div>
               }
             </div>

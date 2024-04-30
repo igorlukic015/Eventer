@@ -6,9 +6,9 @@ import {SelectListComponent} from "../../../shared/components/select-list/select
 import {EventFacade} from "../../+state/facade/event.facade";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
 import {EventCategory} from "../../../event-category/contracts/interfaces";
-import {SelectListElement} from "../../../shared/contracts/interfaces";
+import {Image, SelectListElement} from "../../../shared/contracts/interfaces";
 import {WeatherCondition} from "../../contracts/models";
-import {from, map, mergeMap, of, take, takeUntil, toArray, withLatestFrom} from "rxjs";
+import {concatMap, from, map, take, takeUntil, toArray, withLatestFrom} from "rxjs";
 import flatpickr from "flatpickr";
 import {EventUpdate} from "../../contracts/interfaces";
 import {fromPromise} from "rxjs/internal/observable/innerFrom";
@@ -45,7 +45,7 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
     WeatherCondition.all().map((w) => ({id: w.id, value: w.name}))
   );
 
-  uploadedFiles: WritableSignal<File[]> = signal([]);
+  uploadedFiles: WritableSignal<{ imageId: number, file:File }[]> = signal([]);
   readFiles: WritableSignal<any[]> = signal([]);
 
   isViewChecked: WritableSignal<boolean> = signal(false);
@@ -81,14 +81,18 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
     this.selectedWeatherConditions.set(newList);
   }
 
-  onFileUpload($event: any) {
-    const files = $event.target.files;
+  onFileUpload($event: Event) {
+    const element = $event.currentTarget as HTMLInputElement;
 
-    const newFileList = {...this.uploadedFiles, ...files};
+    if(element.files && element.files.length > 0) {
+      const files = Array.from(element.files).map((f: File) => ({imageId: -1, file: f}));
 
-    this.uploadedFiles.set(newFileList);
+      const newFileList = [...this.uploadedFiles(), ...files];
 
-    this.previewImages(newFileList);
+      this.uploadedFiles.set(newFileList);
+
+      this.previewImages(newFileList);
+    }
   }
 
   onSubmit() {
@@ -114,7 +118,7 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
     }
 
     for (let file of this.uploadedFiles()) {
-      formData.append('images', file);
+      formData.append('images', file.file);
     }
 
     // this.eventFacade.updateEvent(formData);
@@ -155,36 +159,52 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
 
         this.selectedCategories.set(selectedEvent.categories.map(c => c.id));
 
-        this.fetchImages(selectedEvent.images.map(image => image.url))
+        this.fetchImages(selectedEvent.images)
       }
     })
 
     flatpickr("#date", {})
   }
 
-  private previewImages(files: File[]) {
+  private previewImages(images: { file:File, imageId: number }[]) {
     const fileData: any[] = [];
 
-    for (let file of files) {
+    for (let image of images) {
       const fileReader = new FileReader();
       fileReader.onload = function (event) {
-        fileData.push(event.target?.result);
+        fileData.push({data: event.target?.result, imageId: image.imageId});
       }
-      fileReader.readAsDataURL(file);
+      fileReader.readAsDataURL(image.file);
     }
 
     this.readFiles.set(fileData);
   }
 
-  private fetchImages(imageUrls: string[]) {
-    from(imageUrls).pipe(
-      mergeMap((imageUrl) => fromPromise(fetch(imageUrl))),
-      mergeMap(response => fromPromise(response.blob())),
-      map(blob => new File([blob], 'img', {type: blob.type})),
+  private fetchImages(images: Image[]) {
+    from(images).pipe(
+      concatMap((image) =>
+        fromPromise(fetch(image.url)).pipe(
+          concatMap(response =>
+            fromPromise(response.blob()).pipe(
+              map(blob => ({ blob, imageId: image.id }))
+            )
+          )
+        )
+      ),
+      map(({ blob, imageId }) => ({
+          imageId: imageId, file: new File([blob], `${imageId}`, { type: blob.type })
+        })
+      ),
       toArray()
-    ).subscribe((files) => {
-      this.uploadedFiles.set(files);
-      this.previewImages(files)
+    ).subscribe((images) => {
+      this.uploadedFiles.set(images);
+      this.previewImages(images);
     })
+  }
+
+  removeImage(imageId: number) {
+    const filteredImages = this.uploadedFiles().filter(f => f.imageId !== imageId);
+    this.uploadedFiles.set(filteredImages);
+    this.previewImages(filteredImages);
   }
 }

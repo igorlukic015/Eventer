@@ -8,18 +8,19 @@ import {DestroyableComponent} from "../../../shared/components/destroyable/destr
 import {EventCategory} from "../../../event-category/contracts/interfaces";
 import {SelectListElement} from "../../../shared/contracts/interfaces";
 import {WeatherCondition} from "../../contracts/models";
-import {take, takeUntil, withLatestFrom} from "rxjs";
+import {from, map, mergeMap, of, take, takeUntil, toArray, withLatestFrom} from "rxjs";
 import flatpickr from "flatpickr";
 import {EventUpdate} from "../../contracts/interfaces";
+import {fromPromise} from "rxjs/internal/observable/innerFrom";
 
 @Component({
   selector: 'eventer-admin-event-update',
   standalone: true,
   imports: [
-      LayoutMainComponent,
-      NavBarComponent,
-      ReactiveFormsModule,
-      SelectListComponent
+    LayoutMainComponent,
+    NavBarComponent,
+    ReactiveFormsModule,
+    SelectListComponent
   ],
   providers: [EventFacade],
   templateUrl: './event-update.component.html',
@@ -80,22 +81,14 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
     this.selectedWeatherConditions.set(newList);
   }
 
-  onFileUpload($event: any){
+  onFileUpload($event: any) {
     const files = $event.target.files;
 
-    this.uploadedFiles.set(files);
+    const newFileList = {...this.uploadedFiles, ...files};
 
-    const fileData: any[] = [];
+    this.uploadedFiles.set(newFileList);
 
-    for(let file of files) {
-      const fileReader = new FileReader();
-      fileReader.onload = function (event) {
-        fileData.push(event.target?.result);
-      }
-      fileReader.readAsDataURL(file);
-    }
-
-    this.readFiles.set(fileData);
+    this.previewImages(newFileList);
   }
 
   onSubmit() {
@@ -110,7 +103,7 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
       return;
     }
 
-    const data : EventUpdate = {
+    const data: EventUpdate = {
       id: this.updateEventForm.value.id,
       title: this.updateEventForm.value.title,
       date: this.updateEventForm.value.date,
@@ -120,13 +113,12 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
       weatherConditions: this.selectedWeatherConditions().map(w => w.name)
     }
 
-    formData.append('data', JSON.stringify(data));
+    for (let file of this.uploadedFiles()) {
+      formData.append('images', file);
+    }
 
-    // this.uploadedFiles().forEach(file => {formData.append('images', file)});
-
-    this.eventFacade.updateEvent(formData);
+    // this.eventFacade.updateEvent(formData);
   }
-
 
   ngOnInit(): void {
     this.eventFacade.loadCategories();
@@ -143,14 +135,14 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
       takeUntil(this.destroyed$)
     ).subscribe(([events, id]) => {
       const selectedEvent = events.find(e => e.id === id);
-      if(selectedEvent) {
+      if (selectedEvent) {
         this.updateEventForm.patchValue({
-          id: selectedEvent.id,
-          title: selectedEvent.title,
-          date: `${selectedEvent.date.getFullYear()}-${selectedEvent.date.getMonth() +1}-${selectedEvent.date.getDate()}`,
-          description: selectedEvent.description,
-          location: selectedEvent.location
-        },
+            id: selectedEvent.id,
+            title: selectedEvent.title,
+            date: `${selectedEvent.date.getFullYear()}-${selectedEvent.date.getMonth() + 1}-${selectedEvent.date.getDate()}`,
+            description: selectedEvent.description,
+            location: selectedEvent.location
+          },
           {emitEvent: false}
         );
 
@@ -163,10 +155,36 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
 
         this.selectedCategories.set(selectedEvent.categories.map(c => c.id));
 
-        // this.uploadedFiles.set(selectedEvent.images)
+        this.fetchImages(selectedEvent.images.map(image => image.url))
       }
     })
 
     flatpickr("#date", {})
+  }
+
+  private previewImages(files: File[]) {
+    const fileData: any[] = [];
+
+    for (let file of files) {
+      const fileReader = new FileReader();
+      fileReader.onload = function (event) {
+        fileData.push(event.target?.result);
+      }
+      fileReader.readAsDataURL(file);
+    }
+
+    this.readFiles.set(fileData);
+  }
+
+  private fetchImages(imageUrls: string[]) {
+    from(imageUrls).pipe(
+      mergeMap((imageUrl) => fromPromise(fetch(imageUrl))),
+      mergeMap(response => fromPromise(response.blob())),
+      map(blob => new File([blob], 'img', {type: blob.type})),
+      toArray()
+    ).subscribe((files) => {
+      this.uploadedFiles.set(files);
+      this.previewImages(files)
+    })
   }
 }

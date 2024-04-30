@@ -35,8 +35,7 @@ export class EventCreateComponent extends DestroyableComponent implements OnInit
 
   categories: WritableSignal<EventCategory[]> = signal([]);
   selectedCategories: WritableSignal<number[]> = signal([]);
-  categoriesElements: Signal<SelectListElement[]> = computed((): SelectListElement[] =>
-    this.categories().map(c => ({id: c.id, value: c.name})));
+  categoriesElements: WritableSignal<SelectListElement[]> = signal([]);
 
   selectedWeatherConditions: WritableSignal<WeatherCondition[]> = signal([]);
   weatherConditionsElements: Signal<SelectListElement[]> = computed((): SelectListElement[] =>
@@ -63,7 +62,7 @@ export class EventCreateComponent extends DestroyableComponent implements OnInit
       return;
     }
 
-    const data : EventCreate = {
+    const data: EventCreate = {
       title: this.newEventForm.value.title,
       date: this.newEventForm.value.date,
       description: this.newEventForm.value.description,
@@ -72,7 +71,7 @@ export class EventCreateComponent extends DestroyableComponent implements OnInit
       weatherConditions: this.selectedWeatherConditions().map(w => w.name)
     }
 
-    for(let file of this.uploadedFiles()) {
+    for (let file of this.uploadedFiles()) {
       formData.append('images', file);
     }
 
@@ -104,14 +103,14 @@ export class EventCreateComponent extends DestroyableComponent implements OnInit
     this.selectedWeatherConditions.set(newList);
   }
 
-  onFileUpload($event: any){
+  onFileUpload($event: any) {
     const files = $event.target.files;
 
     this.uploadedFiles.set(files);
 
     const fileData: any[] = [];
 
-    for(let file of files) {
+    for (let file of files) {
       const fileReader = new FileReader();
       fileReader.onload = function (event) {
         fileData.push(event.target?.result);
@@ -128,8 +127,10 @@ export class EventCreateComponent extends DestroyableComponent implements OnInit
     this.eventFacade.categories$.pipe(
       takeUntil(this.destroyed$)
     ).subscribe((categories) => {
-      console.log(categories)
-      this.categories.set(categories);
+      if (categories && categories.length > 0) {
+        this.categories.set(categories);
+        this.categoriesElements.set(categories.map(c => ({id: c.id, value: c.name})));
+      }
     })
 
     flatpickr("#date", {})

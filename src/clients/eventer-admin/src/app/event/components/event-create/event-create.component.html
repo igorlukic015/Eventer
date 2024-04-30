@@ -19,13 +19,15 @@
           <input id="date" formControlName="date" />
         </label>
 
-        <eventer-admin-select-list
-          title="Click to select categories"
-          placeholder="Select category"
-          [allData]="categoriesElements()"
-          (changeElement)="onCategoriesChanged($event)"
-        >
-        </eventer-admin-select-list>
+        @if(categoriesElements().length > 0) {
+          <eventer-admin-select-list
+            title="Click to select categories"
+            placeholder="Select category"
+            [allData]="categoriesElements()"
+            (changeElement)="onCategoriesChanged($event)"
+          >
+          </eventer-admin-select-list>
+        }
 
         <eventer-admin-select-list
           title="Click to select weather conditions"

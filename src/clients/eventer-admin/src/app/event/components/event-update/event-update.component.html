@@ -29,6 +29,7 @@
           placeholder="Select category"
           [allData]="categoriesElements()"
           (changeElement)="onCategoriesChanged($event)"
+          [initialData]="oldCategories()"
         >
         </eventer-admin-select-list>
 

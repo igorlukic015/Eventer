@@ -51,6 +51,7 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
   isViewChecked: WritableSignal<boolean> = signal(false);
 
   oldWeatherConditions: WritableSignal<SelectListElement[]> = signal([]);
+  oldCategories: WritableSignal<SelectListElement[]> = signal([]);
 
   constructor(private formBuilder: FormBuilder,
               private readonly eventFacade: EventFacade) {
@@ -170,6 +171,7 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
         this.oldWeatherConditions.set(conditions.map(c => ({id: c.id, value: c.name})));
 
         this.selectedCategories.set(selectedEvent.categories.map(c => c.id));
+        this.oldCategories.set(selectedEvent.categories.map(c => ({id: c.id, value: c.name})))
 
         this.fetchImages(selectedEvent.images)
       }

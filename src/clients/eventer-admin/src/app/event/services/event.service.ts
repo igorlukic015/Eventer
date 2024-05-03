@@ -58,4 +58,8 @@ export class EventService {
   updateEvent(data: EventUpdate, savedImages: string[]): Observable<Event> {
     return this.httpClient.put<Event>(`${baseApiUrl}/${this.eventRoute}`, {...data, savedImages});
   }
+
+  deleteEvent(id: number) {
+    return this.httpClient.delete(`${baseApiUrl}/${this.eventRoute}/${id}`);
+  }
 }

@@ -326,6 +326,40 @@ public class EventServiceImpl implements EventService {
         return updatedEventOrError;
     }
 
+    @Transactional
+    @Override
+    public Result delete(Long id) {
+        logger.info("Attempting to delete event with id {}", id);
+
+        Optional<com.eventer.admin.data.model.Event> foundEvent = this.eventRepository.findById(id);
+
+        if (foundEvent.isEmpty()) {
+            logger.error(ResultErrorMessages.eventNotFound);
+            return Result.notFound(ResultErrorMessages.eventNotFound);
+        }
+
+        try {
+            this.eventRepository.delete(foundEvent.get());
+        } catch (Exception e) {
+            return Result.invalid(e.getMessage());
+        }
+
+        Result messageSentOrError = this.sendMessage(MessageStatics.ACTION_DELETED, id, null);
+
+        if (messageSentOrError.isFailure()) {
+            logger.error(messageSentOrError.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.fromError(messageSentOrError);
+        }
+
+        this.imageHostService.deleteAll(
+                foundEvent.get().getImages().stream()
+                        .map(com.eventer.admin.data.model.Image::getName)
+                        .collect(Collectors.toSet()));
+
+        return Result.success();
+    }
+
     @Transactional(readOnly = true)
     @Override
     public Result<Page<Event>> getEvents(Pageable pageable) {

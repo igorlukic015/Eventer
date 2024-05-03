@@ -45,7 +45,7 @@ public class EventCategoryController implements ResultUnwrapper {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
-        Result result = this.eventCategoryService.deleteCategory(id);
+        Result result = this.eventCategoryService.delete(id);
         return this.okOrError(result);
     }
 

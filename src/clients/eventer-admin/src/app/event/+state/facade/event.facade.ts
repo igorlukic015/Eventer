@@ -37,17 +37,17 @@ export class EventFacade {
   }
 
   deleteEvent(id: number) {
-    // this.store.dispatch(eventActions.deleteEvent({id}));
+    this.store.dispatch(eventActions.deleteEvent({id}));
   }
 
   createEvent(formData: FormData, data: EventCreate) {
     this.store.dispatch(eventActions.createEvent({formData, data}));
   }
-  //
+
   updateEvent(formData: FormData, data: EventUpdate) {
     this.store.dispatch(eventActions.updateEvent({formData, data}));
   }
-  //
+
   updateSelectedEventId(id: number) {
     this.store.dispatch(eventActions.updateSelectedEventId({id}));
   }

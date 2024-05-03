@@ -163,7 +163,7 @@ public class EventCategoryServiceImpl implements EventCategoryService {
 
     @Transactional
     @Override
-    public Result deleteCategory(Long id) {
+    public Result delete(Long id) {
         logger.info("Attempting to delete category with id {}", id);
 
         Optional<com.eventer.admin.data.model.EventCategory> foundCategory =

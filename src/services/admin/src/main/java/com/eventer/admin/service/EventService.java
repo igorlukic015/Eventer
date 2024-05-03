@@ -17,4 +17,6 @@ public interface EventService {
     Result<Set<Event>> getAllEvents();
 
     Result<Event> update(UpdateEventRequest request);
+
+    Result delete(Long id);
 }

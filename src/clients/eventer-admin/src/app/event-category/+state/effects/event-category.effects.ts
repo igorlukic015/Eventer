@@ -31,7 +31,7 @@ export class EventCategoryEffects {
       ofType(eventCategoryActions.deleteEventCategory),
       switchMap(action => (
         this.eventCategoryService.deleteEventCategory(action.id).pipe(
-          map(_ => {
+          map(() => {
             this.toastrService.success('Successfully deleted');
             return eventCategoryActions.defaultAction();
           }),

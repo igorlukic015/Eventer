@@ -18,7 +18,7 @@ public interface EventCategoryService {
 
     Result<Set<EventCategory>> getAllCategories();
 
-    Result deleteCategory(Long id);
+    Result delete(Long id);
 
     Result<EventCategory> update(UpdateEventCategoryRequest request);
 }

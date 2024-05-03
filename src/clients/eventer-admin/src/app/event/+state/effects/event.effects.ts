@@ -80,6 +80,21 @@ export class EventEffects {
     )
   )
 
+  deleteEvent$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(eventActions.deleteEvent),
+      switchMap((action) => (
+        this.eventService.deleteEvent(action.id).pipe(
+          map(() => {
+            this.toastrService.success('Successfully deleted');
+            return eventActions.defaultAction();
+          }),
+          catchError((error) => of(eventActions.deleteEventFail(error)))
+        )
+      ))
+    )
+  )
+
   updateListenedEvent$ = createEffect(() =>
     this.actions$.pipe(
       ofType(updateEntity),
@@ -90,9 +105,9 @@ export class EventEffects {
         } else if (action.payload.actionType === ActionType.updated) {
           return eventActions.updateEventSuccess({updatedEvent: action.payload.data})
         }
-        // else if (action.payload.actionType === ActionType.deleted) {
-        //   return eventActions.deleteEventCategorySuccess({id: action.payload.data});
-        // }
+        else if (action.payload.actionType === ActionType.deleted) {
+          return eventActions.deleteEventSuccess({id: action.payload.data});
+        }
         return eventActions.defaultAction();
       })
     )

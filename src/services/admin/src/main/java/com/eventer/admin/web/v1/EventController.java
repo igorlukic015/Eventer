@@ -60,4 +60,10 @@ public class EventController implements ResultUnwrapper {
         Result<Event> result = this.eventService.update(EventMapper.toRequest(dto));
         return this.okOrError(result, EventMapper::toDTO);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+        Result result = this.eventService.delete(id);
+        return this.okOrError(result);
+    }
 }

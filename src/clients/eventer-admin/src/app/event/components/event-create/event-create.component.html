@@ -52,7 +52,7 @@
             <div class="flex flex-wrap">
               @for (file of readFiles(); track file){
                 <div class="card card-compact w-1/2 bg-base-100 shadow-xl my-3">
-                  <figure><img class="rounded-xl w-11/12" [src]="file" /></figure>
+                  <figure><img class="rounded-xl w-11/12" [src]="file.data" (click)="removeImage(file.imageId)"/></figure>
                 </div>
               }
             </div>

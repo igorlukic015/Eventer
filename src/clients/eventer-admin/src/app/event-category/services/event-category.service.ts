@@ -25,7 +25,7 @@ export class EventCategoryService {
       params = params.append('searchTerm', searchTerm);
     }
 
-    return this.httpClient.get<PagedResponse>(`${baseApiUrl}/${this.eventCategoryRoute}`, {params: params }, );
+    return this.httpClient.get<PagedResponse>(`${baseApiUrl}/${this.eventCategoryRoute}`, {params });
   }
 
   public deleteEventCategory(id: number): Observable<void> {

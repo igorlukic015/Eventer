@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {Router, RouterLink} from "@angular/router";
 import {eventCategoryUrlKey, eventUrlKey} from "../../contracts/statics";
 import {NgClass} from "@angular/common";
@@ -15,6 +15,9 @@ import {RealTimeService} from "../../services/real-time.service";
   styleUrl: './nav-bar.component.css'
 })
 export class NavBarComponent {
+  @Input()
+  public isAdmin: boolean = false;
+
   public activeLink: number;
 
   constructor(private readonly router: Router, private readonly rts: RealTimeService) {

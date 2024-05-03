@@ -35,6 +35,7 @@ public class ResultErrorMessages {
     public static String invalidAdminUsername = "INVALID_ADMIN_USERNAME";
     public static String invalidPassword = "INVALID_ADMIN_PASSWORD";
     public static String invalidRole = "INVALID_ROLE";
+    public static String deletingOfAdministratorsNotValid = "DELETING_OF_ADMINISTRATORS_NOT_VALID";
 
 
     // GENERAL

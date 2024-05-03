@@ -1,17 +1,25 @@
 <div class="navbar bg-base-100">
   <div class="navbar-start">
-    <a class="btn btn-ghost text-xl"
-       [ngClass]="activeLink === 0 ? 'text-accent' : ''"
-       routerLink="/event-category"
-    >
-      Event Categories
-    </a>
-    <a class="btn btn-ghost text-xl"
-       [ngClass]="activeLink === 1 ? 'text-accent' : ''"
-       routerLink="/event"
-    >
-      Events
-    </a>
+    @if (!isAdmin) {
+      <a class="btn btn-ghost text-xl"
+         [ngClass]="activeLink === 0 ? 'text-accent' : ''"
+         routerLink="/event-category"
+      >
+        Event Categories
+      </a>
+      <a class="btn btn-ghost text-xl"
+         [ngClass]="activeLink === 1 ? 'text-accent' : ''"
+         routerLink="/event"
+      >
+        Events
+      </a>
+    } @else {
+      <a class="btn btn-ghost text-xl text-accent"
+        routerLink="/admin"
+      >
+        Admins
+      </a>
+    }
   </div>
 
   <div class="navbar-center">

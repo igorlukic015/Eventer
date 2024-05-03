@@ -13,3 +13,8 @@ export class ActionType {
   public static readonly updated: string = 'UPDATED';
   public static readonly deleted: string = 'DELETED';
 }
+
+export class Role {
+  public static readonly eventManager: string = 'EVENT_MANAGER';
+  public static readonly administrator: string = 'ADMINISTRATOR';
+}

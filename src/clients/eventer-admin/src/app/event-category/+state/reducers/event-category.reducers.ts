@@ -5,6 +5,7 @@ import {eventCategoryActions} from "../actions/event-category.actions";
 import {PageRequest} from "../../../shared/contracts/interfaces";
 import {SortDirection} from "../../../shared/contracts/models";
 import {defaultPageSize} from "../../../shared/contracts/statics";
+
 const adapter: EntityAdapter<EventCategory> = createEntityAdapter<EventCategory>();
 
 export interface EventCategoryState extends EntityState<EventCategory> {

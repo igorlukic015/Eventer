@@ -13,6 +13,7 @@ import com.github.igorlukic015.resulter.Result;
 import com.eventer.admin.utils.ResultErrorMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -94,8 +96,48 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional(readOnly = true)
     @Override
-    public Result<Admin> getEventManagers(Pageable pageable) {
-        return null;
+    public Result<Page<Admin>> getEventManagers(Pageable pageable, String searchTerm) {
+        logger.info("Attempting to get event managers");
+
+        Page<com.eventer.admin.data.model.Admin> foundAdmins =
+                this.adminRepository.findAllByUsernameContainingIgnoreCaseAndRoleEqualsIgnoreCase(
+                        searchTerm, Role.EVENT_MANAGER.getName(), pageable);
+
+        Result<Page<Admin>> adminsOrError =
+                AdminMapper.toDomainPage(foundAdmins);
+
+        if (adminsOrError.isFailure()) {
+            logger.error(adminsOrError.getMessage());
+            return Result.fromError(adminsOrError);
+        }
+
+        return adminsOrError;
+    }
+
+    @Transactional
+    @Override
+    public Result delete(Long id) {
+        logger.info("Attempting to delete admin");
+
+        Optional<com.eventer.admin.data.model.Admin> foundAdmin = this.adminRepository.findById(id);
+
+        if (foundAdmin.isEmpty()) {
+            logger.error(ResultErrorMessages.adminNotFound);
+            return Result.notFound(ResultErrorMessages.adminNotFound);
+        }
+
+        if (Objects.equals(foundAdmin.get().getRole(), Role.ADMINISTRATOR.getName())) {
+            logger.error(ResultErrorMessages.deletingOfAdministratorsNotValid);
+            return Result.invalid(ResultErrorMessages.deletingOfAdministratorsNotValid);
+        }
+
+        try {
+            this.adminRepository.delete(foundAdmin.get());
+        } catch (Exception e) {
+            return Result.invalid(e.getMessage());
+        }
+
+        return Result.success();
     }
 
     @Transactional(readOnly = true)
@@ -121,6 +163,8 @@ public class AdminServiceImpl implements AdminService {
 
         logger.info("Authentication success for {}", loginRequest.username());
 
-        return Result.success(new AuthenticationResponse(accessToken, adminOrError.getValue().getRole().getName()));
+        return Result.success(
+                new AuthenticationResponse(
+                        accessToken, adminOrError.getValue().getRole().getName()));
     }
 }

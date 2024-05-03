@@ -1,0 +1,32 @@
+<div class="overflow-x-auto ml-3.5">
+  <table class="table">
+    <thead>
+    <tr>
+      <th></th>
+      <th>Id</th>
+      <th>Username</th>
+      <th>Role</th>
+    </tr>
+    </thead>
+    <tbody>
+      @for (admin of admins(); track admin.id) {
+        <tr class="hover">
+          <td>
+            <label><input type="checkbox" class="checkbox" (click)="handleCheckClick($event, admin.id)" [checked]="checkedRow() === admin.id" /></label>
+          </td>
+          <td>{{ admin.id }}</td>
+          <td>{{ admin.username }}</td>
+          <td>{{ admin.role }}</td>
+        </tr>
+      } @empty {
+        <h1>The table is empty</h1>
+      }
+    </tbody>
+  </table>
+  @if (totalPages() > 1){
+    <eventer-admin-table-paginator
+      (pageChanged)="pageChanged($event)"
+      [totalPages]="totalPages()">
+    </eventer-admin-table-paginator>
+  }
+</div>

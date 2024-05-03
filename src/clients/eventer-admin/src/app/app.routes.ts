@@ -4,14 +4,15 @@ import {eventCategoryFeatureKey, eventCategoryReducer} from "./event-category/+s
 import {provideEffects} from "@ngrx/effects";
 import {EventCategoryEffects} from "./event-category/+state/effects/event-category.effects";
 import {LoginMainComponent} from "./login/components/login-main/login-main.component";
-import {EventMainComponent} from "./event/components/event-main/event-main.component";
 import {adminUrlKey, eventCategoryUrlKey, eventUrlKey, loginUrlKey} from "./shared/contracts/statics";
 import {authGuard} from "./shared/guards/auth.guard";
-import {LayoutMainComponent} from "./shared/components/layout-main/layout-main.component";
 import {roleGuard} from "./shared/guards/role.guard";
 import {loginGuard} from "./shared/guards/login.guard";
 import {eventFeatureKey, eventReducer} from "./event/+state/reducers/event.reducers";
 import {EventEffects} from "./event/+state/effects/event.effects";
+import {adminFeatureKey, adminReducer} from "./admin/+state/reducers/admin.reducers";
+import {Role} from "./shared/contracts/models";
+import {AdminEffects} from "./admin/+state/effects/admin.effects";
 
 export const routes: Routes = [
   {
@@ -34,9 +35,13 @@ export const routes: Routes = [
   },
   {
     path: adminUrlKey,
-    component: LayoutMainComponent,
+    loadChildren: () => import('./admin/admin.routes').then((m) => m.routes),
+    providers: [
+      provideState(adminFeatureKey, adminReducer),
+      provideEffects(AdminEffects)
+    ],
     canActivate: [authGuard, roleGuard],
-    data: {expectedRoles: ["superadmin"]}
+    data: {expectedRoles: [Role.administrator]}
   },
   {
     path: loginUrlKey,

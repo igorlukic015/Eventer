@@ -9,6 +9,11 @@ import com.eventer.admin.web.dto.admin.AdminDTO;
 import com.eventer.admin.web.dto.auth.AuthenticationResponseDTO;
 import com.eventer.admin.web.dto.auth.LoginDTO;
 import com.eventer.admin.web.dto.auth.RegisterDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AdminMapper {
 
@@ -28,9 +33,35 @@ public class AdminMapper {
         return new AdminDTO(domain.getId(), domain.getUsername());
     }
 
+    public static Page<AdminDTO> toDTOs(Page<Admin> admins) {
+        List<AdminDTO> dtos = admins.stream().map(AdminMapper::toDTO).toList();
+
+        return new PageImpl<>(dtos, admins.getPageable(), admins.getTotalElements());
+    }
+
     public static Result<Admin> toDomain(com.eventer.admin.data.model.Admin model) {
         return Admin.create(
                 model.getId(), model.getUsername(), model.getPassword(), model.getRole());
+    }
+
+    public static Result<Page<Admin>> toDomainPage(
+            Page<com.eventer.admin.data.model.Admin> foundAdmins) {
+        Result<List<Admin>> adminsOrError =
+                Result.getResultValueSet(
+                        foundAdmins.stream().map(AdminMapper::toDomain).toList(),
+                        Collectors.toList());
+
+        if (adminsOrError.isFailure()) {
+            return Result.fromError(adminsOrError);
+        }
+
+        Page<Admin> result =
+                new PageImpl<>(
+                        adminsOrError.getValue(),
+                        foundAdmins.getPageable(),
+                        foundAdmins.getTotalElements());
+
+        return Result.success(result);
     }
 
     public static com.eventer.admin.data.model.Admin toModel(Admin domain) {

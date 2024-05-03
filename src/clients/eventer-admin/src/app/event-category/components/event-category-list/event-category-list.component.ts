@@ -2,7 +2,7 @@ import {Component, Input, OnInit, signal, WritableSignal} from '@angular/core';
 import {EventCategory} from "../../contracts/interfaces";
 import {TablePaginatorComponent} from "../../../shared/components/table-paginator/table-paginator.component";
 import {EventCategoryFacade} from "../../+state/facade/event-category.facade";
-import {take, takeUntil, withLatestFrom} from "rxjs";
+import {takeUntil, withLatestFrom} from "rxjs";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
 import {Router} from "@angular/router";
 

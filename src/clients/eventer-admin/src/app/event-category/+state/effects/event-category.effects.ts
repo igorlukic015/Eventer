@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
-import {act, Actions, createEffect, ofType} from "@ngrx/effects";
+import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {EventCategoryService} from "../../services/event-category.service";
-import {catchError, filter, map, mergeMap, Observable, of, switchMap, tap, withLatestFrom} from "rxjs";
+import {catchError, filter, map, mergeMap, of, switchMap, tap, withLatestFrom} from "rxjs";
 import {PagedResponse} from "../../../shared/contracts/interfaces";
 import {eventCategoryActions} from "../actions/event-category.actions";
 import {Store} from "@ngrx/store";
@@ -105,7 +105,7 @@ export class EventCategoryEffects {
             this.toastrService.error(action.error.detail);
             return;
           }
-          this.toastrService.error(action.statusText);
+          this.toastrService.error('Unknown error');
         })
       ),
     {dispatch: false}

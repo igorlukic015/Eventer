@@ -106,7 +106,7 @@ export class EventEffects {
             this.toastrService.error(action.error.detail);
             return;
           }
-          this.toastrService.error(action.statusText);
+          this.toastrService.error('Unknown error');
         })
       ),
     {dispatch: false}

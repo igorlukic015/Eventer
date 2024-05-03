@@ -150,8 +150,6 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
           {emitEvent: false}
         );
 
-        console.log(selectedEvent.weatherConditions)
-
         const conditions = selectedEvent.weatherConditions.map(e => WeatherCondition.get(e));
 
         this.selectedWeatherConditions.set(conditions);

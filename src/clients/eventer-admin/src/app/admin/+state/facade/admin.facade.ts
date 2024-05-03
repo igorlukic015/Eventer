@@ -3,7 +3,7 @@ import {select, Store} from "@ngrx/store";
 import {Observable} from "rxjs";
 import {PageRequest} from "../../../shared/contracts/interfaces";
 import * as adminFeature from "../reducers/admin.reducers";
-import {Admin} from "../../contracts/interfaces";
+import {Admin, Register} from "../../contracts/interfaces";
 import {adminActions} from "../actions/admin.actions";
 
 @Injectable()
@@ -15,6 +15,10 @@ export class AdminFacade {
   pageRequest$: Observable<PageRequest> = this.store.pipe(select(adminFeature.selectPageRequest));
 
   constructor(private readonly store: Store) {
+  }
+
+  registerAdmin(newAdmin: Register) {
+    this.store.dispatch(adminActions.registerAdmin({newAdmin}))
   }
 
   loadAdmins() {

@@ -3,3 +3,9 @@ export interface Admin {
   username: string;
   role: string;
 }
+
+
+export interface Register {
+  username: string;
+  password: string;
+}

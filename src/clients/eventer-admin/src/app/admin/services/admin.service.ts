@@ -3,10 +3,12 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {PagedResponse, PageRequest} from "../../shared/contracts/interfaces";
 import {Observable} from "rxjs";
 import {baseApiUrl} from "../../shared/contracts/statics";
+import {Admin, Register} from "../contracts/interfaces";
 
 @Injectable({providedIn: "root"})
 export class AdminService {
   private readonly adminRoute = "api/v1/admin";
+  private readonly authRoute = "api/v1/auth";
 
   constructor(private httpClient: HttpClient) {
   }
@@ -29,5 +31,9 @@ export class AdminService {
 
   public deleteAdmin(id: number) {
     return this.httpClient.delete<void>(`${baseApiUrl}/${this.adminRoute}/${id}`)
+  }
+
+  registerAdmin(newAdmin: Register) {
+    return this.httpClient.post<Admin>(`${baseApiUrl}/${this.authRoute}/register`, newAdmin);
   }
 }

@@ -5,6 +5,7 @@ import {Router} from "@angular/router";
 import {AdminFacade} from "../../+state/facade/admin.facade";
 import {takeUntil, withLatestFrom} from "rxjs";
 import {Admin} from "../../contracts/interfaces";
+import {Role} from "../../../shared/contracts/models";
 
 @Component({
   selector: 'eventer-admin-admin-list',
@@ -53,4 +54,6 @@ export class AdminListComponent extends DestroyableComponent implements OnInit {
       this.totalPages.set(total);
     })
   }
+
+  protected readonly Role = Role;
 }

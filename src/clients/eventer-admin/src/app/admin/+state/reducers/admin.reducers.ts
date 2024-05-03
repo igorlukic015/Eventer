@@ -51,6 +51,9 @@ const adminFeature = createFeature({
       })),
       on(adminActions.deleteAdminSuccess, (state, {id}) => (
         adapter.removeOne(id, state)
+      )),
+      on(adminActions.registerAdminSuccess, (state, {admin}) => (
+        adapter.addOne(admin, state)
       ))
     )
   }

@@ -1,5 +1,6 @@
 import {createActionGroup, emptyProps, props} from "@ngrx/store";
 import {PagedResponse} from "../../../shared/contracts/interfaces";
+import {Admin, Register} from "../../contracts/interfaces";
 
 export const adminActions = createActionGroup({
   source: 'admin',
@@ -12,6 +13,9 @@ export const adminActions = createActionGroup({
     'Delete admin': props<{id: number}>(),
     'Delete admin success': props<{id: number}>(),
     'Delete admin fail': props<{error: string}>(),
+    'Register admin': props<{newAdmin: Register}>(),
+    'Register admin success': props<{admin: Admin}>(),
+    'Register admin fail': props<{error: string}>(),
     'Default action': emptyProps(),
   }
 })

@@ -38,11 +38,27 @@ export class AdminEffects {
     )
   );
 
+  registerAdmin$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(adminActions.registerAdmin),
+      switchMap((action) => (
+        this.adminService.registerAdmin(action.newAdmin).pipe(
+          map((admin) => {
+            this.toastrService.success("Successfully registered");
+            this.router.navigate(['/', 'admin']);
+            return adminActions.registerAdminSuccess({admin})
+          })
+        )
+      ))
+    )
+  )
+
   showErrorToast$ = createEffect(() =>
       this.actions$.pipe(
         ofType(
           adminActions.getAdminsFail,
-          adminActions.deleteAdminFail
+          adminActions.deleteAdminFail,
+          adminActions.registerAdminFail
         ),
         tap((action: any) => {
           if (action?.error?.detail !== undefined) {

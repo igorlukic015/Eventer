@@ -33,11 +33,11 @@ public class Admin {
     }
 
     public static Result<Admin> create(String username, String password, Role role) {
-        if (StringUtils.hasText(username) || username.length() > 255) {
+        if (!StringUtils.hasText(username) || username.length() > 255) {
             return Result.invalid(ResultErrorMessages.invalidAdminUsername);
         }
 
-        if (StringUtils.hasText(password) || password.length() < 6 || password.length() > 255) {
+        if (!StringUtils.hasText(password) || password.length() < 6 || password.length() > 255) {
             return Result.invalid(ResultErrorMessages.invalidPassword);
         }
 

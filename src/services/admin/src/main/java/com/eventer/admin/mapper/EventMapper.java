@@ -1,10 +1,12 @@
 package com.eventer.admin.mapper;
 
 import com.eventer.admin.contracts.event.CreateEventRequest;
+import com.eventer.admin.contracts.event.UpdateEventRequest;
 import com.eventer.admin.service.domain.Event;
 import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.service.domain.Image;
 import com.eventer.admin.service.domain.WeatherCondition;
+import com.eventer.admin.web.dto.event.UpdateEventDTO;
 import com.github.igorlukic015.resulter.Result;
 
 import com.eventer.admin.web.dto.event.CreateEventDTO;
@@ -59,12 +61,38 @@ public class EventMapper {
         Result<Instant> dateOrError;
 
         try {
-            dateOrError = Result.success(new SimpleDateFormat("yyyy-MM-dd").parse("2016-12-31").toInstant());
+            dateOrError = Result.success(new SimpleDateFormat("yyyy-MM-dd").parse(dto.date()).toInstant());
         } catch (ParseException e) {
             dateOrError = Result.invalid(e.getMessage());
         }
 
         return new CreateEventRequest(
+                dto.title(),
+                dto.description(),
+                dto.location(),
+                dateOrError,
+                conditionsOrError,
+                dto.eventCategories(),
+                dto.savedImages());
+    }
+
+    public static UpdateEventRequest toRequest(UpdateEventDTO dto) {
+        Result<Set<WeatherCondition>> conditionsOrError =
+                Result.getResultValueSet(
+                        dto.weatherConditions().stream()
+                                .map(WeatherCondition::create)
+                                .collect(Collectors.toSet()));
+
+        Result<Instant> dateOrError;
+
+        try {
+            dateOrError = Result.success(new SimpleDateFormat("yyyy-MM-dd").parse(dto.date()).toInstant());
+        } catch (ParseException e) {
+            dateOrError = Result.invalid(e.getMessage());
+        }
+
+        return new UpdateEventRequest(
+                dto.id(),
                 dto.title(),
                 dto.description(),
                 dto.location(),

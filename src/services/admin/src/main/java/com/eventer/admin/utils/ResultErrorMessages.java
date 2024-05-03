@@ -7,6 +7,7 @@ public class ResultErrorMessages {
     public static final String invalidEventDescription = "INVALID_EVENT_DESCRIPTION";
     public static final String invalidEventLocation = "INVALID_EVENT_LOCATION";
     public static final String invalidCreateEventFormData = "INVALID_CREATE_EVENT_FORM_DATA";
+    public static final String eventNotFound = "EVENT_NOT_FOUND";
 
 
     // EVENT CATEGORY

@@ -38,7 +38,7 @@ public class S3Service implements ImageHostService {
 
     private S3Client client;
 
-    public Set<String> saveAllImages(List<MultipartFile> images, String entityName) {
+    public Set<String> saveAllImages(List<MultipartFile> images) {
         Set<String> savedImages = new HashSet<>();
 
         for (MultipartFile image : images) {
@@ -50,6 +50,11 @@ public class S3Service implements ImageHostService {
                     StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()))
                             .split("\\.");
 
+            if (this.checkIfExists(image.getOriginalFilename())) {
+                savedImages.add(image.getOriginalFilename());
+                continue;
+            }
+
             String extension =
                     fileNameTokens.length > 0 ? fileNameTokens[fileNameTokens.length - 1] : ".jpg";
 
@@ -58,11 +63,9 @@ public class S3Service implements ImageHostService {
                             "%s_%s.%s",
                             UUID.randomUUID(), Instant.now().getEpochSecond(), extension);
 
-            String objectKey = String.format("%s/%s", entityName, fileName);
-
             try {
                 PutObjectRequest objectRequest =
-                        PutObjectRequest.builder().bucket(this.bucketName).key(objectKey).build();
+                        PutObjectRequest.builder().bucket(this.bucketName).key(fileName).build();
 
                 PutObjectResponse response =
                         this.getClient()
@@ -83,7 +86,8 @@ public class S3Service implements ImageHostService {
     }
 
     public void deleteAll(Set<String> images) {
-        ArrayList<ObjectIdentifier> keys = new ArrayList<>();
+        List<ObjectIdentifier> keys =
+                images.stream().map(name -> ObjectIdentifier.builder().key(name).build()).toList();
 
         DeleteObjectsRequest deleteObjectsRequest =
                 DeleteObjectsRequest.builder()
@@ -145,5 +149,18 @@ public class S3Service implements ImageHostService {
         fos.close();
 
         return convFile;
+    }
+
+    private boolean checkIfExists(final String filename) {
+        try {
+            HeadObjectRequest headObjectRequest =
+                    HeadObjectRequest.builder().bucket(this.bucketName).key(filename).build();
+
+            HeadObjectResponse response = this.getClient().headObject(headObjectRequest);
+
+            return response.sdkHttpResponse().isSuccessful();
+        } catch (NoSuchKeyException e) {
+            return false;
+        }
     }
 }

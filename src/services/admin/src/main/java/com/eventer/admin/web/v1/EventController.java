@@ -3,6 +3,7 @@ package com.eventer.admin.web.v1;
 import com.eventer.admin.service.EventService;
 import com.eventer.admin.service.ImageHostService;
 import com.eventer.admin.service.domain.Event;
+import com.eventer.admin.web.dto.event.UpdateEventDTO;
 import com.github.igorlukic015.resulter.Result;
 import com.eventer.admin.web.dto.event.CreateEventDTO;
 import com.eventer.admin.mapper.EventMapper;
@@ -32,7 +33,7 @@ public class EventController implements ResultUnwrapper {
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> upload(@RequestParam("images") List<MultipartFile> images) {
-        Set<String> response = this.imageHostService.saveAllImages(images, Event.class.getSimpleName());
+        Set<String> response = this.imageHostService.saveAllImages(images);
         return ResponseEntity.ok(response);
     }
 
@@ -52,5 +53,11 @@ public class EventController implements ResultUnwrapper {
     public ResponseEntity<?> getAllEvents() {
         Result<Set<Event>> result = this.eventService.getAllEvents();
         return this.okOrError(result, EventMapper::toDTOs);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> update(@RequestBody UpdateEventDTO dto) {
+        Result<Event> result = this.eventService.update(EventMapper.toRequest(dto));
+        return this.okOrError(result, EventMapper::toDTO);
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface ImageHostService {
-    Set<String> saveAllImages(List<MultipartFile> images, String entityName);
+    Set<String> saveAllImages(List<MultipartFile> images);
 
     void deleteAll(Set<String> images);
 

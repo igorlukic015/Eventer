@@ -45,7 +45,7 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
     WeatherCondition.all().map((w) => ({id: w.id, value: w.name}))
   );
 
-  uploadedFiles: WritableSignal<{ imageId: number, file:File }[]> = signal([]);
+  uploadedImages: WritableSignal<{ imageId: string, file: File }[]> = signal([]);
   readFiles: WritableSignal<any[]> = signal([]);
 
   isViewChecked: WritableSignal<boolean> = signal(false);
@@ -84,20 +84,20 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
   onFileUpload($event: Event) {
     const element = $event.currentTarget as HTMLInputElement;
 
-    if(element.files && element.files.length > 0) {
-      const files = Array.from(element.files).map((f: File) => ({imageId: -1, file: f}));
+    if (element.files && element.files.length > 0) {
+      const files =
+        Array.from(element.files)
+          .map((f: File) => ({imageId: crypto.randomUUID(), file: f}));
 
-      const newFileList = [...this.uploadedFiles(), ...files];
+      const newFileList = [...this.uploadedImages(), ...files];
 
-      this.uploadedFiles.set(newFileList);
+      this.uploadedImages.set(newFileList);
 
       this.previewImages(newFileList);
     }
   }
 
   onSubmit() {
-    const formData = new FormData();
-
     if (
       !this.updateEventForm.value.id ||
       !this.updateEventForm.value.title ||
@@ -117,11 +117,25 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
       weatherConditions: this.selectedWeatherConditions().map(w => w.name)
     }
 
-    for (let file of this.uploadedFiles()) {
-      formData.append('images', file.file);
+    const formData = new FormData();
+
+    let imageIds = "";
+
+    for (let image of this.uploadedImages()) {
+      imageIds += `${image.imageId};`;
+      formData.append('images', image.file);
     }
 
-    // this.eventFacade.updateEvent(formData);
+    imageIds = imageIds.substring(0, imageIds.length - 1);
+    formData.append('ids', imageIds);
+
+    this.eventFacade.updateEvent(formData, data);
+  }
+
+  removeImage(imageId: string) {
+    const filteredImages = this.uploadedImages().filter(f => f.imageId !== imageId);
+    this.uploadedImages.set(filteredImages);
+    this.previewImages(filteredImages);
   }
 
   ngOnInit(): void {
@@ -164,7 +178,7 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
     flatpickr("#date", {})
   }
 
-  private previewImages(images: { file:File, imageId: number }[]) {
+  private previewImages(images: { file: File, imageId: string }[]) {
     const fileData: any[] = [];
 
     for (let image of images) {
@@ -182,27 +196,21 @@ export class EventUpdateComponent extends DestroyableComponent implements OnInit
     from(images).pipe(
       concatMap((image) =>
         fromPromise(fetch(image.url)).pipe(
-          concatMap(response =>
+          concatMap((response) =>
             fromPromise(response.blob()).pipe(
-              map(blob => ({ blob, imageId: image.id }))
+              map((blob) => ({blob, imageName: image.name}))
             )
           )
         )
       ),
-      map(({ blob, imageId }) => ({
-          imageId: imageId, file: new File([blob], `${imageId}`, { type: blob.type })
-        })
-      ),
+      map(({blob, imageName}) => ({
+        imageId: crypto.randomUUID(),
+        file: new File([blob], imageName, {type: blob.type})
+      })),
       toArray()
     ).subscribe((images) => {
-      this.uploadedFiles.set(images);
+      this.uploadedImages.set(images);
       this.previewImages(images);
     })
-  }
-
-  removeImage(imageId: number) {
-    const filteredImages = this.uploadedFiles().filter(f => f.imageId !== imageId);
-    this.uploadedFiles.set(filteredImages);
-    this.previewImages(filteredImages);
   }
 }

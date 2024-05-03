@@ -2,9 +2,11 @@ package com.eventer.admin.service.impl;
 
 import com.eventer.admin.contracts.ApplicationStatics;
 import com.eventer.admin.contracts.event.CreateEventRequest;
+import com.eventer.admin.contracts.event.UpdateEventRequest;
 import com.eventer.admin.contracts.message.Message;
 import com.eventer.admin.contracts.message.MessageStatics;
 import com.eventer.admin.data.repository.ImageRepository;
+import com.eventer.admin.mapper.EventCategoryMapper;
 import com.eventer.admin.mapper.ImageMapper;
 import com.eventer.admin.service.EventCategoryService;
 import com.eventer.admin.service.ImageHostService;
@@ -15,6 +17,7 @@ import com.eventer.admin.data.repository.EventRepository;
 import com.eventer.admin.service.EventService;
 import com.eventer.admin.service.domain.EventCategory;
 import com.eventer.admin.service.domain.Image;
+import com.eventer.admin.service.domain.WeatherCondition;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.igorlukic015.resulter.Result;
@@ -29,10 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -167,6 +168,162 @@ public class EventServiceImpl implements EventService {
         logger.info("{} created successfully", Event.class.getSimpleName());
 
         return createdEventOrError;
+    }
+
+    @Transactional
+    @Override
+    public Result<Event> update(UpdateEventRequest request) {
+        logger.info("Attempting to update event {}", request.title());
+
+        Optional<com.eventer.admin.data.model.Event> foundEvent =
+                this.eventRepository.findById(request.id());
+
+        if (foundEvent.isEmpty()) {
+            logger.error(ResultErrorMessages.eventNotFound);
+            return Result.notFound(ResultErrorMessages.eventNotFound);
+        }
+
+        Set<String> newSavedImages =
+                request.savedImages().stream()
+                        .filter(
+                                savedImage ->
+                                        !foundEvent.get().getImages().stream()
+                                                .map(com.eventer.admin.data.model.Image::getName)
+                                                .toList()
+                                                .contains(savedImage))
+                        .collect(Collectors.toSet());
+
+        if (request.weatherConditionsOrError().isFailure()) {
+            logger.error(request.weatherConditionsOrError().getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            this.imageHostService.deleteAll(newSavedImages);
+            return Result.fromError(request.weatherConditionsOrError());
+        }
+
+        if (request.dateOrError().isFailure()) {
+            logger.error(request.dateOrError().getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            this.imageHostService.deleteAll(newSavedImages);
+            return Result.fromError(request.dateOrError());
+        }
+
+        Result<Set<EventCategory>> categoriesOrError =
+                this.eventCategoryService.getCategoriesByIds(request.eventCategoryIds());
+
+        if (categoriesOrError.isFailure()) {
+            logger.error(categoriesOrError.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            this.imageHostService.deleteAll(newSavedImages);
+            return Result.fromError(categoriesOrError);
+        }
+
+        Set<com.eventer.admin.data.model.Image> savedImageEntities = new HashSet<>();
+        Set<com.eventer.admin.data.model.Image> oldImages = foundEvent.get().getImages();
+
+        for (String imageName : request.savedImages()) {
+            Optional<com.eventer.admin.data.model.Image> foundImage =
+                    this.imageRepository.findByName(imageName);
+
+            if (foundImage.isPresent()) {
+                savedImageEntities.add(foundImage.get());
+                continue;
+            }
+
+            Result<Image> imageOrError = Image.create(imageName);
+
+            if (imageOrError.isFailure()) {
+                logger.error(ResultErrorMessages.invalidImage);
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                this.imageHostService.deleteAll(newSavedImages);
+                return Result.invalid(ResultErrorMessages.invalidImage);
+            }
+
+            com.eventer.admin.data.model.Image savedimage;
+            try {
+                savedimage =
+                        this.imageRepository.save(ImageMapper.toModel(imageOrError.getValue()));
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                this.imageHostService.deleteAll(newSavedImages);
+                return Result.invalid(e.getMessage());
+            }
+
+            savedImageEntities.add(savedimage);
+        }
+
+        foundEvent.get().setTitle(request.title());
+        foundEvent.get().setDescription(request.description());
+        foundEvent.get().setLocation(request.location());
+        foundEvent.get().setDate(request.dateOrError().getValue());
+
+        foundEvent
+                .get()
+                .setWeatherConditionAvailability(
+                        String.join(
+                                WeatherCondition.serializationSeparator,
+                                request.weatherConditionsOrError().getValue().stream()
+                                        .map(WeatherCondition::getName)
+                                        .toList()));
+
+        foundEvent
+                .get()
+                .setCategories(
+                        categoriesOrError.getValue().stream()
+                                .map(EventCategoryMapper::toModel)
+                                .collect(Collectors.toSet()));
+
+        foundEvent.get().setImages(savedImageEntities);
+
+        com.eventer.admin.data.model.Event event;
+
+        try {
+            event = this.eventRepository.save(foundEvent.get());
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            this.imageHostService.deleteAll(newSavedImages);
+            return Result.invalid(e.getMessage());
+        }
+
+        Result<Event> updatedEventOrError = EventMapper.toDomain(event);
+
+        if (updatedEventOrError.isFailure()) {
+            logger.error(ResultErrorMessages.failedToSendMessage);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.internalError(ResultErrorMessages.failedToSendMessage);
+        }
+
+        Result messageSentOrError =
+                this.sendMessage(
+                        MessageStatics.ACTION_UPDATED,
+                        updatedEventOrError.getValue().getId(),
+                        updatedEventOrError.getValue());
+
+        if (messageSentOrError.isFailure()) {
+            logger.error(ResultErrorMessages.failedToSendMessage);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.internalError(ResultErrorMessages.failedToSendMessage);
+        }
+
+        Set<String> deletedImages =
+                oldImages.stream()
+                        .map(com.eventer.admin.data.model.Image::getName)
+                        .filter(
+                                name ->
+                                        !savedImageEntities.stream()
+                                                .map(com.eventer.admin.data.model.Image::getName)
+                                                .toList()
+                                                .contains(name))
+                        .collect(Collectors.toSet());
+
+        if (!deletedImages.isEmpty()) {
+            this.imageHostService.deleteAll(deletedImages);
+        }
+
+        logger.info("{} updated successfully", Event.class.getSimpleName());
+
+        return updatedEventOrError;
     }
 
     @Transactional(readOnly = true)

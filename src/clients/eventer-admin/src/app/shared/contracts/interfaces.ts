@@ -3,6 +3,7 @@ import {ActionType, ListenedEntity, SortDirection} from "./models";
 export interface Image {
   id: number,
   url: string;
+  name: string;
 }
 
 export interface PageRequest {

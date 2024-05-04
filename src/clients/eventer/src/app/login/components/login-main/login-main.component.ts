@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {Router} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 import {ToastrService} from "ngx-toastr";
 import {catchError, of, switchMap, take, takeUntil} from "rxjs";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
@@ -13,6 +13,7 @@ import {LoginRequest} from "../../contracts/interfaces";
   imports: [
     FormsModule,
     ReactiveFormsModule,
+    RouterLink,
   ],
   providers: [LoginService],
   templateUrl: './login-main.component.html',

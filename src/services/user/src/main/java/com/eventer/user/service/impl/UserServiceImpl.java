@@ -34,12 +34,12 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public Result<AuthenticationResponse> authenticate(LoginRequest loginRequest) {
         logger.info("Attempting to authenticate {}", loginRequest.username());
 
-        if (this.userRepository.existsByUsername(loginRequest.username())) {
+        if (!this.userRepository.existsByUsername(loginRequest.username())) {
             logger.error(ResultErrorMessages.userNotFound);
             return Result.unauthorized(ResultErrorMessages.userNotFound);
         }
@@ -59,6 +59,7 @@ public class UserServiceImpl implements UserService {
                 new AuthenticationResponse(accessToken));
     }
 
+    @Transactional
     @Override
     public Result<User> register(RegisterRequest request) {
         logger.info("Attempting to create {}", User.class.getSimpleName());

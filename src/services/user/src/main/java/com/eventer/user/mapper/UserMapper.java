@@ -25,14 +25,16 @@ public class UserMapper {
     }
 
     public static UserDTO toDTO(User user) {
+//        var image = ImageMapper.toDTO(user.getProfileImage());
+
         return new UserDTO(
-                user.getId(), user.getUsername(), ImageMapper.toDTO(user.getProfileImage()));
+                user.getId(), user.getUsername(), null);
     }
 
     public static Result<User> toDomain(com.eventer.user.data.model.User user) {
-        Result<Image> imageOrError = ImageMapper.toDomain(user.getProfileImage());
+//        Result<Image> imageOrError = ImageMapper.toDomain(user.getProfileImage());
 
-        return User.create(user.getId(), user.getUsername(), user.getPassword(), imageOrError);
+        return User.create(user.getId(), user.getUsername(), user.getPassword(), null);
     }
 
     public static com.eventer.user.data.model.User toModel(User user) {
@@ -41,7 +43,7 @@ public class UserMapper {
         model.setId(user.getId());
         model.setUsername(user.getUsername());
         model.setPassword(user.getPassword());
-        model.setProfileImage(ImageMapper.toModel(user.getProfileImage()));
+//        model.setProfileImage(ImageMapper.toModel(user.getProfileImage()));
 
         return model;
     }

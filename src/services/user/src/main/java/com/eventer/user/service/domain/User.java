@@ -17,11 +17,11 @@ public class User {
     }
 
     public static Result<User> create(Long id, String username, String password, Result<Image> imageOrError) {
-        if (imageOrError.isFailure()) {
+        if (imageOrError != null && imageOrError.isFailure()) {
             return Result.fromError(imageOrError);
         }
 
-        User user = new User(id, username, password, imageOrError.getValue());
+        User user = new User(id, username, password, imageOrError != null ? imageOrError.getValue() : null);
 
         return Result.success(user);
     }

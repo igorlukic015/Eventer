@@ -4,7 +4,7 @@ import {Router, RouterLink} from "@angular/router";
 import {ToastrService} from "ngx-toastr";
 import {catchError, of, switchMap, take, takeUntil} from "rxjs";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
-import {LoginService} from "../../services/login.service";
+import {AuthService} from "../../services/auth.service";
 import {LoginRequest} from "../../contracts/interfaces";
 
 @Component({
@@ -15,7 +15,7 @@ import {LoginRequest} from "../../contracts/interfaces";
     ReactiveFormsModule,
     RouterLink,
   ],
-  providers: [LoginService],
+  providers: [AuthService],
   templateUrl: './login-main.component.html',
   styleUrl: './login-main.component.css'
 })
@@ -26,7 +26,7 @@ export class LoginMainComponent extends DestroyableComponent {
   });
 
   constructor(private formBuilder: FormBuilder,
-              private readonly loginService: LoginService,
+              private readonly authService: AuthService,
               private readonly router: Router,
               private readonly toastrService: ToastrService) {
     super();
@@ -44,7 +44,7 @@ export class LoginMainComponent extends DestroyableComponent {
       password: this.loginForm.controls.password.value
     }
 
-    this.loginService.authenticate(loginRequest)
+    this.authService.authenticate(loginRequest)
       .pipe(
         take(1),
         takeUntil(this.destroyed$),
@@ -56,6 +56,11 @@ export class LoginMainComponent extends DestroyableComponent {
           return of();
         }),
         catchError((error) => {
+          if (error?.error?.detail !== undefined) {
+            this.toastrService.error(error.error.detail);
+            return of();
+          }
+
           this.toastrService.error('Login failed')
           return of();
         })

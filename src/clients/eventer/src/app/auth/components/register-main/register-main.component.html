@@ -15,6 +15,7 @@
         <input type="password" class="grow" formControlName="password">
       </label>
     </form>
+    <a class="text-sm" routerLink="/login">Already have an account? Login here.</a>
     <div class="card-actions justify-end mt-10">
       <button class="btn btn-primary" (click)="onSubmit()" [disabled]="!newUserForm.valid">Confirm</button>
     </div>

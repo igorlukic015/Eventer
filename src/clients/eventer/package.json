@@ -21,6 +21,7 @@
     "@ngrx/effects": "^17.2.0",
     "@ngrx/entity": "^17.2.0",
     "@ngrx/store": "^17.2.0",
+    "@ngrx/store-devtools": "^17.2.0",
     "autoprefixer": "^10.4.19",
     "ngx-toastr": "^18.0.0",
     "postcss": "^8.4.38",

@@ -1,5 +1,6 @@
 import {createActionGroup, emptyProps, props} from "@ngrx/store";
 import {PagedResponse} from "../../../shared/contracts/interfaces";
+import {EventCategory, EventData} from "../../contracts/interfaces";
 
 export const searchActions = createActionGroup({
   source: 'search',
@@ -13,6 +14,12 @@ export const searchActions = createActionGroup({
     'Update page number': props<{currentPage: number}>(),
     'Update search term': props<{searchTerm: string}>(),
     'Update selected event id': props<{id: number}>(),
+    'Create event success': props<{createdEvent: EventData}>(),
+    'Update event success': props<{updatedEvent: EventData}>(),
+    'Delete event success': props<{id: number}>(),
+    'Create event category success': props<{createdCategory: EventCategory}>(),
+    'Update event category success': props<{updatedCategory: EventCategory}>(),
+    'Delete event category success': props<{id: number}>(),
     'Default action': emptyProps(),
   }
 })

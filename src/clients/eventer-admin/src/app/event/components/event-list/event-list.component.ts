@@ -9,9 +9,9 @@ import {Event} from "../../contracts/interfaces";
 @Component({
   selector: 'eventer-admin-event-list',
   standalone: true,
-    imports: [
-        TablePaginatorComponent
-    ],
+  imports: [
+      TablePaginatorComponent
+  ],
   templateUrl: './event-list.component.html',
   styleUrl: './event-list.component.css'
 })

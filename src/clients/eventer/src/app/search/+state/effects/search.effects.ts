@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {Store} from "@ngrx/store";
 import {ToastrService} from "ngx-toastr";
@@ -8,6 +8,8 @@ import {selectPageRequest} from "../reducers/search.reducers";
 import {PagedResponse} from "../../../shared/contracts/interfaces";
 import {searchActions} from "../actions/search.actions";
 import {SearchService} from "../../services/search.service";
+import {updateEntity} from "../../../shared/+state/actions/real-time.actions";
+import {ActionType, ListenedEntity} from "../../../shared/contracts/models";
 
 @Injectable()
 export class SearchEffects {
@@ -36,22 +38,27 @@ export class SearchEffects {
     )
   );
 
-  // updateListenedEvent$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(updateEntity),
-  //     map((action) => {
-  //       if (action.payload.actionType === ActionType.created) {
-  //         return eventActions.createEventSuccess({createdEvent: action.payload.data});
-  //       } else if (action.payload.actionType === ActionType.updated) {
-  //         return eventActions.updateEventSuccess({updatedEvent: action.payload.data})
-  //       }
-  //       else if (action.payload.actionType === ActionType.deleted) {
-  //         return eventActions.deleteEventSuccess({id: action.payload.data});
-  //       }
-  //       return eventActions.defaultAction();
-  //     })
-  //   )
-  // )
+  updateListenedEvent$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateEntity),
+      map((action) => {
+        if (action.payload.actionType === ActionType.created) {
+          return action.payload.entityType === ListenedEntity.event ?
+            searchActions.createEventSuccess({createdEvent: action.payload.data}) :
+            searchActions.createEventCategorySuccess({createdCategory: action.payload.data});
+        } else if (action.payload.actionType === ActionType.updated) {
+          return action.payload.entityType === ListenedEntity.event ?
+            searchActions.updateEventSuccess({updatedEvent: action.payload.data}) :
+            searchActions.updateEventCategorySuccess({updatedCategory: action.payload.data});
+        } else if (action.payload.actionType === ActionType.deleted) {
+          return action.payload.entityType === ListenedEntity.event ?
+            searchActions.deleteEventSuccess({id: action.payload.data}) :
+            searchActions.deleteEventCategorySuccess({id: action.payload.data});
+        }
+        return searchActions.defaultAction();
+      })
+    )
+  )
 
   showErrorToast$ = createEffect(() =>
       this.actions$.pipe(

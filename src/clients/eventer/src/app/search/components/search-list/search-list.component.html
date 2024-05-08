@@ -12,8 +12,8 @@
   <div class="relative flex w-full flex-col">
     <div class="flex justify-between">
       <div class="flex gap-10">
-        @for (item of [1,2,3,4,5,6]; track item) {
-          <span class="text-blue-700">Button {{item}}</span>
+        @for (item of categories(); track item.id) {
+          <span class="text-blue-700">{{item.name}}</span>
         }
       </div>
       <div class="flex gap-10">
@@ -24,7 +24,7 @@
     </div>
 
     <div class="grid mt-8 gap-8 grid-cols-3">
-      @for (item of [1,2,3,4,5]; track item) {
+      @for (item of events(); track item) {
         <eventer-search-list-item></eventer-search-list-item>
       } @empty {
         <div>

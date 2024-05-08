@@ -8,8 +8,8 @@ import {searchActions} from "../actions/search.actions";
 
 @Injectable()
 export class SearchFacade {
-  events: Observable<EventData[]> = this.store.pipe(select(searchFeature.selectEvents));
-  categories: Observable<EventCategory[]> = this.store.pipe(select(searchFeature.selectCategories));
+  events$: Observable<EventData[]> = this.store.pipe(select(searchFeature.selectEvents));
+  categories$: Observable<EventCategory[]> = this.store.pipe(select(searchFeature.selectCategories));
   totalPages$: Observable<number> = this.store.pipe(select(searchFeature.selectTotalPages));
   totalElements$: Observable<number> = this.store.pipe(select(searchFeature.selectTotalElements));
   pageRequest$: Observable<PageRequest> = this.store.pipe(select(searchFeature.selectPageRequest));

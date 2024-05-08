@@ -63,7 +63,10 @@ const eventFeature = createFeature({
       ...state, selectedEventId: id
     })),
     on(eventActions.deleteEventSuccess, (state, {id}) => (
-      adapter.removeOne(id, state)
+      adapter.removeOne(id, state), {...state, totalElements: state.totalElements -1}
+    )),
+    on(eventActions.createEventSuccess, (state, {createdEvent}) => (
+      adapter.addOne(createdEvent, state), {...state, totalElements: state.totalElements +1}
     ))
   )
 })

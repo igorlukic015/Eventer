@@ -1,0 +1,53 @@
+<main class="relative
+             pt-10
+             px-6
+             flex
+             flex-col
+             flex-1
+             items-start
+             max-w-full
+             pb-16
+      "
+>
+  <div class="relative flex w-full flex-col">
+    <div class="flex justify-between">
+      <div class="flex gap-10">
+        @for (item of [1,2,3,4,5,6]; track item) {
+          <span class="text-blue-700">Button {{item}}</span>
+        }
+      </div>
+      <div class="flex gap-10">
+        @for (item of [1,2,3,4,5,6]; track item) {
+          <span class="text-amber-300">Button {{item}}</span>
+        }
+      </div>
+    </div>
+
+    <div class="grid mt-8 gap-8 grid-cols-3">
+      @for (item of [1,2,3,4,5]; track item) {
+        <div class="card w-96 bg-primary shadow-xl">
+          <div class="card-body text-base-100">
+            <div class="flex gap-3 text-sm">
+              @for (category of [1,2,3]; track category) {
+                <span>cat {{category}} </span>
+              }
+            </div>
+
+            <div class="flex justify-between">
+              <h1 class="card-title">Shoes!</h1>
+              <h2>Location</h2>
+            </div>
+            <p>If a dog chews shoes whose shoes does he choose?</p>
+          </div>
+          <figure><img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg" alt="Shoes" /></figure>
+        </div>
+      } @empty {
+        <div>
+          No content
+        </div>
+      }
+    </div>
+
+  </div>
+</main>
+

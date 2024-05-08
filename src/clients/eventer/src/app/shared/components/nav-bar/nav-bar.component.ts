@@ -4,7 +4,8 @@ import {Router} from "@angular/router";
 @Component({
   selector: 'eventer-nav-bar',
   standalone: true,
-  imports: [],
+  imports: [
+  ],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css'
 })

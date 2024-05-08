@@ -17,13 +17,20 @@ public class ApplicationConfiguration {
         return imageBaseUrl;
     }
 
-    public static String getImageUrlSeparator() {
-        return FileSystems.getDefault().getSeparator();
+
+    @Value("${image.host.url}")
+    public void setImageBaseUrl(String imageHostUrl) {
+        ApplicationConfiguration.imageBaseUrl = imageHostUrl;
     }
 
-    @Value("${image.base.url}")
-    public void setImageBaseUrl(String imageBaseUrl) {
-        Path absolutePath = Path.of(imageBaseUrl).toAbsolutePath();
-        ApplicationConfiguration.imageBaseUrl = absolutePath.toString().replace(File.pathSeparator, "/");
+    private static String imageBucketName;
+
+    public static String getImageBucketName() {
+        return imageBucketName;
+    }
+
+    @Value("${s3.bucket.name}")
+    public void setImageBucketName(String imageBucketName) {
+        ApplicationConfiguration.imageBucketName = imageBucketName;
     }
 }

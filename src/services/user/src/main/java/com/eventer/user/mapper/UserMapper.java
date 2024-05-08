@@ -21,29 +21,35 @@ public class UserMapper {
     }
 
     public static RegisterRequest toRequest(RegisterDTO dto) {
-        return new RegisterRequest(dto.username(), dto.password());
+        return new RegisterRequest(dto.name(), dto.username(), dto.password(), dto.city());
     }
 
     public static UserDTO toDTO(User user) {
-//        var image = ImageMapper.toDTO(user.getProfileImage());
-
         return new UserDTO(
-                user.getId(), user.getUsername(), null);
+                user.getId(), user.getUsername(), ImageMapper.toDTO(user.getProfileImage()));
     }
 
     public static Result<User> toDomain(com.eventer.user.data.model.User user) {
-//        Result<Image> imageOrError = ImageMapper.toDomain(user.getProfileImage());
+        Result<Image> imageOrError = ImageMapper.toDomain(user.getProfileImage());
 
-        return User.create(user.getId(), user.getUsername(), user.getPassword(), null);
+        return User.create(
+                user.getId(),
+                user.getName(),
+                user.getUsername(),
+                user.getPassword(),
+                user.getCity(),
+                imageOrError);
     }
 
     public static com.eventer.user.data.model.User toModel(User user) {
         var model = new com.eventer.user.data.model.User();
 
         model.setId(user.getId());
+        model.setName(user.getName());
         model.setUsername(user.getUsername());
         model.setPassword(user.getPassword());
-//        model.setProfileImage(ImageMapper.toModel(user.getProfileImage()));
+        model.setCity(user.getCity());
+        model.setProfileImage(ImageMapper.toModel(user.getProfileImage()));
 
         return model;
     }

@@ -14,11 +14,17 @@ public class User extends AbstractAuditingEntity<Long> {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "name", nullable = false, length = 255)
+    private String name;
+
     @Column(name = "username", nullable = false, length = 255, unique = true)
     private String username;
 
     @Column(name = "password", nullable = false, length = 255)
     private String password;
+
+    @Column(name = "city", nullable = false, length = 255)
+    private String city;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
@@ -68,5 +74,21 @@ public class User extends AbstractAuditingEntity<Long> {
 
     public void setProfileImage(Image profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }

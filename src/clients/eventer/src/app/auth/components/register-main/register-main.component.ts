@@ -21,9 +21,10 @@ import {RouterLink} from "@angular/router";
 })
 export class RegisterMainComponent extends DestroyableComponent {
   newUserForm = this.formBuilder.group({
-    name: [''],
+    name: ['', Validators.required],
     username: ['', Validators.required],
-    password: ['', Validators.required]
+    password: ['', Validators.required],
+    city: ['', Validators.required]
   });
 
   constructor(private formBuilder: FormBuilder,
@@ -34,14 +35,18 @@ export class RegisterMainComponent extends DestroyableComponent {
 
   onSubmit() {
     if (!this.newUserForm.valid ||
+      !this.newUserForm.controls.name.value ||
       !this.newUserForm.controls.password.value ||
-      !this.newUserForm.controls.username.value) {
+      !this.newUserForm.controls.username.value ||
+      !this.newUserForm.controls.city.value) {
       return;
     }
 
     const newUser: RegisterRequest = {
+      name: this.newUserForm.controls.name.value,
       username: this.newUserForm.controls.username.value,
-      password: this.newUserForm.controls.password.value
+      password: this.newUserForm.controls.password.value,
+      city: this.newUserForm.controls.city.value
     };
 
     this.authService.register(newUser).pipe(

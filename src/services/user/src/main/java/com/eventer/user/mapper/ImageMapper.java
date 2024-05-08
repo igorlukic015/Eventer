@@ -10,10 +10,18 @@ import java.util.stream.Collectors;
 
 public class ImageMapper {
     public static ImageDTO toDTO(Image image) {
-        return new ImageDTO(image.getId(), image.getUrl(), "name");
+        if (image == null) {
+            return null;
+        }
+
+        return new ImageDTO(image.getId(), image.getUrl(), image.getName());
     }
 
     public static Result<Image> toDomain(ImageDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+
         return Image.create(dto.id(), dto.name());
     }
 
@@ -23,6 +31,10 @@ public class ImageMapper {
     }
 
     public static Result<Image> toDomain(com.eventer.user.data.model.Image model) {
+        if (model == null) {
+            return null;
+        }
+
         return Image.create(model.getId(), model.getName());
     }
 
@@ -32,9 +44,13 @@ public class ImageMapper {
     }
 
     public static com.eventer.user.data.model.Image toModel(Image domain) {
+        if (domain == null) {
+            return null;
+        }
+
         com.eventer.user.data.model.Image model = new com.eventer.user.data.model.Image();
         model.setId(domain.getId());
-//        model.setName(domain.getName());
+        model.setName(domain.getName());
 
         return model;
     }

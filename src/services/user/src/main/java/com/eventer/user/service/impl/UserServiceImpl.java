@@ -64,6 +64,12 @@ public class UserServiceImpl implements UserService {
     public Result<User> register(RegisterRequest request) {
         logger.info("Attempting to create {}", User.class.getSimpleName());
 
+        if (request.password().length() < 6) {
+            logger.error("PASSWORD_TOO_SHORT");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.invalid("PASSWORD_TOO_SHORT");
+        }
+
         if (this.userRepository.existsByUsername(request.username())) {
             logger.error(ResultErrorMessages.userUsernameConflicted);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -73,7 +79,7 @@ public class UserServiceImpl implements UserService {
         PasswordEncoder passwordEncoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
         String encodedPassword = passwordEncoder.encode(request.password());
 
-        Result<User> userOrError = User.create(request.username(), encodedPassword, null);
+        Result<User> userOrError = User.create(request.name(), request.username(), encodedPassword, request.city());
 
         if (userOrError.isFailure()) {
             logger.error(userOrError.getMessage());

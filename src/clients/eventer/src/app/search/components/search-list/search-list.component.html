@@ -43,7 +43,7 @@
 
     <div class="grid mt-8 gap-8 grid-cols-3">
       @for (item of events(); track item) {
-        <eventer-search-list-item></eventer-search-list-item>
+        <eventer-search-list-item [event]="item" ></eventer-search-list-item>
       } @empty {
         <div>
           No content

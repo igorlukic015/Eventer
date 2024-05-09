@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component, Input} from '@angular/core';
+import {EventData} from "../../contracts/interfaces";
 
 @Component({
   selector: 'eventer-search-list-item',
@@ -8,5 +9,16 @@ import { Component } from '@angular/core';
   styleUrl: './search-list-item.component.css'
 })
 export class SearchListItemComponent {
+  @Input({required: true})
+  public event: EventData = {
+    images: [],
+    description: '',
+    location: '',
+    title: '',
+    categories: [],
+    id: 0,
+    date: new Date(),
+    weatherConditions: []
+  };
 
 }

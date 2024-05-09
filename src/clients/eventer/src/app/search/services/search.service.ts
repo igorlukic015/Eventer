@@ -3,6 +3,7 @@ import {PagedResponse, PageRequest} from "../../shared/contracts/interfaces";
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import {baseApiUrl} from "../../shared/contracts/statics";
+import {EventCategory} from "../contracts/interfaces";
 
 @Injectable({providedIn: 'root'})
 export class SearchService {
@@ -29,16 +30,16 @@ export class SearchService {
   }
 
   getEventCategories() {
-    const size = 10;
-    const page = 0;
-    const searchTerm = '';
+    // const size = 10;
+    // const page = 0;
+    // const searchTerm = '';
+    //
+    // let params: HttpParams = new HttpParams().set('size', size).set('page', page);
+    //
+    // if (searchTerm) {
+    //   params = params.append('searchTerm', searchTerm);
+    // }
 
-    let params: HttpParams = new HttpParams().set('size', size).set('page', page);
-
-    if (searchTerm) {
-      params = params.append('searchTerm', searchTerm);
-    }
-
-    return this.httpClient.get<PagedResponse>(`${baseApiUrl}/${this.categoriesRoute}`, {params: params }, );
+    return this.httpClient.get<EventCategory[]>(`${baseApiUrl}/${this.categoriesRoute}`);
   }
 }

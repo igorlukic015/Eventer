@@ -13,9 +13,9 @@ import java.util.Set;
 
 @Document
 public class Event {
-    @Id private String uid;
+    @Id private String id;
 
-    @Indexed @Searchable private Long id;
+    @Indexed @Searchable private Long eventId;
 
     @Indexed @Searchable private String title;
 
@@ -34,15 +34,15 @@ public class Event {
     public Event() {}
 
     public Event(
-            Long id,
+            Long eventId,
             String title,
             String description,
             String location,
             Set<String> weatherConditions,
             Set<EventCategoryDTO> categories,
             Set<ImageDTO> images) {
-        this.uid = null;
-        this.id = id;
+        this.id = null;
+        this.eventId = eventId;
         this.title = title;
         this.description = description;
         this.location = location;
@@ -56,28 +56,28 @@ public class Event {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
-        return Objects.equals(uid, event.uid) || Objects.equals(id, event.id);
+        return Objects.equals(id, event.id) || Objects.equals(eventId, event.eventId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uid, id);
+        return Objects.hash(id, eventId);
     }
 
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public Long getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
     }
 
     public String getTitle() {

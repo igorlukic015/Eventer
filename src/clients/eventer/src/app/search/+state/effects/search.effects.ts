@@ -31,7 +31,7 @@ export class SearchEffects {
       ofType(searchActions.getEventCategories),
       mergeMap((action) =>
         this.eventService.getEventCategories().pipe(
-          map((pagedResponse: PagedResponse) => searchActions.getEventCategoriesSuccess({pagedResponse})),
+          map((categories ) => searchActions.getEventCategoriesSuccess({categories})),
           catchError((error) => of(searchActions.getEventCategoriesFail(error)))
         )
       )
@@ -44,12 +44,12 @@ export class SearchEffects {
       map((action) => {
         if (action.payload.actionType === ActionType.created) {
           return action.payload.entityType === ListenedEntity.event ?
-            searchActions.createEventSuccess({createdEvent: action.payload.data}) :
-            searchActions.createEventCategorySuccess({createdCategory: action.payload.data});
+            searchActions.createEventSuccess({createdEvent: {...action.payload.data, eventId: action.payload.data.id}}) :
+            searchActions.createEventCategorySuccess({createdCategory: {...action.payload.data, categoryId: action.payload.data.id}});
         } else if (action.payload.actionType === ActionType.updated) {
           return action.payload.entityType === ListenedEntity.event ?
-            searchActions.updateEventSuccess({updatedEvent: action.payload.data}) :
-            searchActions.updateEventCategorySuccess({updatedCategory: action.payload.data});
+            searchActions.updateEventSuccess({updatedEvent: {...action.payload.data, eventId: action.payload.data.id}}) :
+            searchActions.updateEventCategorySuccess({updatedCategory: {...action.payload.data, categoryId: action.payload.data.id}});
         } else if (action.payload.actionType === ActionType.deleted) {
           return action.payload.entityType === ListenedEntity.event ?
             searchActions.deleteEventSuccess({id: action.payload.data}) :

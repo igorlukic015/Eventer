@@ -8,4 +8,10 @@ public interface CacheEventCategoryService {
     void reloadCategories();
 
     Set<EventCategory> getAll();
+
+    void add(EventCategory newCategory);
+
+    void update(EventCategory updatedCategory);
+
+    void remove(Long deletedId);
 }

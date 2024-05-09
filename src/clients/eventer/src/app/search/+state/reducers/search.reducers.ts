@@ -53,29 +53,29 @@ const searchFeature = createFeature({
     on(searchActions.updateSearchTerm, (state, {searchTerm}) => ({
       ...state, pageRequest: {...state.pageRequest, searchTerm: searchTerm}
     })),
-    on(searchActions.getEventCategoriesSuccess, (state, {pagedResponse}) => ({
-      ...state, categories: pagedResponse.content
+    on(searchActions.getEventCategoriesSuccess, (state, {categories}) => ({
+      ...state, categories: categories
     })),
     on(searchActions.updateSelectedEventId, (state, {id}) => ({
       ...state, selectedEventId: id
     })),
     on(searchActions.deleteEventSuccess, (state, {id}) => ({
-      ...state, totalElements: state.totalElements -1, events: state.events.filter(e => e.id === id)
+      ...state, totalElements: state.totalElements -1, events: state.events.filter(e => e.eventId !== id)
     })),
     on(searchActions.createEventSuccess, (state, {createdEvent}) => ({
       ...state, totalElements: state.totalElements +1, events: [...state.events, createdEvent]
     })),
     on(searchActions.updateEventSuccess, (state, {updatedEvent}) => ({
-      ...state, events: [...state.events, updatedEvent]
+      ...state, events: [...state.events.filter((e) => e.eventId !== updatedEvent.eventId), updatedEvent]
     })),
     on(searchActions.deleteEventCategorySuccess, (state, {id}) => ({
-      ...state, totalElements: state.totalElements -1, categories: state.categories.filter(e => e.id === id)
+      ...state, totalElements: state.totalElements -1, categories: state.categories.filter(e => e.categoryId !== id)
     })),
     on(searchActions.createEventCategorySuccess, (state, {createdCategory}) => ({
       ...state, totalElements: state.totalElements +1, categories: [...state.categories, createdCategory]
     })),
     on(searchActions.updateEventCategorySuccess, (state, {updatedCategory}) => ({
-      ...state, categories: [...state.categories, updatedCategory]
+      ...state, categories: [...state.categories.filter((c) => c.categoryId !== updatedCategory.categoryId), updatedCategory]
     }))
   )
 });

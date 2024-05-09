@@ -1,8 +1,8 @@
-package com.eventer.rts.config;
+package com.eventer.user.config;
 
-import com.eventer.rts.contracts.ApplicationStatics;
-import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import com.eventer.user.contracts.ApplicationStatics;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
@@ -15,7 +15,7 @@ public class RabbitMQConfiguration {
 
     @Bean
     public Queue queue() {
-        return new Queue(ApplicationStatics.RTS_MESSAGE_QUEUE, false);
+        return new Queue(ApplicationStatics.EVENTER_DATA_MESSAGE_QUEUE, false);
     }
 
     @Bean

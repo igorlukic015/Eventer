@@ -9,9 +9,9 @@ import java.util.Objects;
 
 @Document
 public class EventCategory {
-    @Id private String uid;
+    @Id private String id;
 
-    @Indexed @Searchable private Long id;
+    @Indexed @Searchable private Long categoryId;
 
     @Indexed @Searchable private String name;
 
@@ -19,9 +19,9 @@ public class EventCategory {
 
     public EventCategory() {}
 
-    public EventCategory(Long id, String name, String description) {
-        this.uid = null;
-        this.id = id;
+    public EventCategory(Long categoryId, String name, String description) {
+        this.id = null;
+        this.categoryId = categoryId;
         this.name = name;
         this.description = description;
     }
@@ -31,30 +31,30 @@ public class EventCategory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventCategory that = (EventCategory) o;
-        return Objects.equals(uid, that.uid)
-                || Objects.equals(id, that.id)
+        return Objects.equals(id, that.id)
+                || Objects.equals(categoryId, that.categoryId)
                 || Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uid, id, name);
+        return Objects.hash(id, categoryId, name);
     }
 
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getName() {

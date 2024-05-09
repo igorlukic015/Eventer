@@ -6,7 +6,7 @@ export const searchActions = createActionGroup({
   source: 'search',
   events: {
     'Get event categories': emptyProps(),
-    'Get event categories success': props<{pagedResponse: PagedResponse}>(),
+    'Get event categories success': props<{categories: EventCategory[]}>(),
     'Get event categories fail' : props<{error: string}>(),
     'Get events': emptyProps(),
     'Get events success': props<{pagedResponse: PagedResponse}>(),

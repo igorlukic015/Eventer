@@ -8,4 +8,6 @@ public interface CacheEventService {
     void reloadEvents();
 
     Page<Event> getEvents(final Pageable pageable);
+
+    void remove(Long deletedId);
 }

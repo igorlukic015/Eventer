@@ -1,13 +1,13 @@
 import {Image} from "../../shared/contracts/interfaces";
 
 export interface EventCategory {
-  id: number;
+  categoryId: number;
   name: string;
   description: string;
 }
 
 export interface EventData {
-  id: number;
+  eventId: number;
   title: string;
   description: string;
   date: Date;

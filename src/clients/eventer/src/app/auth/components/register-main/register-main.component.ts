@@ -53,8 +53,6 @@ export class RegisterMainComponent extends DestroyableComponent {
       take(1),
       takeUntil(this.destroyed$),
       switchMap((response) => {
-        console.log(response);
-
         this.toastrService.success('Registered successfully');
         return of()
       }),

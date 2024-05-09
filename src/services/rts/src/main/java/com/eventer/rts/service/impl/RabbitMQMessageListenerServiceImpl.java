@@ -6,15 +6,17 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.time.Instant;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class RabbitMQMessageListenerServiceImpl implements MessageListenerService {
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
-    @RabbitListener(queues = ApplicationStatics.EVENTER_DATA_MESSAGE_QUEUE)
+    @RabbitListener(queues = ApplicationStatics.RTS_MESSAGE_QUEUE)
     @Override
     public void receiveMessage(String message) {
+        System.out.println("RECEIVED MESSAGE AT: " + Instant.now().toString());
         this.pushToClient(message);
     }
 

@@ -283,6 +283,9 @@ public class EventCategoryServiceImpl implements EventCategoryService {
         }
 
         this.messageSenderService.sendMessage(
+                ApplicationStatics.RTS_MESSAGE_QUEUE, messagePayload);
+
+        this.messageSenderService.sendMessage(
                 ApplicationStatics.EVENTER_DATA_MESSAGE_QUEUE, messagePayload);
 
         logger.info("Message sent successfully");

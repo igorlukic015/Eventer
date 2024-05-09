@@ -8,6 +8,8 @@ import com.eventer.user.cache.web.dto.EventDTO;
 import com.eventer.user.utils.ResultErrorMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,6 +47,22 @@ public class CacheEventServiceImpl implements CacheEventService {
         return allEvents;
     }
 
+    @Transactional
+    @Override
+    public void remove(Long deletedId) {
+        logger.info("Attempting to remove event");
+
+        Optional<Event> foundEvent = this.eventRepository.findByEventId(deletedId);
+
+        if (foundEvent.isEmpty()) {
+            logger.error("EVENT_NOT_FOUND");
+            return;
+        }
+
+        this.eventRepository.delete(foundEvent.get());
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
     @Transactional
     @Scheduled(cron = "0 0 0 * * ?")
     @Override

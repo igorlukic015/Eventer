@@ -16,7 +16,7 @@ export class SearchListItemComponent {
     location: '',
     title: '',
     categories: [],
-    id: 0,
+    eventId: 0,
     date: new Date(),
     weatherConditions: []
   };

@@ -1,7 +1,7 @@
 <div class="card w-96 bg-primary shadow-xl">
   <div class="card-body text-base-100">
     <div class="flex gap-3 text-sm">
-      @for (category of event.categories; track category.id) {
+      @for (category of event.categories; track category.categoryId) {
         <span>{{category.name}} </span>
       }
     </div>

@@ -7,6 +7,7 @@ import com.redis.om.spring.annotations.Indexed;
 import com.redis.om.spring.annotations.Searchable;
 import org.springframework.data.annotation.Id;
 
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 
@@ -21,6 +22,8 @@ public class Event {
     private String description;
 
     private String location;
+
+    private Instant date;
 
     private Set<String> weatherConditions;
 
@@ -123,5 +126,13 @@ public class Event {
 
     public void setImages(Set<ImageDTO> images) {
         this.images = images;
+    }
+
+    public Instant getDate() {
+        return date;
+    }
+
+    public void setDate(Instant date) {
+        this.date = date;
     }
 }

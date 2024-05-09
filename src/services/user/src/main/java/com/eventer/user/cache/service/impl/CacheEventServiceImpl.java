@@ -2,7 +2,7 @@ package com.eventer.user.cache.service.impl;
 
 import com.eventer.user.cache.data.model.Event;
 import com.eventer.user.cache.data.repository.EventRepository;
-import com.eventer.user.cache.service.EventService;
+import com.eventer.user.cache.service.CacheEventService;
 import com.eventer.user.cache.web.AdminWebClient;
 import com.eventer.user.cache.web.dto.EventDTO;
 import com.eventer.user.utils.ResultErrorMessages;
@@ -20,13 +20,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class EventServiceImpl implements EventService {
+public class CacheEventServiceImpl implements CacheEventService {
     private final String eventUri = "/api/v1/event/get-all";
     private final AdminWebClient adminWebClient;
     private final EventRepository eventRepository;
-    private static final Logger logger = LoggerFactory.getLogger(EventCategoryServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CacheEventCategoryServiceImpl.class);
 
-    public EventServiceImpl(AdminWebClient adminWebClient, EventRepository eventRepository) {
+    public CacheEventServiceImpl(AdminWebClient adminWebClient, EventRepository eventRepository) {
         this.adminWebClient = adminWebClient;
 
         this.eventRepository = eventRepository;

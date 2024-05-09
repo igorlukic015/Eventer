@@ -4,7 +4,7 @@ import com.eventer.user.cache.data.model.Event;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface EventService {
+public interface CacheEventService {
     void reloadEvents();
 
     Page<Event> getEvents(final Pageable pageable);

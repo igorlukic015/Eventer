@@ -2,7 +2,7 @@ package com.eventer.user.cache.service.impl;
 
 import com.eventer.user.cache.data.model.EventCategory;
 import com.eventer.user.cache.data.repository.EventCategoryRepository;
-import com.eventer.user.cache.service.EventCategoryService;
+import com.eventer.user.cache.service.CacheEventCategoryService;
 import com.eventer.user.cache.web.AdminWebClient;
 import com.eventer.user.cache.web.dto.EventCategoryDTO;
 import com.eventer.user.utils.ResultErrorMessages;
@@ -17,13 +17,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 @Service
-public class EventCategoryServiceImpl implements EventCategoryService {
+public class CacheEventCategoryServiceImpl implements CacheEventCategoryService {
     private final String eventCategoryUri = "/api/v1/event-category/get-all";
     private final AdminWebClient adminWebClient;
     private final EventCategoryRepository eventCategoryRepository;
-    private static final Logger logger = LoggerFactory.getLogger(EventCategoryServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CacheEventCategoryServiceImpl.class);
 
-    public EventCategoryServiceImpl(
+    public CacheEventCategoryServiceImpl(
             AdminWebClient adminWebClient, EventCategoryRepository eventCategoryRepository) {
         this.adminWebClient = adminWebClient;
         this.eventCategoryRepository = eventCategoryRepository;

@@ -5,6 +5,7 @@ import {Router} from "@angular/router";
 import {SearchFacade} from "../../+state/facade/search.facade";
 import {takeUntil, withLatestFrom} from "rxjs";
 import {EventCategory, EventData} from "../../contracts/interfaces";
+import {WeatherCondition} from "../../../shared/contracts/models";
 
 @Component({
   selector: 'eventer-search-list',
@@ -20,10 +21,15 @@ export class SearchListComponent extends DestroyableComponent implements OnInit 
   public totalPages: WritableSignal<number> = signal(1);
   public events: WritableSignal<EventData[]> = signal([]);
   public categories: WritableSignal<EventCategory[]> = signal([])
+  public areFiltersOpen: WritableSignal<boolean> = signal(false);
 
   constructor(private readonly router: Router,
               private readonly searchFacade: SearchFacade) {
     super();
+  }
+
+  filtersClick() {
+    this.areFiltersOpen.set(!this.areFiltersOpen());
   }
 
   ngOnInit() {
@@ -41,4 +47,6 @@ export class SearchListComponent extends DestroyableComponent implements OnInit 
       this.categories.set(categories);
     })
   }
+
+    protected readonly WeatherCondition = WeatherCondition;
 }

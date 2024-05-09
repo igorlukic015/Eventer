@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+
 @RestController
 @RequestMapping("/api/v1/event")
 public class EventController implements ResultUnwrapper {
@@ -24,6 +26,6 @@ public class EventController implements ResultUnwrapper {
 //        Result<Page<Event>> result = this.eventService.getEvents(pageable);
 //        return this.okOrError(result, EventMapper::toDTOPage);
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(new ArrayList<>());
     }
 }

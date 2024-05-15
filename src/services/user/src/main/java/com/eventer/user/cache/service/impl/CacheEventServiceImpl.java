@@ -17,9 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,8 +29,42 @@ public class CacheEventServiceImpl implements CacheEventService {
 
     public CacheEventServiceImpl(AdminWebClient adminWebClient, EventRepository eventRepository) {
         this.adminWebClient = adminWebClient;
-
         this.eventRepository = eventRepository;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Set<Event> getAll() {
+        List<Event> allEvents = this.eventRepository.findAll();
+
+        return new HashSet<>(allEvents);
+    }
+
+    @Transactional
+    @Override
+    public void add(Event newEvent) {
+        logger.info("Attempting to add new event");
+
+        this.eventRepository.save(newEvent);
+    }
+
+    @Transactional
+    @Override
+    public void update(Event updatedEvent) {
+        logger.info("Attempting to update event");
+
+        Optional<Event> foundEvent = this.getAll().stream().filter(e -> Objects.equals(e.getEventId(), updatedEvent.getEventId())).findFirst();
+
+        if (foundEvent.isEmpty()) {
+            logger.error("CATEGORY_NOT_FOUND");
+            return;
+        }
+
+//        this.eventCategoryRepository.delete(foundCategory.get());
+
+        updatedEvent.setId(foundEvent.get().getId());
+
+        this.eventRepository.save(updatedEvent);
     }
 
     @Transactional(readOnly = true)

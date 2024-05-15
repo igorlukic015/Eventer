@@ -1,5 +1,6 @@
 package com.eventer.user.service.impl;
 
+import com.eventer.user.cache.data.model.Event;
 import com.eventer.user.cache.data.model.EventCategory;
 import com.eventer.user.cache.service.CacheEventCategoryService;
 import com.eventer.user.cache.service.CacheEventService;
@@ -16,14 +17,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
-
 @Service
 public class RabbitMQMessageListenerServiceImpl implements MessageListenerService {
     private final ObjectMapper objectMapper;
     private final CacheEventService cacheEventService;
     private final CacheEventCategoryService cacheEventCategoryService;
 
-    public RabbitMQMessageListenerServiceImpl(ObjectMapper objectMapper, CacheEventService cacheEventService, CacheEventCategoryService cacheEventCategoryService) {
+    public RabbitMQMessageListenerServiceImpl(
+            ObjectMapper objectMapper,
+            CacheEventService cacheEventService,
+            CacheEventCategoryService cacheEventCategoryService) {
         this.objectMapper = objectMapper;
         this.cacheEventService = cacheEventService;
         this.cacheEventCategoryService = cacheEventCategoryService;
@@ -53,9 +56,23 @@ public class RabbitMQMessageListenerServiceImpl implements MessageListenerServic
             return;
         }
         EventDTO eventDTO = this.objectMapper.convertValue(message.getData(), EventDTO.class);
-        System.out.println(eventDTO.id());
-        System.out.println(eventDTO.title());
-        System.out.println();
+
+        Event event =
+                new Event(
+                        eventDTO.id(),
+                        eventDTO.title(),
+                        eventDTO.description(),
+                        eventDTO.location(),
+                        eventDTO.weatherConditions(),
+                        eventDTO.categories(),
+                        eventDTO.images());
+
+        if (Objects.equals(message.getAction(), MessageStatics.ACTION_CREATED)) {
+            this.cacheEventService.add(event);
+            return;
+        }
+
+        this.cacheEventService.update(event);
     }
 
     private void handleEventCategoryMessage(Message message) {
@@ -64,9 +81,11 @@ public class RabbitMQMessageListenerServiceImpl implements MessageListenerServic
             this.cacheEventCategoryService.remove(deletedId);
             return;
         }
-        EventCategoryDTO categoryDTO = this.objectMapper.convertValue(message.getData(), EventCategoryDTO.class);
+        EventCategoryDTO categoryDTO =
+                this.objectMapper.convertValue(message.getData(), EventCategoryDTO.class);
 
-        EventCategory category = new EventCategory(categoryDTO.id(), categoryDTO.name(), categoryDTO.description());
+        EventCategory category =
+                new EventCategory(categoryDTO.id(), categoryDTO.name(), categoryDTO.description());
 
         if (Objects.equals(message.getAction(), MessageStatics.ACTION_CREATED)) {
             this.cacheEventCategoryService.add(category);

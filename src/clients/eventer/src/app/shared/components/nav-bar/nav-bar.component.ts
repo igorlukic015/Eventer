@@ -1,5 +1,6 @@
 import {Component, OnInit, signal, WritableSignal} from '@angular/core';
 import {Router} from "@angular/router";
+import {RealTimeService} from "../../services/real-time.service";
 
 @Component({
   selector: 'eventer-nav-bar',
@@ -13,14 +14,14 @@ export class NavBarComponent implements OnInit {
   profileImage: WritableSignal<string> = signal("https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg");
 
   constructor(private readonly router: Router,
-              // private readonly rts: RealTimeService
+              private readonly rts: RealTimeService
   ) {
   }
 
 
   handleLogoutClick($event: any){
     localStorage.removeItem('token');
-    // this.rts.closeConnection();
+    this.rts.closeConnection();
     this.router.navigate(['login'])
   }
 

@@ -15,19 +15,19 @@ import java.util.Set;
 public class Event {
     @Id private String id;
 
-    @Indexed @Searchable private Long eventId;
+    @Indexed private Long eventId;
 
-    @Indexed @Searchable private String title;
+    @Searchable private String title;
 
-    private String description;
+    @Searchable private String description;
 
     private String location;
 
     private Instant date;
 
-    private Set<String> weatherConditions;
+    @Searchable private Set<String> weatherConditions;
 
-    private Set<EventCategoryDTO> categories;
+    @Searchable private Set<EventCategoryDTO> categories;
 
     private Set<ImageDTO> images;
 

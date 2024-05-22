@@ -1,17 +1,22 @@
 package com.eventer.user.cache.service.impl;
 
 import com.eventer.user.cache.data.model.Event;
+import com.eventer.user.cache.data.model.Event$;
 import com.eventer.user.cache.data.repository.EventRepository;
 import com.eventer.user.cache.service.CacheEventService;
 import com.eventer.user.cache.web.AdminWebClient;
+import com.eventer.user.cache.web.dto.EventCategoryDTO;
 import com.eventer.user.cache.web.dto.EventDTO;
 import com.eventer.user.utils.ResultErrorMessages;
+import com.redis.om.spring.search.stream.EntityStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -25,7 +30,10 @@ public class CacheEventServiceImpl implements CacheEventService {
     private final String eventUri = "/api/v1/event/get-all";
     private final AdminWebClient adminWebClient;
     private final EventRepository eventRepository;
-    private static final Logger logger = LoggerFactory.getLogger(CacheEventCategoryServiceImpl.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(CacheEventCategoryServiceImpl.class);
+
+    @Autowired EntityStream entityStream;
 
     public CacheEventServiceImpl(AdminWebClient adminWebClient, EventRepository eventRepository) {
         this.adminWebClient = adminWebClient;
@@ -53,14 +61,17 @@ public class CacheEventServiceImpl implements CacheEventService {
     public void update(Event updatedEvent) {
         logger.info("Attempting to update event");
 
-        Optional<Event> foundEvent = this.getAll().stream().filter(e -> Objects.equals(e.getEventId(), updatedEvent.getEventId())).findFirst();
+        Optional<Event> foundEvent =
+                this.getAll().stream()
+                        .filter(e -> Objects.equals(e.getEventId(), updatedEvent.getEventId()))
+                        .findFirst();
 
         if (foundEvent.isEmpty()) {
             logger.error("CATEGORY_NOT_FOUND");
             return;
         }
 
-//        this.eventCategoryRepository.delete(foundCategory.get());
+        //        this.eventCategoryRepository.delete(foundCategory.get());
 
         updatedEvent.setId(foundEvent.get().getId());
 
@@ -69,14 +80,29 @@ public class CacheEventServiceImpl implements CacheEventService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Event> getEvents(final Pageable pageable) {
+    public Page<Event> getEvents(final Pageable pageable, String searchTerm) {
         logger.info("Attempting to get events");
 
-        Page<Event> allEvents = this.eventRepository.findAll(pageable);
+        final int start = (int) pageable.getOffset();
+
+        List<Event> allEvents =
+                Objects.equals(searchTerm, "")
+                        ? entityStream.of(Event.class).skip(start).collect(Collectors.toList())
+                        : entityStream
+                                .of(Event.class)
+                                .skip(start)
+                                .filter(
+                                        Event$.TITLE
+                                                .containing(searchTerm)
+                                                .or(Event$.DESCRIPTION.containing(searchTerm)))
+                                .filter(Event$.CATEGORIES.containing(Set.of(new EventCategoryDTO(1L, "CLEAR", "D"))))
+                                .collect(Collectors.toList());
 
         logger.info("Events found successfully");
 
-        return allEvents;
+        final int end = Math.min((start + pageable.getPageSize()), allEvents.size());
+
+        return new PageImpl<>(allEvents.subList(start, end), pageable, allEvents.size());
     }
 
     @Transactional

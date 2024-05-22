@@ -23,6 +23,10 @@ export class SearchMainComponent extends DestroyableComponent implements OnInit 
     super();
   }
 
+  onSearchTermChanged(searchTerm: string) {
+    this.searchFacade.updateSearchTerm(searchTerm);
+  }
+
   ngOnInit() {
     this.searchFacade.pageRequest$.pipe(
       takeUntil(this.destroyed$)

@@ -19,7 +19,7 @@
         <div class="collapse-content">
           @for (item of categories(); track item.categoryId) {
             <div class="flex gap-5">
-              <input type="checkbox" class="checkbox checkbox-sm" />
+              <input type="checkbox" class="checkbox checkbox-sm" (change)="handleCategoryUpdate($event, item.categoryId)" />
               <span class="text-blue-700">{{item.name}}</span>
             </div>
           }
@@ -33,7 +33,7 @@
         <div class="collapse-content">
           @for (condition of WeatherCondition.all(); track condition.id) {
             <div class="flex gap-5">
-              <input type="checkbox" class="checkbox checkbox-sm" />
+              <input type="checkbox" class="checkbox checkbox-sm" (change)="handleConditionUpdate($event, condition.name)" />
               <span class="text-amber-300 w-4">{{condition.name}}</span>
             </div>
           }

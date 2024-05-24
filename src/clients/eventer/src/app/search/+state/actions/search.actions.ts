@@ -20,6 +20,8 @@ export const searchActions = createActionGroup({
     'Create event category success': props<{createdCategory: EventCategory}>(),
     'Update event category success': props<{updatedCategory: EventCategory}>(),
     'Delete event category success': props<{id: number}>(),
+    'Update filter categories': props<{categoryId: number, isAdding: boolean}>(),
+    'Update filter conditions': props<{condition: string, isAdding: boolean}>(),
     'Default action': emptyProps(),
   }
 })

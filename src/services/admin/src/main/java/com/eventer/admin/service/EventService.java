@@ -12,7 +12,7 @@ import java.util.Set;
 public interface EventService {
     Result<Event> create(CreateEventRequest createEventRequest);
 
-    Result<Page<Event>> getEvents(Pageable pageable);
+    Result<Page<Event>> getEvents(Pageable pageable, String searchTerm);
 
     Result<Set<Event>> getAllEvents();
 

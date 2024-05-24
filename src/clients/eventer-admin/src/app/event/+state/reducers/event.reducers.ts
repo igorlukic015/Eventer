@@ -25,7 +25,7 @@ const initialState: EventState = adapter.getInitialState({
   pageRequest: {
     page: 0,
     size: defaultPageSize,
-    searchTerm: '',
+      searchTerm: '',
     sort: {
       attributeNames: ['id'],
       sortDirection: SortDirection.ascending

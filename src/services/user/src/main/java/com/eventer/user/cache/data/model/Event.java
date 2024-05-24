@@ -15,11 +15,11 @@ import java.util.Set;
 public class Event {
     @Id private String id;
 
-    @Indexed @Searchable private Long eventId;
+    @Indexed private Long eventId;
 
-    @Indexed @Searchable private String title;
+    @Searchable private String title;
 
-    private String description;
+    @Searchable private String description;
 
     private String location;
 

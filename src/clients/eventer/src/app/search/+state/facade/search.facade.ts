@@ -37,4 +37,12 @@ export class SearchFacade {
   updateSelectedEventId(id: number) {
     this.store.dispatch(searchActions.updateSelectedEventId({id}));
   }
+
+  updateFilterCategories(categoryId: number, isAdding: boolean) {
+    this.store.dispatch(searchActions.updateFilterCategories({categoryId, isAdding}))
+  }
+
+  updateFilterConditions(condition: string, isAdding: boolean) {
+    this.store.dispatch(searchActions.updateFilterConditions({condition, isAdding}))
+  }
 }

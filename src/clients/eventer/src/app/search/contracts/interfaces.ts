@@ -1,4 +1,4 @@
-import {Image} from "../../shared/contracts/interfaces";
+import {Image, PageRequest} from "../../shared/contracts/interfaces";
 
 export interface EventCategory {
   categoryId: number;
@@ -15,4 +15,9 @@ export interface EventData {
   weatherConditions: string[];
   categories: EventCategory[];
   images: Image[];
+}
+
+export interface ExtendedSearchPageRequest extends PageRequest {
+  categoryIds: number[];
+  weatherConditions: string[];
 }

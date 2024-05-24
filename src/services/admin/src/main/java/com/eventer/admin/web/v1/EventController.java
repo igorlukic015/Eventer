@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -44,8 +45,8 @@ public class EventController implements ResultUnwrapper {
     }
 
     @GetMapping
-    public ResponseEntity<?> getEvents(final Pageable pageable) {
-        Result<Page<Event>> result = this.eventService.getEvents(pageable);
+    public ResponseEntity<?> getEvents(final Pageable pageable, @RequestParam("searchTerm") Optional<String> searchTerm) {
+        Result<Page<Event>> result = this.eventService.getEvents(pageable, searchTerm.orElse(""));
         return this.okOrError(result, EventMapper::toDTOPage);
     }
 

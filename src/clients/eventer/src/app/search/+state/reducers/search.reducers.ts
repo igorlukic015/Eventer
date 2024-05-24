@@ -1,5 +1,4 @@
-import {PageRequest} from "../../../shared/contracts/interfaces";
-import {EventCategory, EventData} from "../../contracts/interfaces";
+import {EventCategory, EventData, ExtendedSearchPageRequest} from "../../contracts/interfaces";
 import {defaultPageSize} from "../../../shared/contracts/statics";
 import {SortDirection} from "../../../shared/contracts/models";
 import {createFeature, createReducer, on} from "@ngrx/store";
@@ -8,7 +7,7 @@ import {searchActions} from "../actions/search.actions";
 export interface SearchState {
   totalPages: number;
   totalElements: number;
-  pageRequest: PageRequest;
+  pageRequest: ExtendedSearchPageRequest;
   selectedEventId: number;
   categories: EventCategory[];
   events: EventData[];
@@ -24,7 +23,9 @@ const initialState: SearchState = {
     sort: {
       attributeNames: ['id'],
       sortDirection: SortDirection.ascending
-    }
+    },
+    categoryIds: [],
+    weatherConditions: []
   },
   selectedEventId: 0,
   categories: [],
@@ -76,6 +77,12 @@ const searchFeature = createFeature({
     })),
     on(searchActions.updateEventCategorySuccess, (state, {updatedCategory}) => ({
       ...state, categories: [...state.categories.filter((c) => c.categoryId !== updatedCategory.categoryId), updatedCategory]
+    })),
+    on(searchActions.updateFilterCategories, (state, {categoryId, isAdding}) => ({
+        ...state, pageRequest: {...state.pageRequest, categoryIds: isAdding ? [...state.pageRequest.categoryIds, categoryId] : state.pageRequest.categoryIds.filter(id => id !== categoryId)}
+    })),
+    on(searchActions.updateFilterConditions, (state, {condition, isAdding}) => ({
+      ...state, pageRequest: {...state.pageRequest, weatherConditions: isAdding ? [...state.pageRequest.weatherConditions, condition] : state.pageRequest.weatherConditions.filter(con => con !== condition)}
     }))
   )
 });

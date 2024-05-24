@@ -19,7 +19,7 @@ public class ImageMapper {
 
     public static Result<Image> toDomain(ImageDTO dto) {
         if (dto == null) {
-            return null;
+            return Result.success(null);
         }
 
         return Image.create(dto.id(), dto.name());
@@ -32,7 +32,7 @@ public class ImageMapper {
 
     public static Result<Image> toDomain(com.eventer.user.data.model.Image model) {
         if (model == null) {
-            return null;
+            return Result.success(null);
         }
 
         return Image.create(model.getId(), model.getName());

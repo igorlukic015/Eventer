@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import {loginUrlKey, registerUrlKey} from "./shared/contracts/statics";
+import {loginUrlKey, profileUrlKey, registerUrlKey} from "./shared/contracts/statics";
 import {LoginMainComponent} from "./auth/components/login-main/login-main.component";
 import {loginGuard} from "./shared/guards/login.guard";
 import {RegisterMainComponent} from "./auth/components/register-main/register-main.component";
@@ -9,6 +9,7 @@ import {provideState} from "@ngrx/store";
 import {searchFeatureKey, searchReducer} from "./search/+state/reducers/search.reducers";
 import {provideEffects} from "@ngrx/effects";
 import {SearchEffects} from "./search/+state/effects/search.effects";
+import {UserProfileComponent} from "./profile/components/user-profile/user-profile.component";
 
 export const routes: Routes = [
   {
@@ -20,6 +21,11 @@ export const routes: Routes = [
     path: loginUrlKey,
     component: LoginMainComponent,
     canActivate: [loginGuard]
+  },
+  {
+    path: profileUrlKey,
+    component: UserProfileComponent,
+    canActivate: [authGuard]
   },
   {
     path: '',

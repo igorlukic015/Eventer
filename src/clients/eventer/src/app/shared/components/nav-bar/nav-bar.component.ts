@@ -1,5 +1,5 @@
-import {Component, EventEmitter, OnInit, Output, signal, WritableSignal} from '@angular/core';
-import {Router} from "@angular/router";
+import {Component, EventEmitter, Input, OnInit, Output, signal, WritableSignal} from '@angular/core';
+import {Router, RouterLink} from "@angular/router";
 import {RealTimeService} from "../../services/real-time.service";
 import {debounceTime, Subject} from "rxjs";
 
@@ -7,17 +7,21 @@ import {debounceTime, Subject} from "rxjs";
   selector: 'eventer-nav-bar',
   standalone: true,
   imports: [
+    RouterLink
   ],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css'
 })
 export class NavBarComponent implements OnInit {
+  @Input()
+  showSearch: boolean = true;
+
   @Output()
   searchTermChanged: EventEmitter<string> = new EventEmitter<string>();
 
   private debouncer: Subject<string> = new Subject<string>();
 
-  profileImage: WritableSignal<string> = signal("https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg");
+  profileImage: WritableSignal<string> = signal("assets/default_avatar.png");
 
   constructor(private readonly router: Router,
               private readonly rts: RealTimeService
@@ -33,6 +37,7 @@ export class NavBarComponent implements OnInit {
 
   handleLogoutClick($event: any){
     localStorage.removeItem('token');
+    localStorage.removeItem('profileImageUrl')
     this.rts.closeConnection();
     this.router.navigate(['login'])
   }

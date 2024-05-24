@@ -1,5 +1,5 @@
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {PagedResponse, PageRequest} from "../../shared/contracts/interfaces";
+import {PagedResponse} from "../../shared/contracts/interfaces";
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import {baseApiUrl} from "../../shared/contracts/statics";
@@ -40,16 +40,6 @@ export class SearchService {
   }
 
   getEventCategories() {
-    // const size = 10;
-    // const page = 0;
-    // const searchTerm = '';
-    //
-    // let params: HttpParams = new HttpParams().set('size', size).set('page', page);
-    //
-    // if (searchTerm) {
-    //   params = params.append('searchTerm', searchTerm);
-    // }
-
     return this.httpClient.get<EventCategory[]>(`${baseApiUrl}/${this.categoriesRoute}`);
   }
 }

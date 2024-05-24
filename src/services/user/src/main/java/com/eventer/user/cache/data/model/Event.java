@@ -25,9 +25,9 @@ public class Event {
 
     private Instant date;
 
-    @Searchable private Set<String> weatherConditions;
+    private Set<String> weatherConditions;
 
-    @Searchable private Set<EventCategoryDTO> categories;
+    private Set<EventCategoryDTO> categories;
 
     private Set<ImageDTO> images;
 

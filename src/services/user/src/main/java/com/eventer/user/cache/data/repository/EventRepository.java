@@ -6,5 +6,5 @@ import com.redis.om.spring.repository.RedisDocumentRepository;
 import java.util.Optional;
 
 public interface EventRepository extends RedisDocumentRepository<Event, String> {
-    Optional<Event> findByEventId(Long id);
+    Optional<Event> findOneByEventId(Long id);
 }

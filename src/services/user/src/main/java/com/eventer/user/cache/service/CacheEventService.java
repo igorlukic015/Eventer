@@ -15,7 +15,7 @@ public interface CacheEventService {
 
     void reloadEvents();
 
-    Page<Event> getEvents(final Pageable pageable, String searchTerm);
+    Page<Event> getEvents(final Pageable pageable, String searchTerm, String conditionsQuery, String categoriesQuery);
 
     void remove(Long deletedId);
 }

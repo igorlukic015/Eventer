@@ -21,7 +21,16 @@ public class EventController implements ResultUnwrapper {
     }
 
     @GetMapping
-    public ResponseEntity<?> getEvents(final Pageable pageable, @RequestParam("searchTerm") Optional<String> searchTerm) {
-        return ResponseEntity.ok(this.cacheEventService.getEvents(pageable, searchTerm.orElse("")));
+    public ResponseEntity<?> getEvents(
+            final Pageable pageable,
+            @RequestParam("searchTerm") Optional<String> searchTerm,
+            @RequestParam("conditions") Optional<String> conditions,
+            @RequestParam("categories") Optional<String> categories) {
+        return ResponseEntity.ok(
+                this.cacheEventService.getEvents(
+                        pageable,
+                        searchTerm.orElse(""),
+                        conditions.orElse(""),
+                        categories.orElse("")));
     }
 }

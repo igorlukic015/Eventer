@@ -2,6 +2,7 @@ package com.eventer.user.cache.service.impl;
 
 import com.eventer.user.cache.data.model.Event;
 import com.eventer.user.cache.data.model.Event$;
+import com.eventer.user.cache.data.repository.EventCategoryRepository;
 import com.eventer.user.cache.data.repository.EventRepository;
 import com.eventer.user.cache.service.CacheEventService;
 import com.eventer.user.cache.web.AdminWebClient;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,14 +32,19 @@ public class CacheEventServiceImpl implements CacheEventService {
     private final String eventUri = "/api/v1/event/get-all";
     private final AdminWebClient adminWebClient;
     private final EventRepository eventRepository;
+    private final EventCategoryRepository eventCategoryRepository;
     private static final Logger logger =
             LoggerFactory.getLogger(CacheEventCategoryServiceImpl.class);
 
     @Autowired EntityStream entityStream;
 
-    public CacheEventServiceImpl(AdminWebClient adminWebClient, EventRepository eventRepository) {
+    public CacheEventServiceImpl(
+            AdminWebClient adminWebClient,
+            EventRepository eventRepository,
+            EventCategoryRepository eventCategoryRepository) {
         this.adminWebClient = adminWebClient;
         this.eventRepository = eventRepository;
+        this.eventCategoryRepository = eventCategoryRepository;
     }
 
     @Transactional(readOnly = true)
@@ -80,7 +87,11 @@ public class CacheEventServiceImpl implements CacheEventService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Event> getEvents(final Pageable pageable, String searchTerm) {
+    public Page<Event> getEvents(
+            final Pageable pageable,
+            String searchTerm,
+            String conditionsQuery,
+            String categoriesQuery) {
         logger.info("Attempting to get events");
 
         final int start = (int) pageable.getOffset();
@@ -95,12 +106,43 @@ public class CacheEventServiceImpl implements CacheEventService {
                                         Event$.TITLE
                                                 .containing(searchTerm)
                                                 .or(Event$.DESCRIPTION.containing(searchTerm)))
-                                .filter(Event$.CATEGORIES.containing(Set.of(new EventCategoryDTO(1L, "CLEAR", "D"))))
                                 .collect(Collectors.toList());
+
+        if (StringUtils.hasText(categoriesQuery)) {
+            List<Long> categoriesQueryElements =
+                    Arrays.stream(categoriesQuery.split(";")).map(Long::valueOf).toList();
+
+            allEvents =
+                    allEvents.stream()
+                            .filter(
+                                    event ->
+                                            (event.getCategories().stream()
+                                                            .map(EventCategoryDTO::id)
+                                                            .collect(Collectors.toSet()))
+                                                    .containsAll(categoriesQueryElements))
+                            .toList();
+        }
+
+        if (StringUtils.hasText(conditionsQuery)) {
+            List<String> conditionsQueryElements =
+                    Arrays.stream(conditionsQuery.split(";")).map(String::toLowerCase).toList();
+
+            allEvents =
+                    allEvents.stream()
+                            .filter(
+                                    event ->
+                                            (event.getWeatherConditions().stream()
+                                                            .map(String::toLowerCase)
+                                                            .collect(Collectors.toSet()))
+                                                    .containsAll(conditionsQueryElements))
+                            .toList();
+        }
 
         logger.info("Events found successfully");
 
         final int end = Math.min((start + pageable.getPageSize()), allEvents.size());
+
+        allEvents = allEvents.stream().skip(start).limit(pageable.getPageSize()).toList();
 
         return new PageImpl<>(allEvents.subList(start, end), pageable, allEvents.size());
     }
@@ -110,7 +152,7 @@ public class CacheEventServiceImpl implements CacheEventService {
     public void remove(Long deletedId) {
         logger.info("Attempting to remove event");
 
-        Optional<Event> foundEvent = this.eventRepository.findByEventId(deletedId);
+        Optional<Event> foundEvent = this.eventRepository.findOneByEventId(deletedId);
 
         if (foundEvent.isEmpty()) {
             logger.error("EVENT_NOT_FOUND");

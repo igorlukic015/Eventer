@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import {loginUrlKey, profileUrlKey, registerUrlKey} from "./shared/contracts/statics";
+import {loginUrlKey, profileUrlKey, registerUrlKey, searchDetailsUrlKey} from "./shared/contracts/statics";
 import {LoginMainComponent} from "./auth/components/login-main/login-main.component";
 import {loginGuard} from "./shared/guards/login.guard";
 import {RegisterMainComponent} from "./auth/components/register-main/register-main.component";
@@ -10,6 +10,7 @@ import {searchFeatureKey, searchReducer} from "./search/+state/reducers/search.r
 import {provideEffects} from "@ngrx/effects";
 import {SearchEffects} from "./search/+state/effects/search.effects";
 import {UserProfileComponent} from "./profile/components/user-profile/user-profile.component";
+import {SearchDetailsComponent} from "./search/components/search-details/search-details.component";
 
 export const routes: Routes = [
   {
@@ -29,7 +30,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    component: SearchMainComponent,
+    loadChildren: () => import('./search/search.routes').then(m => m.routes),
     providers: [
       provideState(searchFeatureKey, searchReducer),
       provideEffects(SearchEffects)

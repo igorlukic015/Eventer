@@ -19,7 +19,7 @@ public class Event extends AbstractAuditingEntity<Long> {
     @Column(name = "title", nullable = false, length = 255)
     private String title;
 
-    @Column(name = "description", length = 255)
+    @Column(name = "description")
     private String description;
 
     @Column(name = "location", length = 255, nullable = false)

@@ -40,6 +40,11 @@ export class SearchListComponent extends DestroyableComponent implements OnInit 
     this.searchFacade.updateFilterConditions(conditionName, $event.target.checked);
   }
 
+  handleOpenDetails($event: any, eventId: number) {
+    this.searchFacade.updateSelectedEventId(eventId);
+    this.router.navigate(['details'])
+  }
+
   ngOnInit() {
     this.searchFacade.events$.pipe(
       withLatestFrom(this.searchFacade.totalPages$),

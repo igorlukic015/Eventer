@@ -1,4 +1,4 @@
-<div class="card w-96 bg-primary shadow-xl">
+<div class="card bg-primary shadow-xl" style="width: 30rem;">
   <div class="card-body text-base-100">
     <div class="flex gap-3 text-sm">
       @for (category of event.categories; track category.categoryId) {
@@ -10,7 +10,7 @@
       <h1 class="card-title">{{event.title}}</h1>
       <h2>{{event.location}}</h2>
     </div>
-    <p>{{event.description}}</p>
+    <p class="overflow-y-clip h-36">{{event.description}}</p>
   </div>
   <figure><img src="{{event.images[0].url}}" alt="image" /></figure>
 </div>

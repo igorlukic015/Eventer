@@ -1,8 +1,10 @@
 package com.eventer.user.mapper;
 
 import com.eventer.user.config.ApplicationConfiguration;
+import com.eventer.user.contracts.comment.CreateCommentRequest;
 import com.eventer.user.service.domain.Comment;
 import com.eventer.user.web.dto.comment.CommentDTO;
+import com.eventer.user.web.dto.comment.CreateCommentDTO;
 import com.github.igorlukic015.resulter.Result;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -11,6 +13,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CommentMapper {
+    public static CreateCommentRequest toRequest(CreateCommentDTO dto) {
+        return new CreateCommentRequest(dto.text(), dto.eventId());
+    }
+
     public static Result<Page<Comment>> toDomainPage(
             Page<com.eventer.user.data.model.Comment> models) {
         Result<List<Comment>> commentsOrError =
@@ -61,4 +67,13 @@ public class CommentMapper {
                 domain.getUserProfileImageUrl());
     }
 
+    public static com.eventer.user.data.model.Comment toModel(Comment domain, com.eventer.user.data.model.User user) {
+        com.eventer.user.data.model.Comment comment = new com.eventer.user.data.model.Comment();
+
+        comment.setText(domain.getText());
+        comment.setEventId(domain.getEventId());
+        comment.setUser(user);
+
+        return comment;
+    }
 }

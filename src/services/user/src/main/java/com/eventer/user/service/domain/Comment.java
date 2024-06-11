@@ -25,6 +25,10 @@ public class Comment {
         return Result.success(new Comment(null, text, eventId, userId, userProfileImageUrl));
     }
 
+    public static Result<Comment> partialCreate(String text, Long eventId) {
+        return Result.success(new Comment(null, text, eventId, null, null));
+    }
+
     public Long getId() {
         return id;
     }

@@ -40,10 +40,18 @@ export class SearchFacade {
   }
 
   updateFilterCategories(categoryId: number, isAdding: boolean) {
-    this.store.dispatch(searchActions.updateFilterCategories({categoryId, isAdding}))
+    this.store.dispatch(searchActions.updateFilterCategories({categoryId, isAdding}));
   }
 
   updateFilterConditions(condition: string, isAdding: boolean) {
-    this.store.dispatch(searchActions.updateFilterConditions({condition, isAdding}))
+    this.store.dispatch(searchActions.updateFilterConditions({condition, isAdding}));
+  }
+
+  createComment(text: string, eventId: number){
+    this.store.dispatch(searchActions.createComment({text, eventId}));
+  }
+
+  getComments() {
+    this.store.dispatch(searchActions.getComments());
   }
 }

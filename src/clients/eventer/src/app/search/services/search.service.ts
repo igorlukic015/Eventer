@@ -3,12 +3,13 @@ import {PagedResponse} from "../../shared/contracts/interfaces";
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import {baseApiUrl} from "../../shared/contracts/statics";
-import {EventCategory, ExtendedSearchPageRequest} from "../contracts/interfaces";
+import {CommentData, EventCategory, ExtendedSearchPageRequest} from "../contracts/interfaces";
 
 @Injectable({providedIn: 'root'})
 export class SearchService {
   private readonly eventRoute = 'api/v1/event';
   private readonly categoriesRoute = 'api/v1/event-category';
+  private readonly commentsRoute = 'api/v1/comment';
 
   constructor(private httpClient: HttpClient) {
   }
@@ -41,5 +42,13 @@ export class SearchService {
 
   getEventCategories() {
     return this.httpClient.get<EventCategory[]>(`${baseApiUrl}/${this.categoriesRoute}`);
+  }
+
+  createComment(text: string, eventId: number) {
+    return this.httpClient.post<CommentData>(`${baseApiUrl}/${this.commentsRoute}`, {text, eventId})
+  }
+
+  getComments(eventId: number) {
+    return this.httpClient.get<PagedResponse>(`${baseApiUrl}/${this.commentsRoute}/${eventId}`)
   }
 }

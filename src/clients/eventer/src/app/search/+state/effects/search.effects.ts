@@ -1,15 +1,16 @@
 import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
-import {Store} from "@ngrx/store";
+import {select, Store} from "@ngrx/store";
 import {ToastrService} from "ngx-toastr";
 import {Router} from "@angular/router";
-import {catchError, map, mergeMap, of, tap, withLatestFrom} from "rxjs";
+import {catchError, map, mergeMap, of, switchAll, switchMap, tap, withLatestFrom} from "rxjs";
 import {selectPageRequest} from "../reducers/search.reducers";
 import {PagedResponse} from "../../../shared/contracts/interfaces";
 import {searchActions} from "../actions/search.actions";
 import {SearchService} from "../../services/search.service";
 import {updateEntity} from "../../../shared/+state/actions/real-time.actions";
 import {ActionType, ListenedEntity} from "../../../shared/contracts/models";
+import * as searchFeature from "../reducers/search.reducers";
 
 @Injectable()
 export class SearchEffects {
@@ -38,6 +39,33 @@ export class SearchEffects {
     )
   );
 
+  getComments$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(searchActions.getComments),
+      withLatestFrom(this.store.pipe(select(searchFeature.selectSelectedEventId))),
+      mergeMap(([action, eventId]) =>
+        this.eventService.getComments(eventId).pipe(
+          map((pagedResponse) => searchActions.getCommentsSuccess({pagedResponse})),
+          catchError((error) => of(searchActions.getCommentsFail(error)))
+        )
+      )
+    )
+  );
+
+  createComment$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(searchActions.createComment),
+      switchMap((action) =>
+        this.eventService.createComment(action.text, action.eventId).pipe(
+          map(createdComment => {
+            this.toastrService.success("Comment created successfully");
+            return searchActions.createCommentSuccess({createdComment});
+          })
+        )
+      )
+    )
+  )
+
   updateListenedEvent$ = createEffect(() =>
     this.actions$.pipe(
       ofType(updateEntity),
@@ -65,6 +93,8 @@ export class SearchEffects {
         ofType(
           searchActions.getEventsFail,
           searchActions.getEventCategoriesFail,
+          searchActions.getCommentsFail,
+          searchActions.createCommentFail
         ),
         tap((action: any) => {
           if (action?.error?.detail !== undefined) {

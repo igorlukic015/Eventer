@@ -1,6 +1,9 @@
 <div class="flex flex-col items-center mt-10">
   <span class="text-xl font-bold mb-4">Leave a comment</span>
-  <textarea class="textarea textarea-bordered w-2/5" placeholder="..."></textarea>
+  <textarea class="textarea textarea-bordered w-2/5 mb-5" placeholder="..." [(ngModel)]="newCommentValue"></textarea>
+  <button class="btn btn-primary" (click)="handleAddCommentClick()">
+    Add comment
+  </button>
   <div class="flex flex-col-reverse mt-10 w-2/5 justify-evenly items-center">
     @for (comment of comments; track comment.id) {
       <div class="flex flex-col mb-8 w-full justify-between bg-sky-100 rounded-xl text-base-100 p-6">

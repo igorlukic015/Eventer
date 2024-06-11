@@ -85,6 +85,12 @@ const searchFeature = createFeature({
     })),
     on(searchActions.updateFilterConditions, (state, {condition, isAdding}) => ({
       ...state, pageRequest: {...state.pageRequest, weatherConditions: isAdding ? [...state.pageRequest.weatherConditions, condition] : state.pageRequest.weatherConditions.filter(con => con !== condition)}
+    })),
+    on(searchActions.createCommentSuccess, (state, {createdComment}) => ({
+      ...state, comments: [createdComment, ...state.comments]
+    })),
+    on(searchActions.getCommentsSuccess, (state, {pagedResponse}) => ({
+      ...state, comments: pagedResponse.content
     }))
   )
 });

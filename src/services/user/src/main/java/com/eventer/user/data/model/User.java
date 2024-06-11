@@ -30,6 +30,10 @@ public class User extends AbstractAuditingEntity<Long> {
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private Image profileImage;
 
+    public User() {}
+
+    public User(Long id) {this.id = id;}
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

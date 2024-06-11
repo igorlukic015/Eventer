@@ -70,13 +70,16 @@ export class SearchDetailsComponent extends DestroyableComponent implements OnIn
       this.event.set(foundEvent);
     })
 
+    this.searchFacade.selectedEventId$.pipe(
+      takeUntil(this.destroyed$)
+    ).subscribe((eventId) => {
+      this.searchFacade.getComments();
+    })
+
     this.searchFacade.comments$.pipe(
       takeUntil(this.destroyed$),
-      withLatestFrom(this.searchFacade.selectedEventId$)
-    ).subscribe(([comments, selectedEventId]) => {
-      const relevantComments=  comments.filter(comment => comment.eventId === selectedEventId);
-
-      this.comments.set(relevantComments)
+    ).subscribe((comments) => {
+      this.comments.set(comments)
     })
   }
 

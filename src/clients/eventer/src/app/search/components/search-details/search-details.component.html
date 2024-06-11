@@ -31,7 +31,7 @@
 
       <div class="mb-4">{{ event().description }}</div>
 
-      <eventer-comment-section [comments]="comments()">
+      <eventer-comment-section [comments]="comments()" [eventId]="event().eventId">
       </eventer-comment-section>
 
     </div>

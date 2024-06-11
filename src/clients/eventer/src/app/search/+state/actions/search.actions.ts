@@ -1,6 +1,6 @@
 import {createActionGroup, emptyProps, props} from "@ngrx/store";
 import {PagedResponse} from "../../../shared/contracts/interfaces";
-import {EventCategory, EventData} from "../../contracts/interfaces";
+import {CommentData, EventCategory, EventData} from "../../contracts/interfaces";
 
 export const searchActions = createActionGroup({
   source: 'search',
@@ -23,8 +23,11 @@ export const searchActions = createActionGroup({
     'Update filter categories': props<{categoryId: number, isAdding: boolean}>(),
     'Update filter conditions': props<{condition: string, isAdding: boolean}>(),
     'Get comments' : emptyProps(),
-    'Get comments success' : props<{comments: PagedResponse}>(),
+    'Get comments success' : props<{pagedResponse: PagedResponse}>(),
     'Get comments fail': props<{error: string}>(),
+    'Create comment' : props<{text: string, eventId: number}>(),
+    'Create comment success': props<{createdComment: CommentData}>(),
+    'Create comment fail': props<{error: string}>(),
     'Default action': emptyProps(),
   }
 })

@@ -7,26 +7,47 @@ public class Comment {
     private String text;
     private Long eventId;
     private Long userId;
+    private String userUsername;
     private String userProfileImageUrl;
 
-    private Comment(Long id, String text, Long eventId, Long userId, String userProfileImageUrl) {
+    private Comment(
+            Long id,
+            String text,
+            Long eventId,
+            Long userId,
+            String userUsername,
+            String userProfileImageUrl) {
         this.id = id;
         this.text = text;
         this.eventId = eventId;
         this.userId = userId;
+        this.userUsername = userUsername;
         this.userProfileImageUrl = userProfileImageUrl;
     }
 
-    public static Result<Comment> create(Long id, String text, Long eventId, Long userId, String userProfileImageUrl) {
-        return Result.success(new Comment(id, text, eventId, userId, userProfileImageUrl));
+    public static Result<Comment> create(
+            Long id,
+            String text,
+            Long eventId,
+            Long userId,
+            String userUsername,
+            String userProfileImageUrl) {
+        return Result.success(
+                new Comment(id, text, eventId, userId, userUsername, userProfileImageUrl));
     }
 
-    public static Result<Comment> create(String text, Long eventId, Long userId, String userProfileImageUrl) {
-        return Result.success(new Comment(null, text, eventId, userId, userProfileImageUrl));
+    public static Result<Comment> create(
+            String text,
+            Long eventId,
+            Long userId,
+            String userUsername,
+            String userProfileImageUrl) {
+        return Result.success(
+                new Comment(null, text, eventId, userId, userUsername, userProfileImageUrl));
     }
 
     public static Result<Comment> partialCreate(String text, Long eventId) {
-        return Result.success(new Comment(null, text, eventId, null, null));
+        return Result.success(new Comment(null, text, eventId, null, null, null));
     }
 
     public Long getId() {
@@ -39,6 +60,10 @@ public class Comment {
 
     public Long getEventId() {
         return eventId;
+    }
+
+    public String getUserUsername() {
+        return userUsername;
     }
 
     public Long getUserId() {

@@ -49,6 +49,7 @@ public class CommentMapper {
                 model.getText(),
                 model.getEventId(),
                 model.getUser().getId(),
+                model.getUser().getUsername(),
                 userProfileImageUrl);
     }
 
@@ -64,6 +65,7 @@ public class CommentMapper {
                 domain.getText(),
                 domain.getEventId(),
                 domain.getUserId(),
+                domain.getUserUsername(),
                 domain.getUserProfileImageUrl());
     }
 

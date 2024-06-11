@@ -27,6 +27,7 @@ export interface CommentData {
   text: string;
   eventId: number;
   userId: number;
+  userUsername: string;
   userProfileImageUrl: string;
 }
 

@@ -1,5 +1,5 @@
 import {Observable} from "rxjs";
-import {EventCategory, EventData} from "../../contracts/interfaces";
+import {CommentData, EventCategory, EventData} from "../../contracts/interfaces";
 import {select, Store} from "@ngrx/store";
 import {Injectable} from "@angular/core";
 import * as searchFeature from "../reducers/search.reducers"
@@ -14,6 +14,7 @@ export class SearchFacade {
   totalElements$: Observable<number> = this.store.pipe(select(searchFeature.selectTotalElements));
   pageRequest$: Observable<PageRequest> = this.store.pipe(select(searchFeature.selectPageRequest));
   selectedEventId$: Observable<number> = this.store.pipe(select(searchFeature.selectSelectedEventId));
+  comments$: Observable<CommentData[]> = this.store.pipe(select(searchFeature.selectComments));
 
   constructor(private readonly store: Store) {
   }

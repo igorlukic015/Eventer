@@ -21,3 +21,11 @@ export interface ExtendedSearchPageRequest extends PageRequest {
   categoryIds: number[];
   weatherConditions: string[];
 }
+
+export interface CommentData {
+  id: number;
+  text: string;
+  eventId: number;
+  userId: number;
+  userProfileImageUrl: string;
+}

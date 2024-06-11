@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, signal, Signal, WritableSignal} from '@angular/core';
+import {AfterViewInit, Component, OnInit, signal, WritableSignal} from '@angular/core';
 import {FooterComponent} from "../../../shared/components/footer/footer.component";
 import {NavBarComponent} from "../../../shared/components/nav-bar/nav-bar.component";
 import {SearchListComponent} from "../search-list/search-list.component";
@@ -7,8 +7,10 @@ import {SearchFacade} from "../../+state/facade/search.facade";
 import {take, takeUntil, withLatestFrom} from "rxjs";
 import {Router} from "@angular/router";
 import {ToastrService} from "ngx-toastr";
-import {EventData} from "../../contracts/interfaces";
-import {NgForOf, NgIf} from "@angular/common";
+import {CommentData, EventData} from "../../contracts/interfaces";
+import {Location, NgForOf, NgIf} from "@angular/common";
+import {CommentSectionComponent} from "../../../shared/components/comment-section/comment-section.component";
+import {ImageCarouselComponent} from "../../../shared/components/image-carousel/image-carousel.component";
 
 @Component({
   selector: 'eventer-search-details',
@@ -18,7 +20,9 @@ import {NgForOf, NgIf} from "@angular/common";
     NavBarComponent,
     SearchListComponent,
     NgForOf,
-    NgIf
+    NgIf,
+    CommentSectionComponent,
+    ImageCarouselComponent
   ],
   providers: [SearchFacade],
   templateUrl: './search-details.component.html',
@@ -36,12 +40,17 @@ export class SearchDetailsComponent extends DestroyableComponent implements OnIn
     date: new Date()
   })
 
-  lastImageIndex: WritableSignal<number> = signal(0);
+  comments: WritableSignal<CommentData[]> = signal([])
 
   constructor(private readonly searchFacade: SearchFacade,
               private readonly router: Router,
-              private readonly toastrService: ToastrService) {
+              private readonly toastrService: ToastrService,
+              private readonly location: Location) {
     super();
+  }
+
+  handleBackClick() {
+    this.location.back()
   }
 
   ngOnInit() {
@@ -59,6 +68,15 @@ export class SearchDetailsComponent extends DestroyableComponent implements OnIn
       }
 
       this.event.set(foundEvent);
+    })
+
+    this.searchFacade.comments$.pipe(
+      takeUntil(this.destroyed$),
+      withLatestFrom(this.searchFacade.selectedEventId$)
+    ).subscribe(([comments, selectedEventId]) => {
+      const relevantComments=  comments.filter(comment => comment.eventId === selectedEventId);
+
+      this.comments.set(relevantComments)
     })
   }
 

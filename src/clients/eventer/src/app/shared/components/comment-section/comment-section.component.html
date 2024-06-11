@@ -1,0 +1,15 @@
+<div class="flex flex-col items-center mt-10">
+  <span class="text-xl font-bold mb-4">Leave a comment</span>
+  <textarea class="textarea textarea-bordered w-2/5" placeholder="..."></textarea>
+  <div class="flex flex-col-reverse mt-10 w-2/5 justify-evenly items-center">
+    @for (comment of comments; track comment.id) {
+      <div class="flex flex-col mb-8 w-full justify-between bg-sky-100 rounded-xl text-base-100 p-6">
+        <div class="flex mb-4">
+          <img src="/assets/default_avatar.png" class="max-w-12">
+          <span class="self-center ml-4">{{comment.userId}}</span>
+        </div>
+        <textarea class="textarea textarea-bordered text-gray-300" [value]="comment.text" readonly></textarea>
+      </div>
+    }
+  </div>
+</div>

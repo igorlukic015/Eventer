@@ -1,4 +1,4 @@
-import {EventCategory, EventData, ExtendedSearchPageRequest} from "../../contracts/interfaces";
+import {CommentData, EventCategory, EventData, ExtendedSearchPageRequest} from "../../contracts/interfaces";
 import {defaultPageSize} from "../../../shared/contracts/statics";
 import {SortDirection} from "../../../shared/contracts/models";
 import {createFeature, createReducer, on} from "@ngrx/store";
@@ -11,6 +11,7 @@ export interface SearchState {
   selectedEventId: number;
   categories: EventCategory[];
   events: EventData[];
+  comments: CommentData[];
 }
 
 const initialState: SearchState = {
@@ -29,7 +30,8 @@ const initialState: SearchState = {
   },
   selectedEventId: 0,
   categories: [],
-  events: []
+  events: [],
+  comments: []
 }
 
 const searchFeature = createFeature({
@@ -95,5 +97,6 @@ export const {
   selectPageRequest,
   selectSelectedEventId,
   selectCategories,
-  selectEvents
+  selectEvents,
+  selectComments
 } = searchFeature;

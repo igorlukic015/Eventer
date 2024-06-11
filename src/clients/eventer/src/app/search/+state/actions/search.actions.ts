@@ -22,6 +22,9 @@ export const searchActions = createActionGroup({
     'Delete event category success': props<{id: number}>(),
     'Update filter categories': props<{categoryId: number, isAdding: boolean}>(),
     'Update filter conditions': props<{condition: string, isAdding: boolean}>(),
+    'Get comments' : emptyProps(),
+    'Get comments success' : props<{comments: PagedResponse}>(),
+    'Get comments fail': props<{error: string}>(),
     'Default action': emptyProps(),
   }
 })

@@ -3,6 +3,9 @@
 ></eventer-nav-bar>
 
 <main class="p-8" style="margin-top: -45px">
+  <button class="btn btn-primary btn-square" (click)="handleBackClick()">
+    <svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision" width="24" height="24" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 512 404.43"><path fill-rule="nonzero" d="m68.69 184.48 443.31.55v34.98l-438.96-.54 173.67 159.15-23.6 25.79L0 199.94 218.6.02l23.6 25.79z"/></svg>
+  </button>
   @if (event().eventId !== 0) {
     <div class="container mx-auto bg-blue-950 rounded-lg shadow-lg p-8">
       <h1 class="text-3xl font-bold mb-4">{{ event().title }}</h1>
@@ -12,13 +15,7 @@
         }
       </div>
 
-      <div class="carousel carousel-center w-full p-4 space-x-4 rounded-box " id="imageCarousel">
-        @for (image of event().images; track image.id) {
-          <div class="carousel-item w-3/5">
-            <img [src]="image.url" [alt]="image.name" [id]="image.id" class="w-full object-cover rounded-lg"/>
-          </div>
-        }
-      </div>
+      <eventer-image-carousel [images]="event().images"></eventer-image-carousel>
 
       <div class="mb-4">
         <p class="text-lg font-medium mb-4">{{ event().location }}</p>
@@ -34,21 +31,8 @@
 
       <div class="mb-4">{{ event().description }}</div>
 
-      <div class="flex flex-col items-center mt-10">
-        <span class="text-xl font-bold mb-4">Leave a comment</span>
-        <textarea class="textarea textarea-bordered w-2/5" placeholder="..."></textarea>
-        <div class="flex flex-col-reverse mt-10 w-2/5 justify-evenly items-center">
-          @for (comment of [1, 2, 3, 4]; track comment) {
-            <div class="flex flex-col mb-8 w-full justify-between bg-sky-100 rounded-xl text-base-100 p-6">
-              <div class="flex mb-4">
-                <img src="/assets/default_avatar.png" class="max-w-12">
-                <span class="self-center ml-4">Username</span>
-              </div>
-              <textarea class="textarea textarea-bordered text-gray-300" [value]="comment" readonly></textarea>
-            </div>
-          }
-        </div>
-      </div>
+      <eventer-comment-section [comments]="comments()">
+      </eventer-comment-section>
 
     </div>
   }

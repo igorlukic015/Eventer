@@ -362,7 +362,7 @@ public class EventServiceImpl implements EventService {
 
     @Transactional(readOnly = true)
     @Override
-    public Result<Page<Event>> getEvents(Pageable pageable, String searchTerm) {
+        public Result<Page<Event>> getEvents(Pageable pageable, String searchTerm) {
         logger.info("Attempting to get events");
 
         Page<com.eventer.admin.data.model.Event> foundEvents =

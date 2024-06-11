@@ -7,20 +7,22 @@ public class Comment {
     private String text;
     private Long eventId;
     private Long userId;
+    private String userProfileImageUrl;
 
-    private Comment(Long id, String text, Long eventId, Long userId) {
+    private Comment(Long id, String text, Long eventId, Long userId, String userProfileImageUrl) {
         this.id = id;
         this.text = text;
         this.eventId = eventId;
         this.userId = userId;
+        this.userProfileImageUrl = userProfileImageUrl;
     }
 
-    public static Result<Comment> create(Long id, String text, Long eventId, Long userId) {
-        return Result.success(new Comment(id, text, eventId, userId));
+    public static Result<Comment> create(Long id, String text, Long eventId, Long userId, String userProfileImageUrl) {
+        return Result.success(new Comment(id, text, eventId, userId, userProfileImageUrl));
     }
 
-    public static Result<Comment> create(String text, Long eventId, Long userId) {
-        return Result.success(new Comment(null, text, eventId, userId));
+    public static Result<Comment> create(String text, Long eventId, Long userId, String userProfileImageUrl) {
+        return Result.success(new Comment(null, text, eventId, userId, userProfileImageUrl));
     }
 
     public Long getId() {
@@ -37,5 +39,9 @@ public class Comment {
 
     public Long getUserId() {
         return userId;
+    }
+
+    public String getUserProfileImageUrl() {
+        return userProfileImageUrl;
     }
 }

@@ -98,10 +98,10 @@ public class CacheEventServiceImpl implements CacheEventService {
 
         List<Event> allEvents =
                 Objects.equals(searchTerm, "")
-                        ? entityStream.of(Event.class).skip(start).collect(Collectors.toList())
+                        ? entityStream.of(Event.class)
+                        .collect(Collectors.toList())
                         : entityStream
                                 .of(Event.class)
-                                .skip(start)
                                 .filter(
                                         Event$.TITLE
                                                 .containing(searchTerm)
@@ -140,11 +140,9 @@ public class CacheEventServiceImpl implements CacheEventService {
 
         logger.info("Events found successfully");
 
-        final int end = Math.min((start + pageable.getPageSize()), allEvents.size());
+        var resultList = allEvents.stream().skip(start).limit(pageable.getPageSize()).toList();
 
-        allEvents = allEvents.stream().skip(start).limit(pageable.getPageSize()).toList();
-
-        return new PageImpl<>(allEvents.subList(start, end), pageable, allEvents.size());
+        return new PageImpl<>(resultList, pageable, allEvents.size());
     }
 
     @Transactional

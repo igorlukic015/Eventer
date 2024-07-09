@@ -50,6 +50,11 @@
         </div>
       }
     </div>
+    <eventer-table-paginator
+      class="flex h-20"
+      (pageChanged)="handlePageChanged($event)"
+      [totalPages]="totalPages()"
+    ></eventer-table-paginator>
   </div>
 </main>
 

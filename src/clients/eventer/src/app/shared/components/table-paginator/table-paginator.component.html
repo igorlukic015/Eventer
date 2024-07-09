@@ -1,0 +1,9 @@
+<div class="join flex my-3.5 h-full">
+  <button type="button" class="join-item btn btn-outline w-3/5 h-full" [disabled]="isPreviousDisabled()"
+          (click)="onPreviousPageClick($event)"
+  >«</button>
+  <p class="join-item btn btn-outline w-11/12 h-full">Page {{currentPage() +1}}</p>
+  <button type="button" class="join-item btn btn-outline w-3/5 h-full" [disabled]="isNextDisabled()"
+          (click)="onNextPageClick($event)"
+  >»</button>
+</div>

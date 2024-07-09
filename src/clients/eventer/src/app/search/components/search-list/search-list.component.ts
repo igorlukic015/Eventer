@@ -6,12 +6,14 @@ import {SearchFacade} from "../../+state/facade/search.facade";
 import {takeUntil, withLatestFrom} from "rxjs";
 import {EventCategory, EventData} from "../../contracts/interfaces";
 import {WeatherCondition} from "../../../shared/contracts/models";
+import {TablePaginatorComponent} from "../../../shared/components/table-paginator/table-paginator.component";
 
 @Component({
   selector: 'eventer-search-list',
   standalone: true,
   imports: [
-    SearchListItemComponent
+    SearchListItemComponent,
+    TablePaginatorComponent
   ],
   providers: [SearchFacade],
   templateUrl: './search-list.component.html',
@@ -43,6 +45,10 @@ export class SearchListComponent extends DestroyableComponent implements OnInit 
   handleOpenDetails($event: any, eventId: number) {
     this.searchFacade.updateSelectedEventId(eventId);
     this.router.navigate(['details'])
+  }
+
+  handlePageChanged(currentPage: number): void {
+    this.searchFacade.updatePageNumber(currentPage);
   }
 
   ngOnInit() {

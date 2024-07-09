@@ -1,4 +1,4 @@
-export const defaultPageSize: number = 12;
+export const defaultPageSize: number = 6;
 
 export const baseApiUrl: string = 'http://localhost:9004';
 

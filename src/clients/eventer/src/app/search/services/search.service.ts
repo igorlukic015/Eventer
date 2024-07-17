@@ -1,8 +1,8 @@
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {PagedResponse} from "../../shared/contracts/interfaces";
+import {Forecast, PagedResponse} from "../../shared/contracts/interfaces";
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
-import {baseApiUrl} from "../../shared/contracts/statics";
+import {baseApiUrl, forecastApiUrl} from "../../shared/contracts/statics";
 import {CommentData, EventCategory, ExtendedSearchPageRequest} from "../contracts/interfaces";
 
 @Injectable({providedIn: 'root'})
@@ -10,6 +10,7 @@ export class SearchService {
   private readonly eventRoute = 'api/v1/event';
   private readonly categoriesRoute = 'api/v1/event-category';
   private readonly commentsRoute = 'api/v1/comment';
+  private readonly forecastRoute = 'api/v1/forecast';
 
   constructor(private httpClient: HttpClient) {
   }
@@ -37,7 +38,7 @@ export class SearchService {
       params = params.append('conditions', conditionsQuery);
     }
 
-    return this.httpClient.get<PagedResponse>(`${baseApiUrl}/${this.eventRoute}`, {params: params }, );
+    return this.httpClient.get<PagedResponse>(`${baseApiUrl}/${this.eventRoute}`, {params }, );
   }
 
   getEventCategories() {
@@ -50,5 +51,11 @@ export class SearchService {
 
   getComments(eventId: number) {
     return this.httpClient.get<PagedResponse>(`${baseApiUrl}/${this.commentsRoute}/${eventId}`)
+  }
+
+  getForecast(location: string, date: string) {
+    let params: HttpParams = new HttpParams().set('city', location).set('date', date);
+
+    return this.httpClient.get<Forecast>(`${forecastApiUrl}/${this.forecastRoute}`, {params})
   }
 }

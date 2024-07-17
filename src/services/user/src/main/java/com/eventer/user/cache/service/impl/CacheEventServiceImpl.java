@@ -190,6 +190,7 @@ public class CacheEventServiceImpl implements CacheEventService {
                                                 dto.title(),
                                                 dto.description(),
                                                 dto.location(),
+                                                dto.date(),
                                                 dto.weatherConditions(),
                                                 dto.categories(),
                                                 dto.images()))

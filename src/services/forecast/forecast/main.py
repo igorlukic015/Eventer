@@ -1,3 +1,4 @@
+from starlette.middleware.cors import CORSMiddleware
 from uvicorn import run as uvicorn_run
 
 from fastapi import FastAPI
@@ -23,6 +24,18 @@ app.include_router(router)
 
 app.add_exception_handler(Exception, general_exception_handler)
 app.add_exception_handler(BusinessException, business_exception_handler)
+
+origins = [
+    "http://localhost:9009",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def main(arguments):
     try:

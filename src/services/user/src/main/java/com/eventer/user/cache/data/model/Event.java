@@ -38,6 +38,7 @@ public class Event {
             String title,
             String description,
             String location,
+            Instant date,
             Set<String> weatherConditions,
             Set<EventCategoryDTO> categories,
             Set<ImageDTO> images) {
@@ -46,6 +47,7 @@ public class Event {
         this.title = title;
         this.description = description;
         this.location = location;
+        this.date = date;
         this.weatherConditions = weatherConditions;
         this.categories = categories;
         this.images = images;

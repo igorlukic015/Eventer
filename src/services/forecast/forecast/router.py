@@ -14,7 +14,7 @@ async def healthcheck():
 
 
 @router.get(f"/api/v{API_VERSION}/forecast", response_model=WeatherResponse)
-async def get_forecast_for_city(city: str):
-    result = await get_forecast(city)
+async def get_forecast_for_city(city: str, date: str):
+    result = await get_forecast(city, date)
 
     return result.serialize()

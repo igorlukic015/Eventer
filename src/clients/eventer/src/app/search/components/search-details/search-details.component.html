@@ -3,9 +3,18 @@
 ></eventer-nav-bar>
 
 <main class="p-8" style="margin-top: -45px">
-  <button class="btn btn-primary btn-square" (click)="handleBackClick()">
-    <svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision" width="24" height="24" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 512 404.43"><path fill-rule="nonzero" d="m68.69 184.48 443.31.55v34.98l-438.96-.54 173.67 159.15-23.6 25.79L0 199.94 218.6.02l23.6 25.79z"/></svg>
-  </button>
+  <div class="flex container mx-auto">
+    <button class="btn btn-primary btn-square" (click)="handleBackClick()">
+      <svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision" width="24" height="24" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 512 404.43"><path fill-rule="nonzero" d="m68.69 184.48 443.31.55v34.98l-438.96-.54 173.67 159.15-23.6 25.79L0 199.94 218.6.02l23.6 25.79z"/></svg>
+    </button>
+    @if (isForecastIncompatible()) {
+      <div class="w-full pl-20">
+      <button class="btn btn-warning pointer-events-none w-full">
+        Event may be cancelled due to weather forecast.
+      </button>
+      </div>
+    }
+  </div>
   @if (event().eventId !== 0) {
     <div class="container mx-auto bg-blue-950 rounded-lg shadow-lg p-8">
       <h1 class="text-3xl font-bold mb-4">{{ event().title }}</h1>

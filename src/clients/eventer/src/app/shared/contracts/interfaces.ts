@@ -48,6 +48,16 @@ export interface UpdateEntityData {
   data: any,
 }
 
+export interface Forecast {
+  region: string;
+  date: string;
+  weather: number;
+  icon: string;
+  temp: number;
+  min_temp: number;
+  max_temp: number;
+}
+
 interface PageableSortProperties {
   empty: boolean;
   sorted: boolean;

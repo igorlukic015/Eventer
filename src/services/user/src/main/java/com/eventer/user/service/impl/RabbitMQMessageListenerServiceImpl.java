@@ -63,6 +63,7 @@ public class RabbitMQMessageListenerServiceImpl implements MessageListenerServic
                         eventDTO.title(),
                         eventDTO.description(),
                         eventDTO.location(),
+                        eventDTO.date(),
                         eventDTO.weatherConditions(),
                         eventDTO.categories(),
                         eventDTO.images());

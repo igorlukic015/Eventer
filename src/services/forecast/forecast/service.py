@@ -13,7 +13,7 @@ from forecast.cache import get_cache, save_weather, load_weather, load_coordinat
 from forecast.logger import logger
 
 
-async def get_forecast(city: str):
+async def get_forecast(city: str, date: str):
     logger.info(f"Forecast requested for city {city}.")
 
     cache = await get_cache()
@@ -26,13 +26,13 @@ async def get_forecast(city: str):
 
     region = await get_region(lat, lon)
 
-    return await get_conditions(region, lat, lon)
+    return await get_conditions(region, lat, lon, date)
 
 
-async def get_conditions(region, lat, lon):
+async def get_conditions(region, lat, lon, date):
     cache = await get_cache()
 
-    date = datelib.today().isoformat()
+    # date = datelib.today().isoformat()
 
     cached_weather = await load_weather(region, date, cache)
 
@@ -121,7 +121,7 @@ async def parse_data(region, received_data):
     for hourly_data in forecast_data[::8]:
         try:
             date = datelib.fromtimestamp(int(hourly_data["dt"])).isoformat()
-            weather = hourly_data["weather"][0]["main"]
+            weather = hourly_data["weather"][0]["id"]
             icon = await map_icon_url(hourly_data["weather"][0]["icon"])
             temp = hourly_data["main"]["temp"]
             min_temp = hourly_data["main"]["temp_min"]

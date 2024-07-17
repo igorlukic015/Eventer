@@ -11,6 +11,7 @@ import {CommentData, EventData} from "../../contracts/interfaces";
 import {Location, NgForOf, NgIf} from "@angular/common";
 import {CommentSectionComponent} from "../../../shared/components/comment-section/comment-section.component";
 import {ImageCarouselComponent} from "../../../shared/components/image-carousel/image-carousel.component";
+import {SearchService} from "../../services/search.service";
 
 @Component({
   selector: 'eventer-search-details',
@@ -42,9 +43,12 @@ export class SearchDetailsComponent extends DestroyableComponent implements OnIn
 
   comments: WritableSignal<CommentData[]> = signal([])
 
+  isForecastIncompatible: WritableSignal<boolean> = signal(false);
+
   constructor(private readonly searchFacade: SearchFacade,
               private readonly router: Router,
               private readonly toastrService: ToastrService,
+              private readonly searchService: SearchService,
               private readonly location: Location) {
     super();
   }
@@ -66,6 +70,25 @@ export class SearchDetailsComponent extends DestroyableComponent implements OnIn
         this.router.navigate(['']);
         return;
       }
+
+      let date = `${foundEvent.date.getFullYear()}-${foundEvent.date.getMonth()+1}-${foundEvent.date.getDay()}`;
+
+      this.searchService.getForecast(foundEvent.location, date).subscribe((forecastResult) => {
+        let weather;
+        if (forecastResult.weather >= 200 && forecastResult.weather < 300 || forecastResult.weather >= 500 && forecastResult.weather < 600){
+          weather = 'RAIN';
+        } else if(forecastResult.weather >= 300 && forecastResult.weather < 400){
+          weather = 'DRIZZLE';
+        } else if(forecastResult.weather >= 600 && forecastResult.weather < 700) {
+          weather = 'SNOW';
+        } else if(forecastResult.weather >= 800) {
+          weather = 'CLEAR';
+        } else {
+          weather = 'ATMOSPHERIC_DISTURBANCE';
+        }
+
+        this.isForecastIncompatible.set(!foundEvent.weatherConditions.includes(weather))
+      })
 
       this.event.set(foundEvent);
     })

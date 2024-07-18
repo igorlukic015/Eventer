@@ -17,7 +17,7 @@ public class EventSubscription extends AbstractAuditingEntity<Long> {
     @Column(name = "eventId", nullable = false)
     private Long eventId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 

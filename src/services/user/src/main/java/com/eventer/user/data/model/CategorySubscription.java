@@ -16,7 +16,7 @@ public class CategorySubscription {
     @Column(name = "categoryId", nullable = false)
     private Long categoryId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
@@ -32,5 +32,9 @@ public class CategorySubscription {
     @Override
     public int hashCode() {
         return Objects.hash(id, categoryId, user.getId());
+    }
+
+    public User getUser() {
+        return this.user;
     }
 }

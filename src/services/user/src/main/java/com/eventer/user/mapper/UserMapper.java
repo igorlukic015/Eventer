@@ -13,6 +13,9 @@ import com.eventer.user.web.dto.user.UpdateProfileDTO;
 import com.eventer.user.web.dto.user.UserDTO;
 import com.github.igorlukic015.resulter.Result;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class UserMapper {
     public static UpdateProfileRequest toRequest(UpdateProfileDTO dto) {
         return new UpdateProfileRequest(dto.id(), dto.username(), dto.name(), dto.city());
@@ -33,7 +36,16 @@ public class UserMapper {
 
     public static UserDTO toDTO(User user) {
         return new UserDTO(
-                user.getId(), user.getUsername(), user.getName(), user.getCity(), ImageMapper.toDTO(user.getProfileImage()));
+                user.getId(),
+                user.getUsername(),
+                user.getName(),
+                user.getCity(),
+                ImageMapper.toDTO(user.getProfileImage()));
+    }
+
+    public static Result<Set<User>> toDomainSet(Set<com.eventer.user.data.model.User> foundUsers) {
+        return Result.getResultValueSet(
+                foundUsers.stream().map(UserMapper::toDomain).collect(Collectors.toSet()));
     }
 
     public static Result<User> toDomain(com.eventer.user.data.model.User user) {

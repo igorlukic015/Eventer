@@ -10,6 +10,7 @@ import com.eventer.user.contracts.ApplicationStatics;
 import com.eventer.user.contracts.message.Message;
 import com.eventer.user.contracts.message.MessageStatics;
 import com.eventer.user.service.MessageListenerService;
+import com.eventer.user.service.SubscriptionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -22,14 +23,16 @@ public class RabbitMQMessageListenerServiceImpl implements MessageListenerServic
     private final ObjectMapper objectMapper;
     private final CacheEventService cacheEventService;
     private final CacheEventCategoryService cacheEventCategoryService;
+    private final SubscriptionService subscriptionService;
 
     public RabbitMQMessageListenerServiceImpl(
             ObjectMapper objectMapper,
             CacheEventService cacheEventService,
-            CacheEventCategoryService cacheEventCategoryService) {
+            CacheEventCategoryService cacheEventCategoryService, SubscriptionService subscriptionService) {
         this.objectMapper = objectMapper;
         this.cacheEventService = cacheEventService;
         this.cacheEventCategoryService = cacheEventCategoryService;
+        this.subscriptionService = subscriptionService;
     }
 
     @RabbitListener(queues = ApplicationStatics.EVENTER_DATA_MESSAGE_QUEUE)
@@ -70,10 +73,12 @@ public class RabbitMQMessageListenerServiceImpl implements MessageListenerServic
 
         if (Objects.equals(message.getAction(), MessageStatics.ACTION_CREATED)) {
             this.cacheEventService.add(event);
+            this.subscriptionService.sendNewEventNotification(event);
             return;
         }
 
         this.cacheEventService.update(event);
+        this.subscriptionService.sendEventUpdateNotification(event);
     }
 
     private void handleEventCategoryMessage(Message message) {

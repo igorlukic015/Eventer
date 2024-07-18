@@ -7,7 +7,6 @@ import com.eventer.user.data.repository.UserRepository;
 import com.eventer.user.mapper.CommentMapper;
 import com.eventer.user.security.contracts.CustomUserDetails;
 import com.eventer.user.service.CommentService;
-import com.eventer.user.service.UserService;
 import com.eventer.user.service.domain.Comment;
 import com.eventer.user.utils.ResultErrorMessages;
 import com.github.igorlukic015.resulter.Result;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.util.Objects;
 import java.util.Optional;
 
 

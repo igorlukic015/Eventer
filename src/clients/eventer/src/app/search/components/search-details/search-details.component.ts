@@ -4,7 +4,7 @@ import {NavBarComponent} from "../../../shared/components/nav-bar/nav-bar.compon
 import {SearchListComponent} from "../search-list/search-list.component";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
 import {SearchFacade} from "../../+state/facade/search.facade";
-import {take, takeUntil, withLatestFrom} from "rxjs";
+import {catchError, of, take, takeUntil, withLatestFrom} from "rxjs";
 import {Router} from "@angular/router";
 import {ToastrService} from "ngx-toastr";
 import {CommentData, EventData} from "../../contracts/interfaces";
@@ -45,6 +45,8 @@ export class SearchDetailsComponent extends DestroyableComponent implements OnIn
 
   isForecastIncompatible: WritableSignal<boolean> = signal(false);
 
+  isEventFollowed: WritableSignal<boolean> = signal(true);
+
   constructor(private readonly searchFacade: SearchFacade,
               private readonly router: Router,
               private readonly toastrService: ToastrService,
@@ -55,6 +57,19 @@ export class SearchDetailsComponent extends DestroyableComponent implements OnIn
 
   handleBackClick() {
     this.location.back()
+  }
+
+  handleFollowClick() {
+    this.searchService.subscribeToEvent(this.event().eventId).pipe(
+      take(1),
+      takeUntil(this.destroyed$),
+      catchError((error) => {
+        this.toastrService.error('Praćenje događaja nije uspelo.')
+        return of()
+      })
+    ).subscribe(() => {
+      this.isEventFollowed.set(!this.isEventFollowed());
+    });
   }
 
   ngOnInit() {
@@ -71,17 +86,17 @@ export class SearchDetailsComponent extends DestroyableComponent implements OnIn
         return;
       }
 
-      let date = `${foundEvent.date.getFullYear()}-${foundEvent.date.getMonth()+1}-${foundEvent.date.getDay()}`;
+      let date = `${foundEvent.date.getFullYear()}-${foundEvent.date.getMonth() + 1}-${foundEvent.date.getDay()}`;
 
       this.searchService.getForecast(foundEvent.location, date).subscribe((forecastResult) => {
         let weather;
-        if (forecastResult.weather >= 200 && forecastResult.weather < 300 || forecastResult.weather >= 500 && forecastResult.weather < 600){
+        if (forecastResult.weather >= 200 && forecastResult.weather < 300 || forecastResult.weather >= 500 && forecastResult.weather < 600) {
           weather = 'RAIN';
-        } else if(forecastResult.weather >= 300 && forecastResult.weather < 400){
+        } else if (forecastResult.weather >= 300 && forecastResult.weather < 400) {
           weather = 'DRIZZLE';
-        } else if(forecastResult.weather >= 600 && forecastResult.weather < 700) {
+        } else if (forecastResult.weather >= 600 && forecastResult.weather < 700) {
           weather = 'SNOW';
-        } else if(forecastResult.weather >= 800) {
+        } else if (forecastResult.weather >= 800) {
           weather = 'CLEAR';
         } else {
           weather = 'ATMOSPHERIC_DISTURBANCE';
@@ -92,6 +107,16 @@ export class SearchDetailsComponent extends DestroyableComponent implements OnIn
 
       this.event.set(foundEvent);
     })
+
+    this.searchFacade.selectedEventId$.pipe(
+      take(1),
+      takeUntil(this.destroyed$)
+    ).subscribe((selectedEventId) => {
+      this.searchService.getIsEventSubscribed(selectedEventId).pipe(
+        take(1),
+        takeUntil(this.destroyed$)
+      ).subscribe(isEventFollowed => this.isEventFollowed.set(isEventFollowed))
+    });
 
     this.searchFacade.selectedEventId$.pipe(
       takeUntil(this.destroyed$)

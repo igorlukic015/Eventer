@@ -11,6 +11,7 @@ export class SearchService {
   private readonly categoriesRoute = 'api/v1/event-category';
   private readonly commentsRoute = 'api/v1/comment';
   private readonly forecastRoute = 'api/v1/forecast';
+  private readonly subscriptionsRoute = 'api/v1/subscription'
 
   constructor(private httpClient: HttpClient) {
   }
@@ -57,5 +58,15 @@ export class SearchService {
     let params: HttpParams = new HttpParams().set('city', location).set('date', date);
 
     return this.httpClient.get<Forecast>(`${forecastApiUrl}/${this.forecastRoute}`, {params})
+  }
+
+  getIsEventSubscribed(selectedEventId: number) {
+    return this.httpClient.get<boolean>(`${baseApiUrl}/${this.subscriptionsRoute}/${selectedEventId}`);
+  }
+
+  subscribeToEvent(eventId: number) {
+    const body = {entityType: 'Event', entityId: eventId};
+
+    return this.httpClient.post<boolean>(`${baseApiUrl}/${this.subscriptionsRoute}`, body);
   }
 }

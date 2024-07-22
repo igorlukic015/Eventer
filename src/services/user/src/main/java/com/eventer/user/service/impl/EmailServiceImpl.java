@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 @Service
@@ -28,16 +31,14 @@ public class EmailServiceImpl implements EmailService {
         String subject = "Nov dogadjaj koji te mozda interesuje!";
 
         Context context = new Context();
-        context.setVariable("title", "Dodat je nov događaj u kategoriji koju pratite.");
+        context.setVariable("header", "Dodat je nov događaj u kategoriji koju pratite.");
+        context.setVariable("title", event.getTitle());
+        context.setVariable("location", event.getLocation());
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(event.getTitle());
-        builder.append(" se održava u ");
-        builder.append(event.getLocation());
-        builder.append(" na dan ");
-        builder.append(event.getDate().toString());
-
-        context.setVariable("message", builder.toString());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
+        LocalDateTime dateTime = LocalDateTime.ofInstant(event.getDate(), ZoneId.systemDefault());
+        String formattedDate = dateTime.format(formatter);
+        context.setVariable("date", formattedDate);
 
         try {
             this.send(to, subject, "SubscriptionNotificationEmail", context);
@@ -52,16 +53,14 @@ public class EmailServiceImpl implements EmailService {
         String subject = "Detalji događaja koji pratiš su izmenjeni.";
 
         Context context = new Context();
-        context.setVariable("title", "");
+        context.setVariable("header", "Izmenjeni detalji događaja");
+        context.setVariable("title", event.getTitle());
+        context.setVariable("location", event.getLocation());
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(event.getTitle());
-        builder.append(" se održava u ");
-        builder.append(event.getLocation());
-        builder.append(" na dan ");
-        builder.append(event.getDate().toString());
-
-        context.setVariable("message", builder.toString());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
+        LocalDateTime dateTime = LocalDateTime.ofInstant(event.getDate(), ZoneId.systemDefault());
+        String formattedDate = dateTime.format(formatter);
+        context.setVariable("date", formattedDate);
 
         try {
             this.send(to, subject, "SubscriptionNotificationEmail", context);

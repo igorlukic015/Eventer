@@ -13,8 +13,6 @@ import com.eventer.user.service.EmailService;
 import com.eventer.user.service.SubscriptionService;
 import com.eventer.user.utils.ResultErrorMessages;
 import com.github.igorlukic015.resulter.Result;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -73,16 +71,15 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     @Transactional
-    public Result create(String entityType, Long entityId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+    public Result create(String entityType, Long entityId, CustomUserDetails userDetails) {
+        if (userDetails == null) {
             return Result.invalid(ResultErrorMessages.userNotFound);
         }
 
+        String principalUsername = userDetails.getUsername();
+
         Optional<User> foundUser =
-                this.userRepository.findByUsername(((CustomUserDetails) authentication.getPrincipal()).getUsername());
+                this.userRepository.findByUsername(principalUsername);
 
         if (foundUser.isEmpty()) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -106,6 +103,13 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             return Result.success();
         }
 
+        Optional<CategorySubscription> existingSubscription = this.categorySubscriptionRepository.findByCategoryIdAndUserId(entityId, foundUser.get().getId());
+
+        if (existingSubscription.isPresent()) {
+            this.categorySubscriptionRepository.delete(existingSubscription.get());
+            return Result.success();
+        }
+
         CategorySubscription subscription = new CategorySubscription();
         subscription.setCategoryId(entityId);
         subscription.setUser(foundUser.get());
@@ -115,16 +119,16 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public Result<Boolean> getIsEventSubscribed(Long eventId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+    @Transactional(readOnly = true)
+    public Result<Boolean> getIsEventSubscribed(Long eventId, CustomUserDetails userDetails) {
+        if (userDetails == null) {
             return Result.invalid(ResultErrorMessages.userNotFound);
         }
 
+        String principalUsername = userDetails.getUsername();
+
         Optional<User> foundUser =
-                this.userRepository.findByUsername(((CustomUserDetails) authentication.getPrincipal()).getUsername());
+                this.userRepository.findByUsername(principalUsername);
 
         if (foundUser.isEmpty()) {
             return Result.invalid(ResultErrorMessages.userNotFound);
@@ -132,5 +136,28 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Optional<EventSubscription> foundSubscription = this.eventSubscriptionRepository.findByEventIdAndUserId(eventId, foundUser.get().getId());
         return Result.success(foundSubscription.isPresent());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Result<Set<Long>> getSubscribedCategoryIds(CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return Result.invalid(ResultErrorMessages.userNotFound);
+        }
+
+        String principalUsername = userDetails.getUsername();
+
+        Optional<User> foundUser =
+                this.userRepository.findByUsername(principalUsername);
+
+        if (foundUser.isEmpty()) {
+            return Result.invalid(ResultErrorMessages.userNotFound);
+        }
+
+        Set<CategorySubscription> foundSubscriptions = this.categorySubscriptionRepository.findAllByUserId(foundUser.get().getId());
+
+        Set<Long> ids = foundSubscriptions.stream().map(CategorySubscription::getCategoryId).collect(Collectors.toSet());
+
+        return Result.success(ids);
     }
 }

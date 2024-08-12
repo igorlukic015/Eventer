@@ -8,7 +8,13 @@ import com.eventer.user.cache.service.CacheEventService;
 import com.eventer.user.cache.web.AdminWebClient;
 import com.eventer.user.cache.web.dto.EventCategoryDTO;
 import com.eventer.user.cache.web.dto.EventDTO;
+import com.eventer.user.data.model.EventSubscription;
+import com.eventer.user.data.model.User;
+import com.eventer.user.data.repository.EventSubscriptionRepository;
+import com.eventer.user.data.repository.UserRepository;
+import com.eventer.user.security.contracts.CustomUserDetails;
 import com.eventer.user.utils.ResultErrorMessages;
+import com.github.igorlukic015.resulter.Result;
 import com.redis.om.spring.search.stream.EntityStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -32,7 +39,8 @@ public class CacheEventServiceImpl implements CacheEventService {
     private final String eventUri = "/api/v1/event/get-all";
     private final AdminWebClient adminWebClient;
     private final EventRepository eventRepository;
-    private final EventCategoryRepository eventCategoryRepository;
+    private final UserRepository userRepository;
+    private final EventSubscriptionRepository eventSubscriptionRepository;
     private static final Logger logger =
             LoggerFactory.getLogger(CacheEventCategoryServiceImpl.class);
 
@@ -40,11 +48,11 @@ public class CacheEventServiceImpl implements CacheEventService {
 
     public CacheEventServiceImpl(
             AdminWebClient adminWebClient,
-            EventRepository eventRepository,
-            EventCategoryRepository eventCategoryRepository) {
+            EventRepository eventRepository, UserRepository userRepository, EventSubscriptionRepository eventSubscriptionRepository) {
         this.adminWebClient = adminWebClient;
         this.eventRepository = eventRepository;
-        this.eventCategoryRepository = eventCategoryRepository;
+        this.userRepository = userRepository;
+        this.eventSubscriptionRepository = eventSubscriptionRepository;
     }
 
     @Transactional(readOnly = true)
@@ -143,6 +151,39 @@ public class CacheEventServiceImpl implements CacheEventService {
         var resultList = allEvents.stream().skip(start).limit(pageable.getPageSize()).toList();
 
         return new PageImpl<>(resultList, pageable, allEvents.size());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<Event> getEvents(final Pageable pageable, CustomUserDetails userDetails) {
+        logger.info("Attempting to get events");
+
+        final int start = (int) pageable.getOffset();
+
+        if (userDetails == null) {
+            throw new RuntimeException();
+        }
+
+        String principalUsername = userDetails.getUsername();
+
+        Optional<User> foundUser =
+                this.userRepository.findByUsername(principalUsername);
+
+        if (foundUser.isEmpty()) {
+            throw new RuntimeException();
+        }
+
+        Set<Long> subscribedEventIds = this.eventSubscriptionRepository.findAllByUserId(foundUser.get().getId()).stream().map(EventSubscription::getEventId).collect(Collectors.toSet());
+
+        List<Event> allEvents = entityStream.of(Event.class).collect(Collectors.toList());
+
+        List<Event> filteredEvents = allEvents.stream().filter(event -> subscribedEventIds.contains(event.getEventId())).toList();
+
+        logger.info("Events found successfully");
+
+        var resultList = filteredEvents.stream().skip(start).limit(pageable.getPageSize()).toList();
+
+        return new PageImpl<>(resultList, pageable, filteredEvents.size());
     }
 
     @Transactional

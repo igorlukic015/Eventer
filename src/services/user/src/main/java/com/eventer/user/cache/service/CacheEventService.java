@@ -1,6 +1,7 @@
 package com.eventer.user.cache.service;
 
 import com.eventer.user.cache.data.model.Event;
+import com.eventer.user.security.contracts.CustomUserDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,6 +17,8 @@ public interface CacheEventService {
     void reloadEvents();
 
     Page<Event> getEvents(final Pageable pageable, String searchTerm, String conditionsQuery, String categoriesQuery);
+
+    Page<Event> getEvents(final Pageable pageable, CustomUserDetails userDetails);
 
     void remove(Long deletedId);
 }

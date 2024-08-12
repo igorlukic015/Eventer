@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output, signal, WritableSignal} from '@angular/core';
 import {Router, RouterLink} from "@angular/router";
 import {RealTimeService} from "../../services/real-time.service";
-import {debounceTime, Subject} from "rxjs";
+import {debounceTime, filter, Subject} from "rxjs";
 
 @Component({
   selector: 'eventer-nav-bar',
@@ -26,7 +26,10 @@ export class NavBarComponent implements OnInit {
   constructor(private readonly router: Router,
               private readonly rts: RealTimeService
   ) {
-    this.debouncer.pipe(debounceTime(300)).subscribe(value => {
+    this.debouncer.pipe(
+      debounceTime(300),
+      filter(value => value?.length >= 2 || value.length == 0)
+    ).subscribe(value => {
       this.searchTermChanged.emit(value);
     })
   }

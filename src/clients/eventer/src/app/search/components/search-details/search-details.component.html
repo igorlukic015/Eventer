@@ -38,9 +38,7 @@
         <span class="font-medium mb-4">Available when weather is:</span>
         <div class="flex flex-wrap mt-2">
           @for (weather of event().weatherConditions; track weather) {
-            <span
-              class="bg-gray-300 text-gray-700 rounded-full px-3 py-1 mr-2 mb-2 max-w-24 text-center">{{ weather }}
-            </span>
+            <img src="{{weather | conditionToIcon}}">
           }
         </div>
       </div>

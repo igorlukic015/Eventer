@@ -12,6 +12,7 @@ import {Location, NgForOf, NgIf} from "@angular/common";
 import {CommentSectionComponent} from "../../../shared/components/comment-section/comment-section.component";
 import {ImageCarouselComponent} from "../../../shared/components/image-carousel/image-carousel.component";
 import {SearchService} from "../../services/search.service";
+import {ConditionToIconPipe} from "../../pipes/condition-to-icon.pipe";
 
 @Component({
   selector: 'eventer-search-details',
@@ -23,7 +24,8 @@ import {SearchService} from "../../services/search.service";
     NgForOf,
     NgIf,
     CommentSectionComponent,
-    ImageCarouselComponent
+    ImageCarouselComponent,
+    ConditionToIconPipe
   ],
   providers: [SearchFacade],
   templateUrl: './search-details.component.html',

@@ -32,9 +32,9 @@
         </div>
         <div class="collapse-content">
           @for (condition of WeatherCondition.all(); track condition.id) {
-            <div class="flex gap-5">
+            <div class="flex gap-5 items-center">
               <input type="checkbox" class="checkbox checkbox-sm" (change)="handleConditionUpdate($event, condition.name)" />
-              <span class="text-amber-300 w-4">{{condition.name}}</span>
+              <img src="{{condition.name | conditionToIcon}}">
             </div>
           }
         </div>

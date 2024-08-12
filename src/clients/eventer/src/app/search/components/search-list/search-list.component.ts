@@ -7,13 +7,15 @@ import {takeUntil, withLatestFrom} from "rxjs";
 import {EventCategory, EventData} from "../../contracts/interfaces";
 import {WeatherCondition} from "../../../shared/contracts/models";
 import {TablePaginatorComponent} from "../../../shared/components/table-paginator/table-paginator.component";
+import {ConditionToIconPipe} from "../../pipes/condition-to-icon.pipe";
 
 @Component({
   selector: 'eventer-search-list',
   standalone: true,
   imports: [
     SearchListItemComponent,
-    TablePaginatorComponent
+    TablePaginatorComponent,
+    ConditionToIconPipe
   ],
   providers: [SearchFacade],
   templateUrl: './search-list.component.html',

@@ -17,7 +17,7 @@
     @if (isForecastIncompatible()) {
       <div class="w-full pl-20">
       <button class="btn btn-warning pointer-events-none w-full">
-        Event may be cancelled due to weather forecast.
+        Događaj će možda biti otkazan zbog vremenske prognoze.
       </button>
       </div>
     }
@@ -35,7 +35,7 @@
 
       <div class="mb-4">
         <p class="text-lg font-medium mb-4">{{ event().location }}</p>
-        <span class="font-medium mb-4">Available when weather is:</span>
+        <span class="font-medium mb-4">Vremenski uslovi za održavanje:</span>
         <div class="flex flex-wrap mt-2">
           @for (weather of event().weatherConditions; track weather) {
             <img src="{{weather | conditionToIcon}}">

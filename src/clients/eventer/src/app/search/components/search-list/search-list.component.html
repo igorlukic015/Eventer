@@ -14,7 +14,7 @@
       <div class="collapse bg-base-200 w-1/4">
         <input type="checkbox" [checked]="areFiltersOpen()" (change)="filtersClick()" />
         <div class="collapse-title text-xl font-medium">
-          Categories
+          Kategorije
         </div>
         <div class="collapse-content">
           @for (item of categories(); track item.categoryId) {
@@ -28,7 +28,7 @@
       <div class="collapse bg-base-200 w-1/4">
         <input type="checkbox" [checked]="areFiltersOpen()" (change)="filtersClick()" />
         <div class="collapse-title text-xl font-medium">
-          Conditions
+          Vremenski uslovi
         </div>
         <div class="collapse-content">
           @for (condition of WeatherCondition.all(); track condition.id) {
@@ -46,7 +46,7 @@
         <eventer-search-list-item class="w-full" [event]="item" (dblclick)="handleOpenDetails($event, item.eventId)"></eventer-search-list-item>
       } @empty {
         <div>
-          No content
+          Nema sadržaja
         </div>
       }
     </div>

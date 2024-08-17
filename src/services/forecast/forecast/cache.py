@@ -19,14 +19,16 @@ async def save_weather(weather, cache: redis):
     data = weather.serialize()
 
     try:
+        # await cache.hset("proba", "{'jedan': 1}")
+
         await cache.json().set(f"{CacheIdentifiers.FORECAST}:{weather.region}@{data['date']}",
                                "$",
                                data)
 
         await cache.expire(f"{CacheIdentifiers.FORECAST}:{weather.region}@{data['date']}", TIME_TO_LIVE)
-
-    except:
-        logger.error(ErrorMessages.SAVING_WEATHER_FAILED)
+    #
+    # except :
+    #     logger.error(ErrorMessages.SAVING_WEATHER_FAILED)
 
     finally:
         await cache.close()

@@ -414,7 +414,7 @@ public class EventServiceImpl implements EventService {
                         Instant.now(),
                         Event.class.getSimpleName(),
                         action,
-                        Objects.equals(action, MessageStatics.ACTION_DELETED) ? id : event);
+                        Objects.equals(action, MessageStatics.ACTION_DELETED) ? id : EventMapper.toDTO(event));
 
         String messagePayload;
         try {

@@ -67,6 +67,9 @@ const eventFeature = createFeature({
     )),
     on(eventActions.createEventSuccess, (state, {createdEvent}) => (
       adapter.addOne(createdEvent, state), {...state, totalElements: state.totalElements +1}
+    )),
+    on(eventActions.updateEventSuccess, (state, {updatedEvent}) => (
+      adapter.setOne(updatedEvent, state)
     ))
   )
 })

@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Error><Code>NoSuchBucket</Code><Message>The specified bucket does not exist</Message><RequestId>e07bc663-10ee-4d93-940f-708e980887f6</RequestId><BucketName>eventer-images</BucketName></Error>

@@ -428,6 +428,9 @@ public class EventServiceImpl implements EventService {
         }
 
         this.messageSenderService.sendMessage(
+                ApplicationStatics.RTS_MESSAGE_QUEUE, messagePayload);
+
+        this.messageSenderService.sendMessage(
                 ApplicationStatics.EVENTER_DATA_MESSAGE_QUEUE, messagePayload);
 
         logger.info("Message sent successfully");

@@ -70,6 +70,7 @@ export class SearchEffects {
     this.actions$.pipe(
       ofType(updateEntity),
       map((action) => {
+        console.log(action)
         if (action.payload.actionType === ActionType.created) {
           return action.payload.entityType === ListenedEntity.event ?
             searchActions.createEventSuccess({createdEvent: {...action.payload.data, eventId: action.payload.data.id}}) :

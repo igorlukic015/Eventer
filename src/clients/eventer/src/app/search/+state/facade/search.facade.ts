@@ -51,6 +51,14 @@ export class SearchFacade {
     this.store.dispatch(searchActions.createComment({text, eventId}));
   }
 
+  updateComment(text: string, commentId: number) {
+    this.store.dispatch(searchActions.updateComment({text, commentId}));
+  }
+
+  deleteComment(commentId: number){
+    this.store.dispatch(searchActions.deleteComment({commentId}));
+  }
+
   getComments() {
     this.store.dispatch(searchActions.getComments());
   }

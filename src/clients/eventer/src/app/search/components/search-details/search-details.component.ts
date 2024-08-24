@@ -88,7 +88,7 @@ export class SearchDetailsComponent extends DestroyableComponent implements OnIn
         return;
       }
 
-      let date = `${foundEvent.date.getFullYear()}-${foundEvent.date.getMonth() + 1}-${foundEvent.date.getDate()}`;
+      let date = `${foundEvent.date.getFullYear()}-${foundEvent.date.getMonth() < 9 ? '0' : ''}${foundEvent.date.getMonth() + 1}-${foundEvent.date.getDate() < 10 ? '0' : ''}${foundEvent.date.getDate()}`;
 
       this.searchService.getForecast(foundEvent.location, date).pipe(
         take(1),

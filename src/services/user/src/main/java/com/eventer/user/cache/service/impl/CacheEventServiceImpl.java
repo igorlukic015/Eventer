@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -115,6 +116,8 @@ public class CacheEventServiceImpl implements CacheEventService {
                                                 .containing(searchTerm)
                                                 .or(Event$.DESCRIPTION.containing(searchTerm)))
                                 .collect(Collectors.toList());
+
+        allEvents = allEvents.stream().filter(event -> event.getDate().isAfter(Instant.now())).toList();
 
         if (StringUtils.hasText(categoriesQuery)) {
             List<Long> categoriesQueryElements =

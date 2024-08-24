@@ -4,7 +4,7 @@ from aiohttp import ClientSession
 
 from json import load
 
-from datetime import date as datelib
+from datetime import datetime, date as datelib, timedelta
 
 from forecast.config import config
 from forecast.statics import ErrorMessages, Regions, WEATHER_API_URL
@@ -15,6 +15,15 @@ from forecast.logger import logger
 
 async def get_forecast(city: str, date: str):
     logger.info(f"Forecast requested for city {city}.")
+
+    date_obj = datetime.strptime(date, '%Y-%m-%d')
+
+    today = datetime.today()
+
+    five_days_later = today + timedelta(days=5)
+
+    if date_obj < today or date_obj > five_days_later:
+        raise BusinessException(HTTPStatus.BAD_REQUEST, ErrorMessages.INVALID_DATE_RANGE)
 
     cache = await get_cache()
 
@@ -31,8 +40,6 @@ async def get_forecast(city: str, date: str):
 
 async def get_conditions(region, lat, lon, date):
     cache = await get_cache()
-
-    # date = datelib.today().isoformat()
 
     cached_weather = await load_weather(region, date, cache)
 
@@ -53,8 +60,12 @@ async def get_conditions(region, lat, lon, date):
 
     searched_weather = None
 
+    date_object = datetime.strptime(date, '%Y-%m-%d')
+
     for weather in forecast:
-        if weather.date == date:
+        weather_date_object = datetime.strptime(weather.date, '%Y-%m-%d')
+
+        if date_object == weather_date_object:
             searched_weather = weather
 
         await save_weather(weather, cache)

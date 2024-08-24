@@ -91,9 +91,15 @@ const searchFeature = createFeature({
     })),
     on(searchActions.getCommentsSuccess, (state, {pagedResponse}) => ({
       ...state, comments: pagedResponse.content
+    })),
+    on(searchActions.updateCommentSuccess, (state, {updatedComment}) => ({
+      ...state, comments: [...state.comments.map((c) => c.id === updatedComment.id ? updatedComment : c)]
+    })),
+    on(searchActions.deleteCommentSuccess, (state, {id}) => ({
+      ...state, comments: state.comments.filter((c) => c.id !== id)
     }))
   )
-});
+})
 
 export const {
   name: searchFeatureKey,

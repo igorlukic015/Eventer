@@ -50,6 +50,14 @@ export class SearchService {
     return this.httpClient.post<CommentData>(`${baseApiUrl}/${this.commentsRoute}`, {text, eventId})
   }
 
+  updateComment(text: string, id: number) {
+    return this.httpClient.put<CommentData>(`${baseApiUrl}/${this.commentsRoute}`, {text, id})
+  }
+
+  deleteComment(commentId: number) {
+    return this.httpClient.delete<CommentData>(`${baseApiUrl}/${this.commentsRoute}/${commentId}`)
+  }
+
   getComments(eventId: number) {
     return this.httpClient.get<PagedResponse>(`${baseApiUrl}/${this.commentsRoute}/${eventId}`)
   }

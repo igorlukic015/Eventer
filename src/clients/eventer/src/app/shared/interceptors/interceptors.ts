@@ -28,6 +28,8 @@ export function tokenInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn)
       }
 
       localStorage.removeItem('token');
+      localStorage.removeItem('profileImageUrl');
+      localStorage.removeItem('username');
 
       router.navigate(['login'])
 

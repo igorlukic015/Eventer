@@ -1,6 +1,7 @@
 package com.eventer.user.service.impl;
 
 import com.eventer.user.contracts.comment.CreateCommentRequest;
+import com.eventer.user.contracts.comment.UpdateCommentRequest;
 import com.eventer.user.data.model.User;
 import com.eventer.user.data.repository.CommentRepository;
 import com.eventer.user.data.repository.UserRepository;
@@ -12,12 +13,11 @@ import com.eventer.user.utils.ResultErrorMessages;
 import com.github.igorlukic015.resulter.Result;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -49,16 +49,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public Result<Comment> create(CreateCommentRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return Result.invalid(ResultErrorMessages.userNotFound);
-        }
-
+    public Result<Comment> create(CreateCommentRequest request, CustomUserDetails userDetails) {
         Optional<User> foundUser =
-                this.userRepository.findByUsername(((CustomUserDetails) authentication.getPrincipal()).getUsername());
+                this.userRepository.findByUsername(userDetails.getUsername());
 
         if (foundUser.isEmpty()) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -77,5 +70,63 @@ public class CommentServiceImpl implements CommentService {
         comment = this.commentRepository.save(comment);
 
         return CommentMapper.toDomain(comment);
+    }
+
+    @Override
+    public Result<Comment> update(UpdateCommentRequest request, CustomUserDetails userDetails) {
+        Optional<User> foundUser =
+                this.userRepository.findByUsername(userDetails.getUsername());
+
+        if (foundUser.isEmpty()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.invalid(ResultErrorMessages.userNotFound);
+        }
+
+        Optional<com.eventer.user.data.model.Comment> foundComment = this.commentRepository.findById(request.id());
+
+        if (foundComment.isEmpty()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.invalid(ResultErrorMessages.commentNotFound);
+        }
+
+        if (!Objects.equals(foundComment.get().getUser().getUsername(), foundUser.get().getUsername())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.invalid(ResultErrorMessages.editCommentNotAllowed);
+        }
+
+        com.eventer.user.data.model.Comment comment = foundComment.get();
+
+        comment.setText(request.text());
+
+        comment = this.commentRepository.save(comment);
+
+        return CommentMapper.toDomain(comment);
+    }
+
+    @Override
+    public Result delete(Long id, CustomUserDetails userDetails) {
+        Optional<User> foundUser =
+                this.userRepository.findByUsername(userDetails.getUsername());
+
+        if (foundUser.isEmpty()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.invalid(ResultErrorMessages.userNotFound);
+        }
+
+        Optional<com.eventer.user.data.model.Comment> foundComment = this.commentRepository.findById(id);
+
+        if (foundComment.isEmpty()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.invalid(ResultErrorMessages.commentNotFound);
+        }
+
+        if (!Objects.equals(foundComment.get().getUser().getUsername(), foundUser.get().getUsername())) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return Result.invalid(ResultErrorMessages.editCommentNotAllowed);
+        }
+
+        this.commentRepository.delete(foundComment.get());
+
+        return Result.success();
     }
 }

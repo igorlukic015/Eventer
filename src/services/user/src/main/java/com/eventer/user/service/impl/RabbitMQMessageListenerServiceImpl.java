@@ -60,6 +60,8 @@ public class RabbitMQMessageListenerServiceImpl implements MessageListenerServic
         }
         EventDTO eventDTO = this.objectMapper.convertValue(message.getData(), EventDTO.class);
 
+        System.out.println(message.getData());
+
         Event event =
                 new Event(
                         eventDTO.id(),

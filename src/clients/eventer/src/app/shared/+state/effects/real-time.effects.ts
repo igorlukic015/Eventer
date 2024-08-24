@@ -6,8 +6,8 @@ import {RealTimeService} from "../../services/real-time.service";
 import {Message} from "../../contracts/interfaces";
 
 export const subscribeToChanges$ = createEffect(
-  (actions$ = inject(Actions), realTimeService = inject(RealTimeService)) => {
-    return actions$.pipe(
+  (actions$ = inject(Actions), realTimeService = inject(RealTimeService)) =>
+    actions$.pipe(
       ofType(subscribeToChanges),
       switchMap((action) =>
         realTimeService.subscribeToChanges().pipe(
@@ -19,11 +19,11 @@ export const subscribeToChanges$ = createEffect(
                   data: message.data
                 }
               )
-            )
-          ))
+            ))
+          )
         )
       )
     )
-  },
+  ,
   { functional: true }
 )

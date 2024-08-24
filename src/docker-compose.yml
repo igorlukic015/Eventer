@@ -35,7 +35,7 @@ services:
   redis-forecast-cache:
     container_name:
       redis-forecast-cache
-    image: redis
+    image: redis/redis-stack:7.2.0-v8
     ports:
       - "9001:6379"
     environment:

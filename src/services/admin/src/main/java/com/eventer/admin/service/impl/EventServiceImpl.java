@@ -414,7 +414,7 @@ public class EventServiceImpl implements EventService {
                         Instant.now(),
                         Event.class.getSimpleName(),
                         action,
-                        Objects.equals(action, MessageStatics.ACTION_DELETED) ? id : event);
+                        Objects.equals(action, MessageStatics.ACTION_DELETED) ? id : EventMapper.toDTO(event));
 
         String messagePayload;
         try {
@@ -426,6 +426,9 @@ public class EventServiceImpl implements EventService {
                     e.getMessage());
             return Result.internalError(ResultErrorMessages.failedToSendMessage);
         }
+
+        this.messageSenderService.sendMessage(
+                ApplicationStatics.RTS_MESSAGE_QUEUE, messagePayload);
 
         this.messageSenderService.sendMessage(
                 ApplicationStatics.EVENTER_DATA_MESSAGE_QUEUE, messagePayload);

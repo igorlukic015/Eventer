@@ -50,7 +50,8 @@ export class LoginMainComponent extends DestroyableComponent {
         takeUntil(this.destroyed$),
         switchMap(response => {
           localStorage.setItem('token', response.accessToken);
-          localStorage.setItem('profileImageUrl', response.userProfileImageUrl)
+          localStorage.setItem('profileImageUrl', response.userProfileImageUrl);
+          localStorage.setItem('username', loginRequest.username)
           this.toastrService.success('Login successful');
 
           this.router.navigate([''])

@@ -28,6 +28,12 @@ export const searchActions = createActionGroup({
     'Create comment' : props<{text: string, eventId: number}>(),
     'Create comment success': props<{createdComment: CommentData}>(),
     'Create comment fail': props<{error: string}>(),
+    'Update comment': props<{text:string, commentId: number}>(),
+    'Update comment success' : props<{updatedComment: CommentData}>(),
+    'Update comment fail': props<{error: string}>(),
+    'Delete comment': props<{commentId: number}>(),
+    'Delete comment success' : props<{id: number}>(),
+    'Delete comment fail': props<{error: string}>(),
     'Default action': emptyProps(),
   }
 })

@@ -69,7 +69,7 @@ const searchFeature = createFeature({
       ...state, totalElements: state.totalElements +1, events: [...state.events, createdEvent]
     })),
     on(searchActions.updateEventSuccess, (state, {updatedEvent}) => ({
-      ...state, events: [...state.events.filter((e) => e.eventId !== updatedEvent.eventId), updatedEvent]
+      ...state, events: [...state.events.map(e => (e.eventId === updatedEvent.eventId) ? updatedEvent : e)]
     })),
     on(searchActions.deleteEventCategorySuccess, (state, {id}) => ({
       ...state, totalElements: state.totalElements -1, categories: state.categories.filter(e => e.categoryId !== id)
@@ -78,7 +78,7 @@ const searchFeature = createFeature({
       ...state, totalElements: state.totalElements +1, categories: [...state.categories, createdCategory]
     })),
     on(searchActions.updateEventCategorySuccess, (state, {updatedCategory}) => ({
-      ...state, categories: [...state.categories.filter((c) => c.categoryId !== updatedCategory.categoryId), updatedCategory]
+      ...state, categories: [...state.categories.map((c) => c.categoryId === updatedCategory.categoryId ? updatedCategory : c)]
     })),
     on(searchActions.updateFilterCategories, (state, {categoryId, isAdding}) => ({
         ...state, pageRequest: {...state.pageRequest, categoryIds: isAdding ? [...state.pageRequest.categoryIds, categoryId] : state.pageRequest.categoryIds.filter(id => id !== categoryId)}
@@ -91,9 +91,15 @@ const searchFeature = createFeature({
     })),
     on(searchActions.getCommentsSuccess, (state, {pagedResponse}) => ({
       ...state, comments: pagedResponse.content
+    })),
+    on(searchActions.updateCommentSuccess, (state, {updatedComment}) => ({
+      ...state, comments: [...state.comments.map((c) => c.id === updatedComment.id ? updatedComment : c)]
+    })),
+    on(searchActions.deleteCommentSuccess, (state, {id}) => ({
+      ...state, comments: state.comments.filter((c) => c.id !== id)
     }))
   )
-});
+})
 
 export const {
   name: searchFeatureKey,

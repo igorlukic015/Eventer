@@ -25,7 +25,7 @@ async def save_weather(weather, cache: redis):
 
         await cache.expire(f"{CacheIdentifiers.FORECAST}:{weather.region}@{data['date']}", TIME_TO_LIVE)
 
-    except:
+    except :
         logger.error(ErrorMessages.SAVING_WEATHER_FAILED)
 
     finally:

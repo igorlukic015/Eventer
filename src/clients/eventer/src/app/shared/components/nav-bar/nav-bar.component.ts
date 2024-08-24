@@ -41,6 +41,7 @@ export class NavBarComponent implements OnInit {
   handleLogoutClick($event: any){
     localStorage.removeItem('token');
     localStorage.removeItem('profileImageUrl')
+    localStorage.removeItem('username');
     this.rts.closeConnection();
     this.router.navigate(['login'])
   }

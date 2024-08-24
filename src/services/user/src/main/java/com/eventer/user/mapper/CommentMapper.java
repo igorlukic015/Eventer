@@ -2,9 +2,11 @@ package com.eventer.user.mapper;
 
 import com.eventer.user.config.ApplicationConfiguration;
 import com.eventer.user.contracts.comment.CreateCommentRequest;
+import com.eventer.user.contracts.comment.UpdateCommentRequest;
 import com.eventer.user.service.domain.Comment;
 import com.eventer.user.web.dto.comment.CommentDTO;
 import com.eventer.user.web.dto.comment.CreateCommentDTO;
+import com.eventer.user.web.dto.comment.UpdateCommentDTO;
 import com.github.igorlukic015.resulter.Result;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -15,6 +17,10 @@ import java.util.stream.Collectors;
 public class CommentMapper {
     public static CreateCommentRequest toRequest(CreateCommentDTO dto) {
         return new CreateCommentRequest(dto.text(), dto.eventId());
+    }
+
+    public static UpdateCommentRequest toRequest(UpdateCommentDTO dto) {
+        return new UpdateCommentRequest(dto.text(), dto.id());
     }
 
     public static Result<Page<Comment>> toDomainPage(

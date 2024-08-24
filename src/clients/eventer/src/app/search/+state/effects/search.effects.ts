@@ -60,7 +60,36 @@ export class SearchEffects {
           map(createdComment => {
             this.toastrService.success("Comment created successfully");
             return searchActions.createCommentSuccess({createdComment});
-          })
+          }),
+          catchError(error => of(searchActions.createCommentFail(error)))
+        )
+      )
+    )
+  )
+
+  updateComment$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(searchActions.updateComment),
+      switchMap((action) =>
+        this.eventService.updateComment(action.text, action.commentId).pipe(
+          map(updatedComment => {
+            return searchActions.updateCommentSuccess({updatedComment});
+          }),
+          catchError(error => of(searchActions.updateCommentFail(error)))
+        )
+      )
+    )
+  )
+
+  deleteComment$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(searchActions.deleteComment),
+      switchMap((action) =>
+        this.eventService.deleteComment(action.commentId).pipe(
+          map(updatedComment => {
+            return searchActions.deleteCommentSuccess({id: action.commentId});
+          }),
+          catchError(error => of(searchActions.deleteCommentFail(error)))
         )
       )
     )
@@ -94,7 +123,9 @@ export class SearchEffects {
           searchActions.getEventsFail,
           searchActions.getEventCategoriesFail,
           searchActions.getCommentsFail,
-          searchActions.createCommentFail
+          searchActions.createCommentFail,
+          searchActions.updateCommentFail,
+          searchActions.deleteCommentFail
         ),
         tap((action: any) => {
           if (action?.error?.detail !== undefined) {

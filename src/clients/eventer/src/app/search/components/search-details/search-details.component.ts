@@ -88,9 +88,16 @@ export class SearchDetailsComponent extends DestroyableComponent implements OnIn
         return;
       }
 
-      let date = `${foundEvent.date.getFullYear()}-${foundEvent.date.getMonth() + 1}-${foundEvent.date.getDay()}`;
+      let date = `${foundEvent.date.getFullYear()}-${foundEvent.date.getMonth() < 9 ? '0' : ''}${foundEvent.date.getMonth() + 1}-${foundEvent.date.getDate() < 10 ? '0' : ''}${foundEvent.date.getDate()}`;
 
-      this.searchService.getForecast(foundEvent.location, date).subscribe((forecastResult) => {
+      this.searchService.getForecast(foundEvent.location, date).pipe(
+        take(1),
+        takeUntil(this.destroyed$),
+        catchError((error) => {
+            this.toastrService.error('Nema podataka o vremenskoj prognozi.');
+            return of();
+          }
+        )).subscribe((forecastResult) => {
         let weather;
         if (forecastResult.weather >= 200 && forecastResult.weather < 300 || forecastResult.weather >= 500 && forecastResult.weather < 600) {
           weather = 'RAIN';

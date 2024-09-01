@@ -1,6 +1,6 @@
 # Eventer
 
-![Project Image](src/clients/eventer/src/assets/eventer_logo.svg)
+![Project Image](src/clients/eventer/src/assets/eventer_logo_not_ext.png)
 
 ---
 

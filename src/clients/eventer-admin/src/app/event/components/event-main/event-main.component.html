@@ -1,0 +1,10 @@
+<eventer-admin-nav-bar></eventer-admin-nav-bar>
+<eventer-admin-layout-main>
+  <eventer-admin-action-bar
+    (searchTermChanged)="onSearchTermChanged($event)"
+    (deleteClicked)="list.onDeleteClicked($event)"
+    class="w-full"
+  >
+  </eventer-admin-action-bar>
+  <eventer-admin-event-list #list class="w-full" ></eventer-admin-event-list>
+</eventer-admin-layout-main>

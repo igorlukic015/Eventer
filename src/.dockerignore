@@ -1,0 +1,4 @@
+pgdata_admin/
+pgdata_user/
+rabbitmq_data/
+rabbitmq_config/

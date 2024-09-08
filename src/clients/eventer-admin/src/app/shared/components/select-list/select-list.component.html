@@ -1,0 +1,37 @@
+<div class="collapse collapse-arrow bg-base-200 mb-4">
+  <input type="radio" (click)="onViewChange($event)" [checked]="isViewChecked()"/>
+  <div class="collapse-title text-l font-medium">
+    {{title}}
+  </div>
+  <div class="collapse-content">
+    <select class="select select-bordered w-full max-w-xs" (change)="onSelectChange($event)">
+      <option [value]="-1">{{placeholder}}</option>
+      @for (element of optionData(); track element.id) {
+        <option [value]="element.id">{{ element.value }}</option>
+      }
+    </select>
+    <div class="flex mt-3 justify-evenly flex-wrap">
+      @for (selectedElement of selectedData(); track selectedElement.id) {
+        <div
+          data-dismissible="chip"
+          class="select-none
+                     items-center
+                     whitespace-nowrap
+                     rounded-lg
+                     bg-gray-900
+                     py-1.5
+                     px-3
+                     font-sans
+                     text-xs
+                     uppercase
+                     text-white
+                     mt-2
+                     w-4/5"
+          (click)="onRemoveSelectedElement($event, selectedElement.id)"
+        >
+          <span>{{selectedElement.value}}</span>
+        </div>
+      }
+    </div>
+  </div>
+</div>

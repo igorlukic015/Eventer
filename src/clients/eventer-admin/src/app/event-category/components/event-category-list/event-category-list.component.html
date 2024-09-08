@@ -1,0 +1,32 @@
+<div class="overflow-x-auto ml-3.5">
+  <table class="table">
+    <thead>
+    <tr>
+      <th></th>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+      @for (category of categories(); track category.id) {
+        <tr class="hover" (dblclick)="openUpdate($event, category.id)">
+          <td>
+            <label><input type="checkbox" class="checkbox" (click)="handleCheckClick($event, category.id)" [checked]="checkedRow() === category.id" /></label>
+          </td>
+          <td>{{ category.id }}</td>
+          <td>{{ category.name }}</td>
+          <td>{{ category.description }}</td>
+        </tr>
+      } @empty {
+        <h1>The table is empty</h1>
+      }
+    </tbody>
+  </table>
+  @if (totalPages() > 1){
+    <eventer-admin-table-paginator
+      (pageChanged)="pageChanged($event)"
+      [totalPages]="totalPages()">
+    </eventer-admin-table-paginator>
+  }
+</div>

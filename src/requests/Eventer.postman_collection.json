@@ -1,0 +1,389 @@
+{
+	"info": {
+		"_postman_id": "eb97350e-396e-4687-bc84-4f9782f38126",
+		"name": "Eventer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10262694"
+	},
+	"item": [
+		{
+			"name": "Eventer-Admin",
+			"item": [
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "Authenticate",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"admin2\",\r\n    \"password\": \"1234567\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{admin-url}}/auth/authenticate",
+									"host": [
+										"{{admin-url}}"
+									],
+									"path": [
+										"auth",
+										"authenticate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJzdXBlcmFkbWluIiwiaWF0IjoxNzA4NjA4NzM2LCJleHAiOjE3MDg2OTUxMzZ9.zrHl7Kk8gxlxVw0fdajuxMe8KXEgk_qGlF0NMSEnwt7-HVLB4R2UaUDPkO8T-TRC",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"admin5\",\r\n    \"password\": \"1234567\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{admin-url}}/auth/register",
+									"host": [
+										"{{admin-url}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Admin",
+					"item": []
+				},
+				{
+					"name": "Event",
+					"item": [
+						{
+							"name": "GetEvents",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{admin-url}}/event?page=0&size=3",
+									"host": [
+										"{{admin-url}}"
+									],
+									"path": [
+										"event"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateEvent",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjIiLCJpYXQiOjE3MDg4OTEwNDUsImV4cCI6MTcwODk3NzQ0NX0.8ZQ5U9cNMtBGgWWfi8eBKO_5gX8M2qScxyOZZiHFfc26_MtBNnZn4MMZp_rXBpYZzTGIZOQYLhwNna-RLGDTow",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "images",
+											"type": "file",
+											"src": [
+												"/C:/Users/Igor/Desktop/51299565578_5f8d908210_o-1.jpg",
+												"/C:/Users/Igor/Desktop/EXIT-festival-2021-1.jpg"
+											]
+										},
+										{
+											"key": "data",
+											"value": "{\n    \"id\": 0,\n    \"title\": \"Event 3\",\n    \"description\": \"Test event 3\",\n    \"location\": \"Novi Sad\",\n    \"date\": \"2024-02-18T12:10:03Z\",\n    \"weatherConditions\": [\"CLEAR\"],\n    \"eventCategories\": [\n        {\n            \"id\": 1,\n            \"name\": \"Category 3\",\n            \"description\": \"Test category 3\"\n        }\n    ]\n}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{admin-url}}/event",
+									"host": [
+										"{{admin-url}}"
+									],
+									"path": [
+										"event"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "EventCategory",
+					"item": [
+						{
+							"name": "CreateCategory",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{perma-admin-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": null,\r\n    \"name\": \"Category 5\",\r\n    \"description\": \"Test category 5\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{admin-url}}/event-category",
+									"host": [
+										"{{admin-url}}"
+									],
+									"path": [
+										"event-category"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetCategories",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjIiLCJpYXQiOjE3MDg4NjI3NzksImV4cCI6MTcwODk0OTE3OX0.ttCl6ad2FzW9TsDt4QGIV3ODhvME5-OJi-tZA_07-BkDKSSfc-c9uWjCiZhvRJMVasxfjP7CXNc3CsBNvg38Ng",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{admin-url}}/event-category?page=0&size=3",
+									"host": [
+										"{{admin-url}}"
+									],
+									"path": [
+										"event-category"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Eventer",
+			"item": [
+				{
+					"name": "Event",
+					"item": [
+						{
+							"name": "GetEvents",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{user-url}}/test/list-all-e?page=0&size=3",
+									"host": [
+										"{{user-url}}"
+									],
+									"path": [
+										"test",
+										"list-all-e"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "EventCategory",
+					"item": [
+						{
+							"name": "GetCategories",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{user-url}}/test/list-all-c",
+									"host": [
+										"{{user-url}}"
+									],
+									"path": [
+										"test",
+										"list-all-c"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "test-categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:9004/api/v1/test/load-categories",
+							"host": [
+								"localhost"
+							],
+							"port": "9004",
+							"path": [
+								"api",
+								"v1",
+								"test",
+								"load-categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "test-events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:9004/api/v1/test/load-events",
+							"host": [
+								"localhost"
+							],
+							"port": "9004",
+							"path": [
+								"api",
+								"v1",
+								"test",
+								"load-events"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "admin-url",
+			"value": "localhost:9002/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "perma-admin-token",
+			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjIiLCJpYXQiOjE3MDkyOTQ4MzQsImV4cCI6MTc0MDg1MTc2MH0.DmCSkC4oFlaaItXrmShV8NV5aDzKdK3zNQAkr79ePAvEw-KT5zz0ZY1234pB-s3gllTJSfXOCLvoABGi4p7y6A",
+			"type": "string"
+		},
+		{
+			"key": "user-url",
+			"value": "localhost:9004/api/v1",
+			"type": "string"
+		}
+	]
+}

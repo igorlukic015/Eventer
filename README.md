@@ -32,6 +32,7 @@ Admins can add new events and categories.
 ---
 
 ## How To Use
+If you have any problems, contact the author.
 
 ### Installation
 
@@ -105,6 +106,7 @@ Then you can start the project.
 Open the other services in InteliJ.
 First start the rts service, than admin and user service must be started last.
 
+There is sample testing data for the admin application in the resources folder. You can update and use those scripts or create your own data.
 
 #### Frontend
 

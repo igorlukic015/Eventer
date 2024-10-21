@@ -19,6 +19,9 @@ public class Comment extends AbstractAuditingEntity<Long> {
     @Column(name = "eventId", nullable = false, updatable = false)
     private Long eventId;
 
+    @Column(name = "isEdited", nullable = false)
+    private Boolean isEdited;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
@@ -67,5 +70,13 @@ public class Comment extends AbstractAuditingEntity<Long> {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Boolean getEdited() {
+        return isEdited;
+    }
+
+    public void setEdited(Boolean edited) {
+        isEdited = edited;
     }
 }

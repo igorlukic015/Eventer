@@ -16,8 +16,8 @@ INSERT INTO public.category_subscription (id, category_id, user_id) VALUES (108,
 INSERT INTO public.category_subscription (id, category_id, user_id) VALUES (152, 4, 402);
 
 
-INSERT INTO public.comment (id, created_by, created_date, last_modified_by, last_modified_date, event_id, text, user_id) VALUES (403, 'igi.l.1999@gmail.com', '2024-09-08 10:09:17.258545 +00:00', 'igi.l.1999@gmail.com', '2024-09-08 10:09:17.258545 +00:00', 2, 'Mogu da dodam komentar', 402);
-INSERT INTO public.comment (id, created_by, created_date, last_modified_by, last_modified_date, event_id, text, user_id) VALUES (402, 'igi.l.1999@gmail.com', '2024-09-08 10:06:17.891108 +00:00', 'igi.l.1999@gmail.com', '2024-09-08 10:09:28.024149 +00:00', 2, 'Mogu da izemenim komentar', 402);
+INSERT INTO public.comment (id, created_by, created_date, last_modified_by, last_modified_date, event_id, text, user_id, is_edited) VALUES (403, 'igi.l.1999@gmail.com', '2024-09-08 10:09:17.258545 +00:00', 'igi.l.1999@gmail.com', '2024-09-08 10:09:17.258545 +00:00', 2, 'Mogu da dodam komentar', 402, false);
+INSERT INTO public.comment (id, created_by, created_date, last_modified_by, last_modified_date, event_id, text, user_id, is_edited) VALUES (402, 'igi.l.1999@gmail.com', '2024-09-08 10:06:17.891108 +00:00', 'igi.l.1999@gmail.com', '2024-09-08 10:09:28.024149 +00:00', 2, 'Mogu da izemenim komentar', 402, true);
 
 
 INSERT INTO public.event_subscription (id, created_by, created_date, last_modified_by, last_modified_date, event_id, user_id) VALUES (53, 'igor', '2024-07-20 13:27:59.635621 +00:00', 'igor', '2024-07-20 13:27:59.635621 +00:00', 2, 402);

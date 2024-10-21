@@ -9,6 +9,7 @@ public class Comment {
     private Long userId;
     private String userUsername;
     private String userProfileImageUrl;
+    private Boolean isEdited;
 
     private Comment(
             Long id,
@@ -16,13 +17,15 @@ public class Comment {
             Long eventId,
             Long userId,
             String userUsername,
-            String userProfileImageUrl) {
+            String userProfileImageUrl,
+            Boolean isEdited) {
         this.id = id;
         this.text = text;
         this.eventId = eventId;
         this.userId = userId;
         this.userUsername = userUsername;
         this.userProfileImageUrl = userProfileImageUrl;
+        this.isEdited = isEdited;
     }
 
     public static Result<Comment> create(
@@ -31,9 +34,10 @@ public class Comment {
             Long eventId,
             Long userId,
             String userUsername,
-            String userProfileImageUrl) {
+            String userProfileImageUrl,
+            Boolean isEdited) {
         return Result.success(
-                new Comment(id, text, eventId, userId, userUsername, userProfileImageUrl));
+                new Comment(id, text, eventId, userId, userUsername, userProfileImageUrl, isEdited));
     }
 
     public static Result<Comment> create(
@@ -43,11 +47,11 @@ public class Comment {
             String userUsername,
             String userProfileImageUrl) {
         return Result.success(
-                new Comment(null, text, eventId, userId, userUsername, userProfileImageUrl));
+                new Comment(null, text, eventId, userId, userUsername, userProfileImageUrl, false));
     }
 
     public static Result<Comment> partialCreate(String text, Long eventId) {
-        return Result.success(new Comment(null, text, eventId, null, null, null));
+        return Result.success(new Comment(null, text, eventId, null, null, null, false));
     }
 
     public Long getId() {
@@ -72,5 +76,9 @@ public class Comment {
 
     public String getUserProfileImageUrl() {
         return userProfileImageUrl;
+    }
+
+    public Boolean getEdited() {
+        return isEdited;
     }
 }

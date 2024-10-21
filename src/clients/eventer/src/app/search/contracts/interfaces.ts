@@ -29,6 +29,7 @@ export interface CommentData {
   userId: number;
   userUsername: string;
   userProfileImageUrl: string;
+  isEdited: boolean;
 }
 
 export interface CreateCommentRequest {

@@ -6,8 +6,6 @@ export interface Image {
   name: string;
 }
 
-
-
 export interface PageRequest {
   page: number;
   size: number;

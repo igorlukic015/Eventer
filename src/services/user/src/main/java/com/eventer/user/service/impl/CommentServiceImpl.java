@@ -97,6 +97,7 @@ public class CommentServiceImpl implements CommentService {
         com.eventer.user.data.model.Comment comment = foundComment.get();
 
         comment.setText(request.text());
+        comment.setEdited(true);
 
         comment = this.commentRepository.save(comment);
 

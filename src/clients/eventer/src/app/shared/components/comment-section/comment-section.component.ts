@@ -1,4 +1,10 @@
-import {Component, Input, OnInit, signal, WritableSignal} from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  signal,
+  WritableSignal
+} from '@angular/core';
 import {CommentData} from "../../../search/contracts/interfaces";
 import {DestroyableComponent} from "../destroyable/destroyable.component";
 import {FormsModule} from "@angular/forms";
@@ -25,6 +31,8 @@ export class CommentSectionComponent extends DestroyableComponent implements OnI
 
   currentUsername: WritableSignal<string> = signal('');
 
+  private updateCommentDataRequests: CommentUpdateData[] = [];
+
   private debouncedInput$ = new Subject<{ id: number, value: string }>();
 
   constructor(private readonly searchFacade: SearchFacade) {
@@ -43,8 +51,11 @@ export class CommentSectionComponent extends DestroyableComponent implements OnI
     this.debouncedInput$.next({ id, value: event.target.value });
   }
 
-  onCommentChange(id: number, value: string): void {
-    this.searchFacade.updateComment(value, id);
+  save(id: number): void {
+    const foundData = this.updateCommentDataRequests.find(data => data.id === id);
+    if (foundData) {
+      this.searchFacade.updateComment(foundData.value, foundData.id);
+    }
   }
 
   ngOnInit() {
@@ -53,7 +64,26 @@ export class CommentSectionComponent extends DestroyableComponent implements OnI
     this.debouncedInput$.pipe(
       debounceTime(1000)
     ).subscribe(({ id, value }) => {
-      this.onCommentChange(id, value);
+      const foundId = this.updateCommentDataRequests.findIndex(data => data.id === id);
+      if (foundId !== -1) {
+        this.updateCommentDataRequests[foundId] = {id, value};
+      } else {
+        this.updateCommentDataRequests.push({id, value});
+      }
+      this.enableSave(id);
     });
   }
+
+  private enableSave(commentId: number) {
+    const saveIcon = document.getElementById(`svg-icon-${commentId}`);
+    if (saveIcon){
+      saveIcon.classList.remove("disabled-svg");
+      saveIcon.classList.add("cursor-pointer");
+    }
+  }
+}
+
+interface CommentUpdateData {
+  id: number;
+  value: string;
 }

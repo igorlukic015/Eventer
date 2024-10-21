@@ -56,7 +56,8 @@ public class CommentMapper {
                 model.getEventId(),
                 model.getUser().getId(),
                 model.getUser().getUsername(),
-                userProfileImageUrl);
+                userProfileImageUrl,
+                model.getEdited());
     }
 
     public static Page<CommentDTO> toDTOPage(Page<Comment> comments) {
@@ -72,7 +73,8 @@ public class CommentMapper {
                 domain.getEventId(),
                 domain.getUserId(),
                 domain.getUserUsername(),
-                domain.getUserProfileImageUrl());
+                domain.getUserProfileImageUrl(),
+                domain.getEdited());
     }
 
     public static com.eventer.user.data.model.Comment toModel(Comment domain, com.eventer.user.data.model.User user) {

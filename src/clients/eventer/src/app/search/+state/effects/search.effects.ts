@@ -73,6 +73,7 @@ export class SearchEffects {
       switchMap((action) =>
         this.eventService.updateComment(action.text, action.commentId).pipe(
           map(updatedComment => {
+            this.toastrService.success("Izmena komentara sačuvana!")
             return searchActions.updateCommentSuccess({updatedComment});
           }),
           catchError(error => of(searchActions.updateCommentFail(error)))

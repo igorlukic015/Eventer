@@ -3,11 +3,12 @@ import {catchError, Observable, throwError} from "rxjs";
 import {inject} from "@angular/core";
 import {Router} from "@angular/router";
 import {RealTimeService} from "../services/real-time.service";
+import {userUrlKey} from "../contracts/statics";
 
 export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
   const token = localStorage.getItem('token');
 
-  if (!token) {
+  if (!token || req.url.includes(userUrlKey)) {
     return next(req);
   }
 

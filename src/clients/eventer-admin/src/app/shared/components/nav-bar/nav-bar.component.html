@@ -13,6 +13,12 @@
       >
         Events
       </a>
+      <a class="btn btn-ghost text-xl"
+         [ngClass]="activeLink === 2 ? 'text-accent' : ''"
+         routerLink="/user"
+      >
+        Users
+      </a>
     } @else {
       <a class="btn btn-ghost text-xl text-accent"
         routerLink="/admin"

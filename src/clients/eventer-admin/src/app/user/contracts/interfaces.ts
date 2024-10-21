@@ -1,5 +1,5 @@
 export interface User {
   id: number;
   username: string;
-  isActivated: boolean;
+  city: string;
 }

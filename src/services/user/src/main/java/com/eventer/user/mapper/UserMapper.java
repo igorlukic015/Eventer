@@ -43,6 +43,10 @@ public class UserMapper {
                 ImageMapper.toDTO(user.getProfileImage()));
     }
 
+    public static Set<UserDTO> toDTOSet(Set<User> userSet) {
+        return userSet.stream().map(UserMapper::toDTO).collect(Collectors.toSet());
+    }
+
     public static Result<Set<User>> toDomainSet(Set<com.eventer.user.data.model.User> foundUsers) {
         return Result.getResultValueSet(
                 foundUsers.stream().map(UserMapper::toDomain).collect(Collectors.toSet()));

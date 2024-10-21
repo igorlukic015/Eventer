@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {debounceTime, Subject} from "rxjs";
 import {RouterLink} from "@angular/router";
 
@@ -12,6 +12,8 @@ import {RouterLink} from "@angular/router";
   styleUrl: './action-bar.component.css'
 })
 export class ActionBarComponent {
+  @Input()
+  disableCreate: boolean = false;
 
   @Output()
   searchTermChanged: EventEmitter<string> = new EventEmitter<string>();

@@ -15,4 +15,5 @@ public interface UserService {
     Result<User> getProfileData(String username);
     Result<User> updateProfile(UpdateProfileRequest request);
     Result<User> updateProfileImage(Set<String> response);
+    Result<Set<User>> getAll();
 }

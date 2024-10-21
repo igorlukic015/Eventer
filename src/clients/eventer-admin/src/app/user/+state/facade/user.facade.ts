@@ -16,8 +16,12 @@ export class UserFacade {
   constructor(private readonly store: Store) {
   }
 
-  loadAdmins() {
-    this.store.dispatch(userActions.getUsers());
+  loadUsers() {
+    this.store.dispatch(userActions.getAllUsers());
+  }
+
+  searchUsers() {
+    this.store.dispatch((userActions.getUsers()));
   }
 
   updatePageNumber(currentPage: number) {

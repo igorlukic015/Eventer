@@ -27,9 +27,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -186,5 +188,12 @@ public class UserServiceImpl implements UserService {
         var result = this.userRepository.save(foundUser.get());
 
         return UserMapper.toDomain(result);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Result<Set<User>> getAll() {
+        var foundUsers = new HashSet<>(this.userRepository.findAll());
+        return UserMapper.toDomainSet(foundUsers);
     }
 }

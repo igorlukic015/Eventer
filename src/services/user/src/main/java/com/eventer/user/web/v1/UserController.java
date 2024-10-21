@@ -46,4 +46,10 @@ public class UserController implements ResultUnwrapper {
         Result<User> result = this.userService.updateProfile(UserMapper.toRequest(dto));
         return this.okOrError(result, UserMapper::toDTO);
     }
+
+    @GetMapping("/get-all")
+    public ResponseEntity<?> getUsers() {
+        Result<Set<User>> result = this.userService.getAll();
+        return this.okOrError(result, UserMapper::toDTOSet);
+    }
 }

@@ -57,6 +57,8 @@ public class CacheEventCategoryServiceImpl implements CacheEventCategoryService 
     @Transactional
     @Override
     public void add(EventCategory newCategory) {
+
+        newCategory.setId(null);
         logger.info("Attempting to add new category");
 
         this.eventCategoryRepository.save(newCategory);

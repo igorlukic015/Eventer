@@ -3,7 +3,7 @@ import {NavBarComponent} from "../../../shared/components/nav-bar/nav-bar.compon
 import {LayoutMainComponent} from "../../../shared/components/layout-main/layout-main.component";
 import {ActionBarComponent} from "../../../shared/components/action-bar/action-bar.component";
 import {UserListComponent} from "../user-list/user-list.component";
-import {takeUntil} from "rxjs";
+import {skip, take, takeUntil} from "rxjs";
 import {UserFacade} from "../../+state/facade/user.facade";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
 
@@ -31,10 +31,12 @@ export class UserMainComponent extends DestroyableComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.userFacade.loadUsers();
+
     this.userFacade.pageRequest$.pipe(
-      takeUntil(this.destroyed$)
+      takeUntil(this.destroyed$),
     ).subscribe(() => {
-      this.userFacade.loadAdmins();
+      this.userFacade.searchUsers();
     })
   }
 }

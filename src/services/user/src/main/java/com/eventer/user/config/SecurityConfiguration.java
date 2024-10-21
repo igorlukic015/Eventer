@@ -42,7 +42,7 @@ public class SecurityConfiguration {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:9009"));
+        configuration.setAllowedOrigins(List.of("http://localhost:9009", "http://localhost:9008"));
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -65,6 +65,8 @@ public class SecurityConfiguration {
                                 auth.requestMatchers("/api/v1/auth/**")
                                         .permitAll()
                                         .requestMatchers("/api/v1/test/**")
+                                        .permitAll()
+                                        .requestMatchers("/api/v1/user/**")
                                         .permitAll()
                                         .requestMatchers("/api/v1/**")
                                         .authenticated())

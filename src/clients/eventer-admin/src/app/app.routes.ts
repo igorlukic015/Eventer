@@ -4,7 +4,7 @@ import {eventCategoryFeatureKey, eventCategoryReducer} from "./event-category/+s
 import {provideEffects} from "@ngrx/effects";
 import {EventCategoryEffects} from "./event-category/+state/effects/event-category.effects";
 import {LoginMainComponent} from "./login/components/login-main/login-main.component";
-import {adminUrlKey, eventCategoryUrlKey, eventUrlKey, loginUrlKey} from "./shared/contracts/statics";
+import {adminUrlKey, eventCategoryUrlKey, eventUrlKey, loginUrlKey, userUrlKey} from "./shared/contracts/statics";
 import {authGuard} from "./shared/guards/auth.guard";
 import {roleGuard} from "./shared/guards/role.guard";
 import {loginGuard} from "./shared/guards/login.guard";
@@ -13,6 +13,8 @@ import {EventEffects} from "./event/+state/effects/event.effects";
 import {adminFeatureKey, adminReducer} from "./admin/+state/reducers/admin.reducers";
 import {Role} from "./shared/contracts/models";
 import {AdminEffects} from "./admin/+state/effects/admin.effects";
+import {userFeatureKey, userReducer} from "./user/+state/reducers/user.reducers";
+import {UserEffects} from "./user/+state/effects/user.effects";
 
 export const routes: Routes = [
   {
@@ -30,6 +32,15 @@ export const routes: Routes = [
     providers: [
       provideState(eventFeatureKey, eventReducer),
       provideEffects(EventEffects)
+    ],
+    canActivate: [authGuard]
+  },
+  {
+    path: userUrlKey,
+    loadChildren: () => import('./user/user.routes').then((m) => m.routes),
+    providers: [
+      provideState(userFeatureKey, userReducer),
+      provideEffects(UserEffects)
     ],
     canActivate: [authGuard]
   },

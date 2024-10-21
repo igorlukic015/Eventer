@@ -1,6 +1,7 @@
 <eventer-admin-nav-bar></eventer-admin-nav-bar>
 <eventer-admin-layout-main>
   <eventer-admin-action-bar
+    [disableCreate]="true"
     (searchTermChanged)="onSearchTermChanged($event)"
     (deleteClicked)="list.onDeleteClicked($event)"
     class="w-full"

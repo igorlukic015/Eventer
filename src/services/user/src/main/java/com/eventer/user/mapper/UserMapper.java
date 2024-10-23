@@ -1,14 +1,12 @@
 package com.eventer.user.mapper;
 
-import com.eventer.user.contracts.auth.AuthenticationResponse;
-import com.eventer.user.contracts.auth.LoginRequest;
-import com.eventer.user.contracts.auth.RegisterRequest;
-import com.eventer.user.contracts.auth.UpdateProfileRequest;
+import com.eventer.user.contracts.auth.*;
 import com.eventer.user.service.domain.Image;
 import com.eventer.user.service.domain.User;
 import com.eventer.user.web.dto.auth.AuthenticationResponseDTO;
 import com.eventer.user.web.dto.auth.LoginDTO;
 import com.eventer.user.web.dto.auth.RegisterDTO;
+import com.eventer.user.web.dto.user.PasswordResetDTO;
 import com.eventer.user.web.dto.user.UpdateProfileDTO;
 import com.eventer.user.web.dto.user.UserDTO;
 import com.github.igorlukic015.resulter.Result;
@@ -75,5 +73,9 @@ public class UserMapper {
         model.setProfileImage(ImageMapper.toModel(user.getProfileImage()));
 
         return model;
+    }
+
+    public static PasswordResetRequest toRequest(PasswordResetDTO dto) {
+        return new PasswordResetRequest(dto.email(), dto.password(), dto.code());
     }
 }

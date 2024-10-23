@@ -1,6 +1,7 @@
 package com.eventer.user.service.impl;
 
 import com.eventer.user.cache.data.model.Event;
+import com.eventer.user.data.model.User;
 import com.eventer.user.service.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -13,6 +14,7 @@ import org.thymeleaf.context.Context;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -66,6 +68,22 @@ public class EmailServiceImpl implements EmailService {
             this.send(to, subject, "SubscriptionNotificationEmail", context);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void sendPasswordResetEmail(Optional<User> foundUser, String code) {
+        String[] to = new String[] {foundUser.get().getUsername()};
+        String subject = "Restartovanje lozinke";
+
+        Context context = new Context();
+        context.setVariable("header", "Ovo je vaš kod za restartovanje lozinke.");
+        context.setVariable("code", code);
+
+        try {
+            this.send(to, subject, "PasswordResetEmail", context);
+        } catch (MessagingException e) {
+            throw  new RuntimeException(e);
         }
     }
 

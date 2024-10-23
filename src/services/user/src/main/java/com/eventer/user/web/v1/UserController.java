@@ -4,6 +4,7 @@ import com.eventer.user.mapper.UserMapper;
 import com.eventer.user.service.ImageHostService;
 import com.eventer.user.service.UserService;
 import com.eventer.user.service.domain.User;
+import com.eventer.user.web.dto.user.PasswordResetDTO;
 import com.eventer.user.web.dto.user.UpdateProfileDTO;
 import com.github.igorlukic015.resulter.Result;
 import com.github.igorlukic015.resulter.ResultUnwrapper;
@@ -51,5 +52,17 @@ public class UserController implements ResultUnwrapper {
     public ResponseEntity<?> getUsers() {
         Result<Set<User>> result = this.userService.getAll();
         return this.okOrError(result, UserMapper::toDTOSet);
+    }
+
+    @PatchMapping("/request-reset/{email}")
+    public ResponseEntity<?> requestPasswordReset(@PathVariable("email") String email) {
+        Result result = this.userService.requestPasswordReset(email);
+        return this.okOrError(result);
+    }
+
+    @PatchMapping("/reset")
+    public ResponseEntity<?> passwordReset(@RequestBody PasswordResetDTO dto) {
+        Result result = this.userService.resetPassword(UserMapper.toRequest(dto));
+        return this.okOrError(result);
     }
 }

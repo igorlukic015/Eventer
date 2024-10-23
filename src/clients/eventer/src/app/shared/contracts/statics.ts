@@ -9,3 +9,5 @@ export const registerUrlKey: string  = "register"
 export const profileUrlKey: string = "profile"
 export const searchDetailsUrlKey: string = "details"
 export const subscriptionsUrlKey: string = "subscriptions"
+export const forgotPasswordUrlKey: string = "forgot-password";
+export const forgotPasswordResetUrlKey: string = "forgot-password-reset";

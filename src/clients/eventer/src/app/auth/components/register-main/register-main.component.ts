@@ -5,7 +5,7 @@ import {AuthService} from "../../services/auth.service";
 import {catchError, of, switchMap, take, takeUntil} from "rxjs";
 import {DestroyableComponent} from "../../../shared/components/destroyable/destroyable.component";
 import {ToastrService} from "ngx-toastr";
-import {RouterLink} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 
 @Component({
   selector: 'eventer-register-main',
@@ -29,7 +29,8 @@ export class RegisterMainComponent extends DestroyableComponent {
 
   constructor(private formBuilder: FormBuilder,
               private readonly authService: AuthService,
-              private readonly toastrService: ToastrService) {
+              private readonly toastrService: ToastrService,
+              private readonly router: Router) {
     super();
   }
 
@@ -54,6 +55,7 @@ export class RegisterMainComponent extends DestroyableComponent {
       takeUntil(this.destroyed$),
       switchMap((response) => {
         this.toastrService.success('Registered successfully');
+        this.router.navigate(["/login"]);
         return of()
       }),
       catchError((error) => {

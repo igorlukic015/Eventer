@@ -14,3 +14,9 @@ export interface RegisterRequest {
   password: string;
   city: string;
 }
+
+export interface PasswordResetRequest {
+  email: string;
+  password: string;
+  code: string;
+}

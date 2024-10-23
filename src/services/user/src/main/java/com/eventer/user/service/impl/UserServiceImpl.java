@@ -1,14 +1,14 @@
 package com.eventer.user.service.impl;
 
-import com.eventer.user.contracts.auth.AuthenticationResponse;
-import com.eventer.user.contracts.auth.LoginRequest;
-import com.eventer.user.contracts.auth.RegisterRequest;
-import com.eventer.user.contracts.auth.UpdateProfileRequest;
+import com.eventer.user.contracts.auth.*;
+import com.eventer.user.data.model.PasswordResetCode;
+import com.eventer.user.data.repository.PasswordResetCodeRepository;
 import com.eventer.user.data.repository.UserRepository;
 import com.eventer.user.mapper.ImageMapper;
 import com.eventer.user.mapper.UserMapper;
 import com.eventer.user.security.contracts.CustomUserDetails;
 import com.eventer.user.security.service.JwtService;
+import com.eventer.user.service.EmailService;
 import com.eventer.user.service.UserService;
 import com.eventer.user.service.domain.Image;
 import com.eventer.user.service.domain.User;
@@ -27,10 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,15 +35,20 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserRepository userRepository;
+    private final PasswordResetCodeRepository passwordResetCodeRepository;
+    private final EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     public UserServiceImpl(
             AuthenticationManager authenticationManager,
             JwtService jwtService,
-            UserRepository userRepository) {
+            UserRepository userRepository, PasswordResetCodeRepository passwordResetCodeRepository,
+            EmailService emailService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
+        this.passwordResetCodeRepository = passwordResetCodeRepository;
+        this.emailService = emailService;
     }
 
     @Transactional(readOnly = true)
@@ -195,5 +197,57 @@ public class UserServiceImpl implements UserService {
     public Result<Set<User>> getAll() {
         var foundUsers = new HashSet<>(this.userRepository.findAll());
         return UserMapper.toDomainSet(foundUsers);
+    }
+
+    @Override
+    public Result requestPasswordReset(String email) {
+        Optional<com.eventer.user.data.model.User> foundUser = this.userRepository.findByUsername(email);
+
+        if (foundUser.isEmpty()) {
+            return Result.invalid(ResultErrorMessages.userNotFound);
+        }
+
+        Optional<PasswordResetCode> foundCode = this.passwordResetCodeRepository.findByUserId(foundUser.get().getId());
+
+        String code = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+
+        PasswordResetCode passwordResetCode;
+
+        if (foundCode.isEmpty()) {
+            passwordResetCode = new PasswordResetCode(null, foundUser.get().getId(), code);
+        } else {
+            passwordResetCode = foundCode.get();
+            passwordResetCode.setCode(code);
+        }
+
+        this.passwordResetCodeRepository.save(passwordResetCode);
+
+        this.emailService.sendPasswordResetEmail(foundUser, code);
+
+        return Result.success();
+    }
+
+    @Override
+    public Result resetPassword(PasswordResetRequest request) {
+        Optional<com.eventer.user.data.model.User> foundUser = this.userRepository.findByUsername(request.email());
+
+        if (foundUser.isEmpty()) {
+            return Result.invalid(ResultErrorMessages.userNotFound);
+        }
+
+        Optional<PasswordResetCode> foundCode = this.passwordResetCodeRepository.findByUserId(foundUser.get().getId());
+
+        if (foundCode.isEmpty() || !foundCode.get().getCode().equalsIgnoreCase(request.code())) {
+            return Result.invalid(ResultErrorMessages.userNotFound);
+        }
+
+        PasswordEncoder passwordEncoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+        String encodedPassword = passwordEncoder.encode(request.password());
+
+        foundUser.get().setPassword(encodedPassword);
+
+        this.passwordResetCodeRepository.delete(foundCode.get());
+
+        return Result.success();
     }
 }

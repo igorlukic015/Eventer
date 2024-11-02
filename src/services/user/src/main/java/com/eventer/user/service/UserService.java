@@ -15,4 +15,5 @@ public interface UserService {
     Result<Set<User>> getAll();
     Result requestPasswordReset(String email);
     Result resetPassword(PasswordResetRequest request);
+    Result delete(Long id);
 }

@@ -47,6 +47,9 @@ const userFeature = createFeature({
     on(userActions.updateSearchTerm, (state, {searchTerm}) => ({
       ...state, pageRequest: {...state.pageRequest, searchTerm: searchTerm}
     })),
+    on(userActions.deleteUserSuccess, (state, {id}) => (
+      adapter.removeOne(id, state)
+    ))
   )
 });
 

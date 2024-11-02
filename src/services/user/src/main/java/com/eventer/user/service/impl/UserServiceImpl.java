@@ -250,4 +250,17 @@ public class UserServiceImpl implements UserService {
 
         return Result.success();
     }
+
+    @Override
+    public Result delete(Long id) {
+        Optional<com.eventer.user.data.model.User> foundUser = this.userRepository.findById(id);
+
+        if (foundUser.isEmpty()) {
+            return Result.invalid(ResultErrorMessages.userNotFound);
+        }
+
+        this.userRepository.delete(foundUser.get());
+
+        return Result.success();
+    }
 }

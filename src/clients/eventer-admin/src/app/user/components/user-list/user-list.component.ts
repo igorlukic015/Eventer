@@ -33,13 +33,13 @@ export class UserListComponent extends DestroyableComponent implements OnInit {
     this.userFacade.updatePageNumber(currentPage);
   }
 
-  handleCheckClick($event: any, categoryId: number) {
-    if (this.checkedRow() === categoryId) {
+  handleCheckClick($event: any, userId: number) {
+    if (this.checkedRow() === userId) {
       this.checkedRow.set(0);
       return;
     }
 
-    this.checkedRow.set(categoryId);
+    this.checkedRow.set(userId);
   }
 
   ngOnInit() {

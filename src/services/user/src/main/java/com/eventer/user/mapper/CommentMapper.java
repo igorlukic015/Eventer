@@ -82,6 +82,7 @@ public class CommentMapper {
 
         comment.setText(domain.getText());
         comment.setEventId(domain.getEventId());
+        comment.setEdited(domain.getEdited());
         comment.setUser(user);
 
         return comment;

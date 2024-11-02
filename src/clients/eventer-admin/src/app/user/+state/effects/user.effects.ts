@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {createEffect, Actions, ofType} from "@ngrx/effects";
 import {Store} from "@ngrx/store";
 import {userActions} from "../actions/user.actions";
-import {catchError, map, mergeMap, of, tap, withLatestFrom} from "rxjs";
+import {catchError, map, mergeMap, of, switchMap, tap, withLatestFrom} from "rxjs";
 import {UserService} from "../../services/user.service";
 import {User} from "../../contracts/interfaces";
 import {ToastrService} from "ngx-toastr";
@@ -41,10 +41,26 @@ export class UserEffects {
     }
   );
 
+  deleteUsers$ = createEffect(() => {
+      return this.actions$.pipe(
+        ofType(userActions.deleteUser),
+        switchMap(action =>
+          (this.userService.delete(action.id).pipe(
+            map(() => {
+              this.toastrService.success('Successfully deleted');
+              return userActions.deleteUserSuccess({id: action.id});
+            }),
+            catchError((error) => of(userActions.deleteUserFail(error)))
+          ))
+        )
+      )
+  });
+
   showErrorToast$ = createEffect(() =>
       this.actions$.pipe(
         ofType(
-          userActions.getAllUsersFail
+          userActions.getAllUsersFail,
+          userActions.deleteUserFail,
         ),
         tap((action: any) => {
           if (action?.error?.detail !== undefined) {

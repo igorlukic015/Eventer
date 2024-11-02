@@ -14,4 +14,8 @@ export class UserService {
   public getAll(): Observable<User[]> {
     return this.httpClient.get<User[]>(`${userApiUrl}/${this.userRoute}/get-all`);
   }
+
+  public delete(id: number) {
+    return this.httpClient.delete(`${userApiUrl}/${this.userRoute}/${id}`);
+  }
 }

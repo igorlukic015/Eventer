@@ -65,4 +65,10 @@ public class UserController implements ResultUnwrapper {
         Result result = this.userService.resetPassword(UserMapper.toRequest(dto));
         return this.okOrError(result);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+        Result result = this.userService.delete(id);
+        return this.okOrError(result);
+    }
 }

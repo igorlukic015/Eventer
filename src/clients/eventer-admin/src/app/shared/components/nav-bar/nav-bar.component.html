@@ -1,0 +1,42 @@
+<div class="navbar bg-base-100">
+  <div class="navbar-start">
+    @if (!isAdmin) {
+      <a class="btn btn-ghost text-xl"
+         [ngClass]="activeLink === 0 ? 'text-accent' : ''"
+         routerLink="/event-category"
+      >
+        Event Categories
+      </a>
+      <a class="btn btn-ghost text-xl"
+         [ngClass]="activeLink === 1 ? 'text-accent' : ''"
+         routerLink="/event"
+      >
+        Events
+      </a>
+      <a class="btn btn-ghost text-xl"
+         [ngClass]="activeLink === 2 ? 'text-accent' : ''"
+         routerLink="/user"
+      >
+        Users
+      </a>
+    } @else {
+      <a class="btn btn-ghost text-xl text-accent"
+        routerLink="/admin"
+      >
+        Admins
+      </a>
+    }
+  </div>
+
+  <div class="navbar-center">
+    <span class="text-xl italic text-primary">Eventer Admin</span>
+  </div>
+
+  <div class="navbar-end">
+    <a class="btn btn-ghost text-xl text-warning"
+       (click)="handleLogoutClick($event)"
+    >
+      Logout
+    </a>
+  </div>
+</div>

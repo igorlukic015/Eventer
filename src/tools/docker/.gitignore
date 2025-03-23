@@ -1,0 +1,7 @@
+redis_user_data/
+redis_forecast_data/
+pgdata_admin/
+pgdata_user/
+rabbitmq_data/
+rabbitmq_config/
+localstack_data/

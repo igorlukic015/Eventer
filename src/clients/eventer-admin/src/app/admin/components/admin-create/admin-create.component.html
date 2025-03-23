@@ -1,0 +1,21 @@
+<eventer-admin-nav-bar [isAdmin]="true"></eventer-admin-nav-bar>
+<eventer-admin-layout-main class="w-full">
+  <div class="card w-1/2 bg-neutral shadow-xl">
+    <div class="card-body items-center text-center">
+      <h1 class="card-title text-2xl mb-10">Register new admin</h1>
+      <form class="flex flex-col w-1/2" [formGroup]="newAdminForm">
+        <label class="input input-bordered flex items-center gap-2 mb-7">
+          Username
+          <input type="text" class="grow" formControlName="username" />
+        </label>
+        <label class="input input-bordered flex items-center gap-2 mb-7">
+          Password
+          <input type="password" class="grow" formControlName="password">
+        </label>
+      </form>
+      <div class="card-actions justify-end mt-10">
+        <button class="btn btn-primary" (click)="onSubmit()" [disabled]="!newAdminForm.valid">Confirm</button>
+      </div>
+    </div>
+  </div>
+</eventer-admin-layout-main>

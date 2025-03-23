@@ -1,0 +1,7 @@
+<div class="carousel carousel-center w-full p-4 space-x-4 rounded-box " id="imageCarousel">
+  @for (image of images; track image.id) {
+    <div class="carousel-item w-3/5">
+      <img [src]="image.url" [alt]="image.name" [id]="image.id" class="w-full object-cover rounded-lg"/>
+    </div>
+  }
+</div>

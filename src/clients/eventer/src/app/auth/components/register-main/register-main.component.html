@@ -1,0 +1,27 @@
+<div class="card w-1/3 bg-neutral shadow-xl absolute top-1/4 left-1/3">
+  <div class="card-body items-center text-center">
+    <h1 class="card-title text-2xl mb-10">Registracija</h1>
+    <form class="flex flex-col w-4/5" [formGroup]="newUserForm">
+      <label class="input input-bordered flex items-center gap-2 mb-7">
+        Puno ime
+        <input type="text" class="grow" formControlName="name" />
+      </label>
+      <label class="input input-bordered flex items-center gap-2 mb-7">
+        Email
+        <input type="text" class="grow" formControlName="username" />
+      </label>
+      <label class="input input-bordered flex items-center gap-2 mb-7">
+        Lozinka
+        <input type="password" class="grow" formControlName="password">
+      </label>
+      <label class="input input-bordered flex items-center gap-2 mb-7">
+        Grad
+        <input type="text" class="grow" formControlName="city" />
+      </label>
+    </form>
+    <a class="text-sm" routerLink="/login">Već imaš nalog? Prijavi se ovde.</a>
+    <div class="card-actions justify-end mt-10">
+      <button class="btn btn-primary" (click)="onSubmit()" [disabled]="!newUserForm.valid">Potvrdi</button>
+    </div>
+  </div>
+</div>

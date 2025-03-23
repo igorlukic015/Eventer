@@ -1,0 +1,60 @@
+<main class="relative
+             pt-10
+             px-6
+             flex
+             flex-col
+             flex-1
+             items-start
+             max-w-full
+             pb-16
+             min-h-[calc(100vh-100px)]"
+>
+  <div class="relative flex w-full flex-col">
+    <div class="flex justify-between">
+      <div class="collapse bg-base-200 w-1/4">
+        <input type="checkbox" [checked]="areFiltersOpen()" (change)="filtersClick()" />
+        <div class="collapse-title text-xl font-medium">
+          Kategorije
+        </div>
+        <div class="collapse-content">
+          @for (item of categories(); track item.categoryId) {
+            <div class="flex gap-5">
+              <input type="checkbox" class="checkbox checkbox-sm" (change)="handleCategoryUpdate($event, item.categoryId)" />
+              <span class="text-blue-700">{{item.name}}</span>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="collapse bg-base-200 w-1/4">
+        <input type="checkbox" [checked]="areFiltersOpen()" (change)="filtersClick()" />
+        <div class="collapse-title text-xl font-medium">
+          Vremenski uslovi
+        </div>
+        <div class="collapse-content">
+          @for (condition of WeatherCondition.all(); track condition.id) {
+            <div class="flex gap-5 items-center">
+              <input type="checkbox" class="checkbox checkbox-sm" (change)="handleConditionUpdate($event, condition.name)" />
+              <img src="{{condition.name | conditionToIcon}}">
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="grid mt-8 gap-8 grid-cols-3">
+      @for (item of events(); track item) {
+        <eventer-search-list-item class="w-full" [event]="item" (dblclick)="handleOpenDetails($event, item.eventId)"></eventer-search-list-item>
+      } @empty {
+        <div>
+          Nema sadržaja
+        </div>
+      }
+    </div>
+    <eventer-table-paginator
+      class="flex h-20"
+      (pageChanged)="handlePageChanged($event)"
+      [totalPages]="totalPages()"
+    ></eventer-table-paginator>
+  </div>
+</main>
+

@@ -1,0 +1,75 @@
+version: "3.9"
+name: eventer-tools
+services:
+  admin-db:
+    image: postgres:16.1-bullseye
+    container_name: eventer-admin-db
+    ports:
+      - "9003:5432"
+    env_file:
+      - .env
+    volumes:
+      - ./tools/docker/pgdata_admin:/var/lib/postgresql/data
+
+  user-db:
+    image: postgres:16.1-bullseye
+    container_name: eventer-user-db
+    ports:
+      - "9005:5432"
+    env_file:
+      - .env
+    volumes:
+      - ./tools/docker/pgdata_user:/var/lib/postgresql/data
+
+  redis-user-cache:
+    container_name:
+      redis-user-cache
+    image: redis/redis-stack:7.2.0-v8
+    ports:
+      - "9007:6379"
+    environment:
+      REDIS_ARGS: --save 5 1 --requirepass a123456! --appendonly yes --appendfsync everysec
+    volumes:
+      - ./tools/docker/redis_user_data:/data
+
+  redis-forecast-cache:
+    container_name:
+      redis-forecast-cache
+    image: redis/redis-stack:7.2.0-v8
+    ports:
+      - "9001:6379"
+    environment:
+      REDIS_ARGS: --save 5 1 --requirepass a123456! --appendonly yes --appendfsync everysec
+    volumes:
+      - ./tools/docker/redis_forecast_data:/data
+
+  rabbitmq:
+    image: rabbitmq:3.13.0-management
+    env_file:
+      - .env
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./tools/docker/rabbitmq_data:/var/lib/rabbitmq
+      - ./tools/docker/rabbitmq_config:/etc/rabbitmq
+
+  localstack:
+    container_name: "localstack"
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      - PERSISTENCE=1
+      - SERVICES=s3
+    volumes:
+      - "./tools/docker/localstack_data:/var/lib/localstack"
+      
+volumes:
+    redis_forecast_data:
+    redis_user_data:
+    pgdata:
+    rabbitmq_data:
+    rabbitmq_config:
+    localstack_data:
